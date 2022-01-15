@@ -1,0 +1,11 @@
+cache
+logs
+.idea
+.run
+go.sum
+arbitrage/main
+marketanalysis/main
+tools/xxxxx
+*_log
+script/nohup.out
+script/solana_arbitrage

@@ -1,0 +1,65 @@
+{
+    "ATLAS/USDC[aquafarm]": {
+        "poolId": "ATLAS/USDC[aquafarm]",
+        "poolAccount": "3V5sjXj1mrWjjB1Xt6Xwp554QwHE5fppGSxbk4GzAtEW",
+        "volume": {
+            "day": "1753639.2306440433"
+        }
+    },
+    "ETH/USDC[aquafarm]": {
+        "poolId": "ETH/USDC[aquafarm]",
+        "poolAccount": "FgZut2qVQEyPBibaTJbbX2PxaMZvT1vjDebiVaDp5BWP",
+        "volume": {
+            "day": "1082904.1563007717"
+        }
+    },
+    "POLIS/USDC[aquafarm]": {
+        "poolId": "POLIS/USDC[aquafarm]",
+        "poolAccount": "CdKPtCb5fBRaGFS4bJgytfReeHuFyhpe9YUyWHPnEWZG",
+        "volume": {
+            "day": "1239006.3461746597"
+        }
+    },
+    "SOL/USDC[aquafarm]": {
+        "poolId": "SOL/USDC[aquafarm]",
+        "poolAccount": "EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U",
+        "volume": {
+            "day": "6301517.263891964"
+        }
+    },
+    "SOL/USDT[aquafarm]": {
+        "poolId": "SOL/USDT[aquafarm]",
+        "poolAccount": "Dqk7mHQBx2ZWExmyrR2S8X6UG75CrbbpK2FSBZsNYsw6",
+        "volume": {
+            "day": "2130039.911908801"
+        }
+    },
+    "USDC/USDT[stable][aquafarm]": {
+        "poolId": "USDC/USDT[stable][aquafarm]",
+        "poolAccount": "F13xvvx45jVGd84ynK3c8T89UejQVxjCLtmHfPmAXAHP",
+        "volume": {
+            "day": "1188390.630756388"
+        }
+    },
+    "mSOL/SOL[stable][aquafarm]": {
+        "poolId": "mSOL/SOL[stable][aquafarm]",
+        "poolAccount": "9EQMEzJdE2LDAY1hw1RytpufdwAXzatYfQ3M2UuT9b88",
+        "volume": {
+            "day": "1335495.3732912466"
+        }
+    },
+    "mSOL/USDC[aquafarm]": {
+        "poolId": "mSOL/USDC[aquafarm]",
+        "poolAccount": "Hme4Jnqhdz2jAPUMnS7jGE5zv6Y1ynqrUEhmUAWkXmzn",
+        "volume": {
+            "day": "4067786.03292604"
+        }
+    },
+    "mSOL/USDT[aquafarm]": {
+        "poolId": "mSOL/USDT[aquafarm]",
+        "poolAccount": "Afofkb7JTc32rdpqiyc3RDmGF5s9N6W1ujcdYVfGZ5Je",
+        "volume": {
+            "day": "2413863.865946832"
+        }
+    }
+}
