@@ -630,7 +630,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	// update first usdc amount
 	if data.amount > config.USDC_AMOUNT {
 		data.amount = config.USDC_AMOUNT
-	} else if data.amount < 200000000 {
+	} else if data.amount < 200000000 && data.yield < 200 {
 		arb.log.Printf("amount is too small")
 		return nil
 	}
