@@ -13,15 +13,24 @@ type AccountCallback interface {
 }
 
 func (backend *Backend) SubscribeAccount(pubkey solana.PublicKey, cb AccountCallback) error {
-	for _, wsClient := range backend.wsClients {
-		sub, err := wsClient.AccountSubscribeWithOpts(pubkey, rpc.CommitmentProcessed, solana.EncodingBase64)
-		if err != nil {
-			return err
+	backend.subscribes[pubkey] = cb
+	return nil
+}
+
+func (backend *Backend) StartSubscribe() error {
+	for pubkey, cb := range backend.subscribes {
+		for _, wsClient := range backend.wsClients {
+			sub, err := wsClient.AccountSubscribeWithOpts(pubkey, rpc.CommitmentProcessed, solana.EncodingBase64)
+			if err != nil {
+				return err
+			}
+			backend.accountSubs = append(backend.accountSubs, sub)
+			backend.wg.Add(1)
+			go backend.RecvAccount(pubkey, cb, sub)
 		}
-		backend.accountSubs = append(backend.accountSubs, sub)
-		backend.wg.Add(1)
-		go backend.RecvAccount(pubkey, cb, sub)
 	}
+	backend.subscribeStatus = true
+	go backend.FetchAccount()
 	return nil
 }
 
@@ -38,6 +47,8 @@ func (backend *Backend) RecvAccount(key solana.PublicKey, cb AccountCallback, su
 			backend.logger.Printf("RecvAccount exit")
 			return
 		}
+		backend.logger.Printf("recv account, slot diff: %d, %d", got.Context.Slot, program.GlobalSlot)
+		/*
 		data := got
 		account := &Account{
 			PubKey:  key,
@@ -46,5 +57,78 @@ func (backend *Backend) RecvAccount(key solana.PublicKey, cb AccountCallback, su
 		}
 		backend.logger.Printf("recv account, slot diff: %d, %d", data.Context.Slot, program.GlobalSlot)
 		cb.OnAccountUpdate(account)
+		 */
+	}
+}
+
+func (backend *Backend) FetchAccount() {
+	defer backend.wg.Done()
+	accounts := make([]solana.PublicKey, 0, len(backend.subscribes))
+	for pubkey, _ := range backend.subscribes {
+		accounts = append(accounts, pubkey)
+	}
+	//ticker := time.NewTicker(time.Second * 2)
+	for {
+		select {
+		case <-backend.updateAccount:
+			backend.logger.Printf("current solt: %d, chan size: %d", program.GlobalSlot, len(backend.updateAccount))
+			L:
+			for {
+				select {
+				case <-backend.updateAccount:
+				default:
+					break L
+				}
+			}
+			//backend.logger.Printf("current solt: %d, chan size: %d", program.GlobalSlot, len(backend.updateAccount))
+			getAccountResult, err := backend.rpcClient.GetAccountInfoWithOpts(
+				backend.ctx, accounts[0], &rpc.GetAccountInfoOpts{
+					Encoding:   solana.EncodingBase64,
+					Commitment: rpc.CommitmentProcessed,
+				})
+			if err != nil {
+				continue
+			}
+			backend.logger.Printf("fetch account slot: %d", getAccountResult.Context.Slot)
+			/*
+			account := &Account{
+				PubKey:  accounts[0],
+				Account: getAccountResult.Value,
+				Height:  getAccountResult.Context.Slot,
+			}
+			cb, ok := backend.subscribes[account.PubKey]
+			if !ok || cb == nil {
+				continue
+			}
+			cb.OnAccountUpdate(account)
+			 */
+			/*
+			backend.logger.Printf("current solt: %d", program.GlobalSlot)
+			getMultipleAccountsResult, err := backend.rpcClient.GetMultipleAccountsWithOpts(
+				backend.ctx, accounts[0:1], &rpc.GetMultipleAccountsOpts{
+					Encoding:   solana.EncodingBase64,
+					Commitment: rpc.CommitmentProcessed,
+				})
+			if err != nil {
+				continue
+			}
+			backend.logger.Printf("fetch account slot: %d", getMultipleAccountsResult.Context.Slot)
+			for i, updateAccount := range getMultipleAccountsResult.Value {
+				account := &Account{
+					PubKey:  accounts[i],
+					Account: updateAccount,
+					Height:  getMultipleAccountsResult.Context.Slot,
+				}
+				cb, ok := backend.subscribes[account.PubKey]
+				if !ok || cb == nil {
+					continue
+				}
+				cb.OnAccountUpdate(account)
+			}
+			*/
+		case <-backend.ctx.Done():
+			backend.logger.Printf("recent blockhash cacher exit")
+			return
+		}
 	}
 }

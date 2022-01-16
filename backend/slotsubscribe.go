@@ -45,10 +45,14 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 			backend.logger.Printf("RecvSlot exit")
 			return
 		}
+		backend.logger.Printf("recv slot: %d", got.Slot)
+		backend.updateAccount <- true
+		/*
 		atomic.StoreInt64(tt, time.Now().UnixNano())
 		if got.Slot % 5 == 0 {
 			backend.updateBlockHash <- true
 		}
+		backend.updateAccount <- true
 		data := got
 		slot := &Slot{
 			Number: data.Slot,
@@ -56,6 +60,8 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 		if cb != nil {
 			cb.OnSlotUpdate(slot)
 		}
+
+		 */
 	}
 }
 

@@ -248,6 +248,7 @@ func (arb *Arbitrage) Start() {
 			arb.log.Printf("program %s flash err: %v", program.Name(), err)
 		}
 	}
+	arb.backend.StartSubscribe()
 	arb.stateListen.Start()
 	arb.wg.Add(1)
 	go arb.Tick()

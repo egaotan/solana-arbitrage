@@ -13,25 +13,28 @@ import (
 )
 
 type Backend struct {
-	logger          *log.Logger
-	rpcClient       *rpc.Client
-	wsClients       []*ws.Client
-	ctx             context.Context
-	wg              sync.WaitGroup
-	accountSubs     []*ws.AccountSubscription
-	slotSubs        []*ws.SlotSubscription
-	wallets         []*Wallet
-	player          solana.PublicKey
-	lock            int32
-	cachedBlockHash []solana.Hash
-	updateBlockHash chan bool
-	transaction     bool
-	store           *store.Store
-	commandChans    []chan *Command
-	clients         []*rpc.Client
+	logger             *log.Logger
+	rpcClient          *rpc.Client
+	wsClients          []*ws.Client
+	ctx                context.Context
+	wg                 sync.WaitGroup
+	subscribes         map[solana.PublicKey]AccountCallback
+	subscribeStatus    bool
+	accountSubs        []*ws.AccountSubscription
+	slotSubs           []*ws.SlotSubscription
+	wallets            []*Wallet
+	player             solana.PublicKey
+	lock               int32
+	cachedBlockHash    []solana.Hash
+	updateBlockHash    chan bool
+	updateAccount      chan bool
+	useTransaction     bool
+	store              *store.Store
+	commandChans       []chan *Command
+	transactionClients []*rpc.Client
 }
 
-func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node) *Backend {
+func NewBackend(ctx context.Context, nodes []*config.Node, useTransaction bool, transactionNodes []*config.Node) *Backend {
 	rpcClient := rpc.New(nodes[0].Rpc)
 	wsClients := make([]*ws.Client, 0, len(nodes))
 	for _, node := range nodes {
@@ -46,11 +49,13 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		wsClients:       wsClients,
 		ctx:             ctx,
 		logger:          utils.NewLog(config.LogPath, config.BackendLog),
+		subscribes:make(map[solana.PublicKey]AccountCallback),
 		accountSubs:     make([]*ws.AccountSubscription, 0),
 		slotSubs:        make([]*ws.SlotSubscription, 0),
 		updateBlockHash: make(chan bool, 1024),
-		cachedBlockHash:make([]solana.Hash, 0, 3),
-		transaction:     transaction,
+		cachedBlockHash: make([]solana.Hash, 0, 3),
+		updateAccount: make(chan bool, 1024),
+		useTransaction:  useTransaction,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))
@@ -59,7 +64,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		clients = append(clients, rpc.New(node.Rpc))
 	}
 	backend.commandChans = commandChans
-	backend.clients = clients
+	backend.transactionClients = clients
 	return backend
 }
 
@@ -74,7 +79,7 @@ func (backend *Backend) WsClient() *ws.Client {
 */
 
 func (backend *Backend) Start() {
-	if !backend.transaction {
+	if !backend.useTransaction {
 		return
 	}
 	//
@@ -87,7 +92,7 @@ func (backend *Backend) Start() {
 }
 
 func (backend *Backend) Stop() {
-	if !backend.transaction {
+	if !backend.useTransaction {
 		return
 	}
 	for _, slotSub := range backend.slotSubs {

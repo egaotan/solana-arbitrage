@@ -4,12 +4,17 @@
       "rpc": "https://api.mainnet-beta.solana.com",
       "ws": "wss://api.mainnet-beta.solana.com",
       "wss": ["wss://86.109.14.237:443", "wss://147.75.66.251:443", "wss://145.40.93.109:443"],
-      "usable": true
+      "usable": false
     },
     {
       "rpc": "https://solana-api.projectserum.com",
       "ws": "wss://solana-api.projectserum.com",
       "usable": false
+    },
+    {
+      "rpc": "https://free.rpcpool.com",
+      "ws": "wss://free.rpcpool.com",
+      "usable": true
     }
   ],
   "transaction_nodes": [
@@ -34,7 +39,7 @@
     "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
   ],
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
-  "key":"",
+  "key":"2wBcbh7HT89WM8WLxrmB79BM82jCK1PbjHLpbjMvGT4cdSd7NkG3SAzWw7y6zVfaLbQpaSMNK1GpbvdUL9zwmcwc",
   "calculators": [
     "cyclic","serum"
   ],
@@ -47,6 +52,6 @@
   "db_scheme": "arbitrage",
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
-  "listen": "0.0.0.0:8088",
+  "listen": "0.0.0.0:8087",
   "usdc": 28700
 }

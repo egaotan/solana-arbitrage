@@ -144,7 +144,7 @@ func (backend *Backend) startExecutor() {
 	for i := 0; i < len(backend.commandChans); i++ {
 		for j := 0; j < ExecutorSize; j++ {
 			id := (i+1)*1000 + (j + 1)
-			go backend.Executor(id, backend.commandChans[i], backend.clients[i])
+			go backend.Executor(id, backend.commandChans[i], backend.transactionClients[i])
 		}
 	}
 }
