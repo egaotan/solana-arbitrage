@@ -44,7 +44,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cfg.TransactionNodes = append(cfg.TransactionNodes, validatorNodes...)
+	//cfg.TransactionNodes = append(cfg.TransactionNodes, validatorNodes...)
 
 	//
 	oldNodes := cfg.Nodes

@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"github.com/egaotan/solana-arbitrage/program"
 	"github.com/gagliardetto/solana-go/rpc/ws"
 	"sync/atomic"
 	"syscall"
@@ -46,6 +47,7 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 			return
 		}
 		backend.logger.Printf("recv slot: %d", got.Slot)
+		program.GlobalSlot = got.Slot
 		backend.updateAccount <- true
 		/*
 		atomic.StoreInt64(tt, time.Now().UnixNano())
@@ -74,12 +76,15 @@ func (backend *Backend) AdditionalSlot(cb SlotCallback, tt *int64) {
 			newTime := time.Now().UnixNano()
 			oldTime := atomic.SwapInt64(tt, newTime)
 			if newTime-oldTime >= time.Millisecond.Nanoseconds()*90 {
+				/*
 				slot := &Slot{
 					Number: 0,
 				}
 				if cb != nil {
 					cb.OnSlotUpdate(slot)
 				}
+
+				 */
 			}
 		case <-backend.ctx.Done():
 			backend.logger.Printf("AdditionalSlot exit")

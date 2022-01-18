@@ -14,6 +14,11 @@
     {
       "rpc": "https://free.rpcpool.com",
       "ws": "wss://free.rpcpool.com",
+      "usable": false
+    },
+    {
+      "rpc": "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
+      "ws": "wss://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
       "usable": true
     }
   ],
@@ -31,7 +36,7 @@
       "usable": true
     }
   ],
-  "transaction_node_size": 100,
+  "transaction_node_size": 1,
   "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
@@ -39,12 +44,12 @@
     "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
   ],
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
-  "key":"2wBcbh7HT89WM8WLxrmB79BM82jCK1PbjHLpbjMvGT4cdSd7NkG3SAzWw7y6zVfaLbQpaSMNK1GpbvdUL9zwmcwc",
+  "key":"",
   "calculators": [
     "cyclic","serum"
   ],
   "which": 1,
-  "valid-yield": 30,
+  "valid-yield": 300,
   "local": true,
   "simulate": true,
   "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",

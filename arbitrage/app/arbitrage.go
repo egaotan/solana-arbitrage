@@ -662,6 +662,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			}
 			ins = append(ins, result...)
 		}
+		arb.log.Printf("++++hash index: %d", blockHashIndex)
 		arb.backend.Commit(blockHashIndex, id, ins, false, nil)
 		arb.latestCommitTime = time.Now().Unix()
 	}

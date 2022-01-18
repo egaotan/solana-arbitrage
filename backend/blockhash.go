@@ -22,6 +22,9 @@ func (backend *Backend) CacheRecentBlockHash() {
 			backend.cachedBlockHash = append(backend.cachedBlockHash, getRecentBlockHashResult.Value.Blockhash)
 			backend.cachedBlockHash = backend.cachedBlockHash[1:]
 			atomic.StoreInt32(&backend.lock, 0)
+			for _, hash := range backend.cachedBlockHash {
+				backend.logger.Printf("====== hash : %s", hash.String())
+			}
 		case <-backend.ctx.Done():
 			backend.logger.Printf("recent blockhash cacher exit")
 			return
