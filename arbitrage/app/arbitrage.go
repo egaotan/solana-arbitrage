@@ -508,7 +508,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	if len(caches) >= cacheSize {
 		amountDiff := decimal.NewFromInt(int64(usdcAmount)).Sub(decimal.NewFromInt(int64(caches[0].initUsdcAmount))).Abs()
 		yieldDiff := decimal.NewFromInt(yield).Sub(decimal.NewFromInt(caches[0].yield)).Abs()
-		if amountDiff.Cmp(decimal.NewFromInt(1000*1000000)) < 0 && yieldDiff.Cmp(decimal.NewFromInt(50)) < 0 {
+		if amountDiff.Cmp(decimal.NewFromInt(1000*1000000)) < 0 && yieldDiff.Cmp(decimal.NewFromInt(100)) < 0 {
 			arb.log.Printf("so much arbitrage transactions in 60 seconds, usdc amount: %d......", usdcAmount)
 			return nil
 		}
@@ -634,7 +634,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		arb.log.Printf("amount is too small")
 		return nil
 	}
-	data.amount = (data.amount / 1000000) * 1000000
+	data.amount = (data.amount / 100000000) * 100000000
 	if true {
 		ins := make([]solana.Instruction, 0)
 		for j, step := range data.steps {

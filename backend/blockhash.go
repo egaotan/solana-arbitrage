@@ -14,6 +14,10 @@ func (backend *Backend) CacheRecentBlockHash() {
 		case <-backend.updateBlockHash:
 			getRecentBlockHashResult, err := backend.rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 			if err != nil {
+				backend.logger.Printf("GetRecentBlockhash, err: %s", err.Error())
+				continue
+			}
+			if backend.cachedBlockHash[2] == getRecentBlockHashResult.Value.Blockhash {
 				continue
 			}
 			for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
