@@ -50,7 +50,7 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 		if got.Slot % 10 == 0 {
 			backend.updateBlockHash <- true
 		}
-		backend.updateAccount <- true
+		//backend.updateAccount <- true
 		data := got
 		slot := &Slot{
 			Number: data.Slot,

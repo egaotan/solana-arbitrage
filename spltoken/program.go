@@ -193,7 +193,7 @@ func (p *Program) SubscribeUsers(pubkeys []solana.PublicKey) error {
 			p.log.Printf("user %s is not in cache", pubkey.String())
 			continue
 		}
-		p.backend.SubscribeAccount(pubkey, p)
+		p.backend.SubscribeAccount(pubkey, p, 0)
 	}
 	return nil
 }

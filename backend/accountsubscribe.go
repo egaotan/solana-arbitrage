@@ -11,13 +11,22 @@ type AccountCallback interface {
 	OnAccountUpdate(account *Account) error
 }
 
-func (backend *Backend) SubscribeAccount(pubkey solana.PublicKey, cb AccountCallback) error {
-	backend.subscribes[pubkey] = cb
+type AccountSubscribe struct {
+	cb AccountCallback
+	t int
+}
+
+func (backend *Backend) SubscribeAccount(pubkey solana.PublicKey, cb AccountCallback, t int) error {
+	backend.subscribes[pubkey] = &AccountSubscribe{
+		cb: cb,
+		t:  t,
+	}
 	return nil
 }
 
 func (backend *Backend) StartSubscribe() error {
-	for pubkey, cb := range backend.subscribes {
+	/*
+	for pubkey, as := range backend.subscribes {
 		for _, wsClient := range backend.wsClients {
 			sub, err := wsClient.AccountSubscribeWithOpts(pubkey, rpc.CommitmentProcessed, solana.EncodingBase64)
 			if err != nil {
@@ -25,10 +34,25 @@ func (backend *Backend) StartSubscribe() error {
 			}
 			backend.accountSubs = append(backend.accountSubs, sub)
 			backend.wg.Add(1)
-			go backend.RecvAccount(pubkey, cb, sub)
+			go backend.RecvAccount(pubkey, as.cb, sub)
 		}
 	}
-	go backend.FetchAccount()
+	*/
+	spltokenAccounts := make([]solana.PublicKey, 0)
+	var spltokenCb AccountCallback
+	serumAccounts := make([]solana.PublicKey, 0)
+	var serumCb AccountCallback
+	for pubkey, as := range backend.subscribes {
+		if as.t == 0 {
+			spltokenAccounts = append(spltokenAccounts, pubkey)
+			spltokenCb = as.cb
+		} else if as.t == 1 {
+			serumAccounts = append(serumAccounts, pubkey)
+			serumCb = as.cb
+		}
+	}
+	go backend.FetchAccount(spltokenAccounts, spltokenCb, 0)
+	go backend.FetchAccount(serumAccounts, serumCb, 1)
 	return nil
 }
 
@@ -73,70 +97,32 @@ func (backend *Backend) RecvAccount(key solana.PublicKey, cb AccountCallback, su
 	}
 }
 
-func (backend *Backend) FetchAccount() {
+func (backend *Backend) FetchAccount(keys []solana.PublicKey, cb AccountCallback, t int) {
 	defer backend.wg.Done()
-	accounts := make([]solana.PublicKey, 0, len(backend.subscribes))
-	for pubkey, _ := range backend.subscribes {
-		accounts = append(accounts, pubkey)
-	}
 	//ticker := time.NewTicker(time.Second * 2)
 	for {
 		select {
-		case <-backend.updateAccount:
-		L:
-			for {
-				select {
-				case <-backend.updateAccount:
-				default:
-					break L
-				}
-			}
-			//backend.logger.Printf("current solt: %d, chan size: %d", program.GlobalSlot, len(backend.updateAccount))
-			getAccountResult, err := backend.rpcClient.GetAccountInfoWithOpts(
-				backend.ctx, accounts[0], &rpc.GetAccountInfoOpts{
+		default:
+			backend.logger.Printf("fetch account %d", t)
+			getMultipleAccountsResult, err := backend.rpcClient.GetMultipleAccountsWithOpts(
+				backend.ctx, keys, &rpc.GetMultipleAccountsOpts{
 					Encoding:   solana.EncodingBase64,
 					Commitment: rpc.CommitmentProcessed,
 				})
 			if err != nil {
 				continue
 			}
-			backend.logger.Printf("fetch account slot: %d", getAccountResult.Context.Slot)
-			/*
+			backend.logger.Printf("fetch account slot: %d", getMultipleAccountsResult.Context.Slot)
+			for i, updateAccount := range getMultipleAccountsResult.Value {
 				account := &Account{
-					PubKey:  accounts[0],
-					Account: getAccountResult.Value,
-					Height:  getAccountResult.Context.Slot,
+					PubKey:  keys[i],
+					Account: updateAccount,
+					Height:  getMultipleAccountsResult.Context.Slot,
 				}
-				cb, ok := backend.subscribes[account.PubKey]
-				if !ok || cb == nil {
-					continue
-				}
-				cb.OnAccountUpdate(account)
-			*/
-			/*
-				backend.logger.Printf("current solt: %d", program.GlobalSlot)
-				getMultipleAccountsResult, err := backend.rpcClient.GetMultipleAccountsWithOpts(
-					backend.ctx, accounts[0:1], &rpc.GetMultipleAccountsOpts{
-						Encoding:   solana.EncodingBase64,
-						Commitment: rpc.CommitmentProcessed,
-					})
-				if err != nil {
-					continue
-				}
-				backend.logger.Printf("fetch account slot: %d", getMultipleAccountsResult.Context.Slot)
-				for i, updateAccount := range getMultipleAccountsResult.Value {
-					account := &Account{
-						PubKey:  accounts[i],
-						Account: updateAccount,
-						Height:  getMultipleAccountsResult.Context.Slot,
-					}
-					cb, ok := backend.subscribes[account.PubKey]
-					if !ok || cb == nil {
-						continue
-					}
+				if cb != nil {
 					cb.OnAccountUpdate(account)
 				}
-			*/
+			}
 		case <-backend.ctx.Done():
 			backend.logger.Printf("fetch account exit")
 			return

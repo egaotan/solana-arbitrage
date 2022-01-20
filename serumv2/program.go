@@ -557,7 +557,7 @@ func (p *Program) parseOpenOrders(account *backend.Account) (OpenOrdersLayout, e
 
 func (p *Program) SubscribeOrderBooks(pubkeys []solana.PublicKey) error {
 	for _, pubkey := range pubkeys {
-		p.backend.SubscribeAccount(pubkey, p)
+		p.backend.SubscribeAccount(pubkey, p, 1)
 	}
 	return nil
 }

@@ -53,7 +53,7 @@ func (notify *Notify) listen() {
 func (notify *Notify) tryNotify(data *ArbitrageData) {
 	items := make([]string, 0)
 	tt := int64(data.id)
-	ttStr := time.Unix(tt/1000000, 0).Format("2006-01-02 15:04:05")
+	ttStr := time.Unix(tt/1000000, tt%1000000*1000).Format("2006-01-02 15:04:05.000")
 	items = append(items, "arbitrage: ")
 	items = append(items, fmt.Sprintf("id: %d;", tt))
 	items = append(items, fmt.Sprintf("time: %s;", ttStr))
