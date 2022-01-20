@@ -5,6 +5,7 @@ import (
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/gagliardetto/solana-go/rpc/ws"
 	"syscall"
+	"time"
 )
 
 type AccountCallback interface {
@@ -99,10 +100,11 @@ func (backend *Backend) RecvAccount(key solana.PublicKey, cb AccountCallback, su
 
 func (backend *Backend) FetchAccount(keys []solana.PublicKey, cb AccountCallback, t int) {
 	defer backend.wg.Done()
-	//ticker := time.NewTicker(time.Second * 2)
+	ticker := time.NewTicker(time.Millisecond * 100)
+	currentSolt := uint64(0)
 	for {
 		select {
-		default:
+		case <- ticker.C:
 			backend.logger.Printf("fetch account %d", t)
 			getMultipleAccountsResult, err := backend.rpcClient.GetMultipleAccountsWithOpts(
 				backend.ctx, keys, &rpc.GetMultipleAccountsOpts{
@@ -112,7 +114,11 @@ func (backend *Backend) FetchAccount(keys []solana.PublicKey, cb AccountCallback
 			if err != nil {
 				continue
 			}
-			backend.logger.Printf("fetch account slot: %d", getMultipleAccountsResult.Context.Slot)
+			backend.logger.Printf("fetch account, %d", getMultipleAccountsResult.Context.Slot)
+			if getMultipleAccountsResult.Context.Slot <= currentSolt {
+				continue
+			}
+			currentSolt = getMultipleAccountsResult.Context.Slot
 			for i, updateAccount := range getMultipleAccountsResult.Value {
 				account := &Account{
 					PubKey:  keys[i],
