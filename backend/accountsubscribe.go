@@ -105,7 +105,7 @@ func (backend *Backend) FetchAccount(keys []solana.PublicKey, cb AccountCallback
 	for {
 		select {
 		case <- ticker.C:
-			backend.logger.Printf("fetch account %d", t)
+			backend.logger.Printf("try to fetch account (%d)", t)
 			getMultipleAccountsResult, err := backend.rpcClient.GetMultipleAccountsWithOpts(
 				backend.ctx, keys, &rpc.GetMultipleAccountsOpts{
 					Encoding:   solana.EncodingBase64,
@@ -114,10 +114,11 @@ func (backend *Backend) FetchAccount(keys []solana.PublicKey, cb AccountCallback
 			if err != nil {
 				continue
 			}
-			backend.logger.Printf("fetch account, %d", getMultipleAccountsResult.Context.Slot)
+			backend.logger.Printf("fetch account (%d, %d)", getMultipleAccountsResult.Context.Slot, t)
 			if getMultipleAccountsResult.Context.Slot <= currentSolt {
 				continue
 			}
+			backend.logger.Printf("receive account (%d, %d)", getMultipleAccountsResult.Context.Slot, t)
 			currentSolt = getMultipleAccountsResult.Context.Slot
 			for i, updateAccount := range getMultipleAccountsResult.Value {
 				account := &Account{
