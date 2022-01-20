@@ -29,6 +29,8 @@ type Backend struct {
 	store           *store.Store
 	commandChans    []chan *Command
 	clients         []*rpc.Client
+	subscribes         map[solana.PublicKey]AccountCallback
+	updateAccount      chan bool
 }
 
 func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node) *Backend {
@@ -51,6 +53,8 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		updateBlockHash: make(chan bool, 1024),
 		cachedBlockHash:make([]solana.Hash, 0, 3),
 		transaction:     transaction,
+		subscribes:make(map[solana.PublicKey]AccountCallback),
+		updateAccount: make(chan bool, 1024),
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))

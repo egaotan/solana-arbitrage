@@ -3,12 +3,31 @@
     {
       "rpc": "https://api.mainnet-beta.solana.com",
       "ws": "wss://api.mainnet-beta.solana.com",
-      "wss": ["wss://86.109.14.237:443", "wss://147.75.66.251:443", "wss://145.40.93.109:443"],
       "usable": true
     },
     {
       "rpc": "https://solana-api.projectserum.com",
       "ws": "wss://solana-api.projectserum.com",
+      "usable": false
+    },
+    {
+      "rpc": "https://ssc-dao.genesysgo.net",
+      "ws": "wss://ssc-dao.genesysgo.net",
+      "usable": false
+    },
+    {
+      "rpc": "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189",
+      "ws": "wss://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189",
+      "usable": false
+    },
+    {
+      "rpc": "https://free.rpcpool.com",
+      "ws": "wss://free.rpcpool.com",
+      "usable": false
+    },
+    {
+      "rpc": "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
+      "ws": "wss://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
       "usable": false
     }
   ],
@@ -26,7 +45,7 @@
       "usable": true
     }
   ],
-  "transaction_node_size": 100,
+  "transaction_node_size": 10,
   "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
@@ -48,5 +67,5 @@
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
   "listen": "0.0.0.0:8088",
-  "usdc": 28700
+  "usdc": 30100
 }
