@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"github.com/egaotan/solana-arbitrage/program"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/gagliardetto/solana-go/rpc/ws"
@@ -38,13 +37,13 @@ func (backend *Backend) RecvAccount(key solana.PublicKey, cb AccountCallback, su
 			backend.logger.Printf("RecvAccount exit")
 			return
 		}
+		backend.logger.Printf("receive account, %d", got.Context.Slot)
 		data := got
 		account := &Account{
 			PubKey:  key,
 			Account: &data.Value.Account,
 			Height:  data.Context.Slot,
 		}
-		backend.logger.Printf("recv account, slot diff: %d, %d", data.Context.Slot, program.GlobalSlot)
 		cb.OnAccountUpdate(account)
 	}
 }

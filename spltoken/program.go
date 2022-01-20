@@ -210,8 +210,6 @@ func (p *Program) update() {
 }
 
 func (p *Program) updateAccount(account *backend.Account) {
-	// slot
-	p.log.Printf("update account slot diff: %d, %d", account.Height, program.GlobalSlot)
 	// old
 	balanceOld := uint64(0)
 	keyedUserOld, ok := p.users[account.PubKey]

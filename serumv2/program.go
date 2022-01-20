@@ -580,7 +580,6 @@ func (p *Program) update() {
 
 func (p *Program) updateAccount(account *backend.Account) {
 	//
-	p.log.Printf("update account slot diff: %d, %d", account.Height, program.GlobalSlot)
 	if account.Account.Owner != p.id {
 		p.log.Printf("account(%s) is not serum v1 program account- OnAccountUpdate", account.PubKey)
 		return

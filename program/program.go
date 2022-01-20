@@ -35,10 +35,6 @@ var (
 	Serum_mSol_Usdt = solana.MustPublicKeyFromBase58("HxkQdUnrPdHwXP5T9kewEXs3ApgvbufuTfdw9v1nApFd")
 )
 
-var (
-	GlobalSlot = uint64(0)
-)
-
 const (
 	AMM       = "AMM"
 	OrderBook = "OrderBook"

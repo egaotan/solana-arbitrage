@@ -357,7 +357,6 @@ func (arb *Arbitrage) GetProgram(id solana.PublicKey) program.Program {
 }
 
 func (arb *Arbitrage) OnSlotUpdate(slot *backend.Slot) error {
-	program.GlobalSlot = slot.Number
 	locked := atomic.CompareAndSwapInt32(&arb.status, Started, Pause)
 	if !locked {
 		return nil
