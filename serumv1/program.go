@@ -514,7 +514,7 @@ func (p *Program) RetrieveOrderBooks(pubkeys []solana.PublicKey) error {
 
 func (p *Program) SubscribeOrderBooks(pubkeys []solana.PublicKey) error {
 	for _, pubkey := range pubkeys {
-		p.backend.SubscribeAccount(pubkey, p)
+		p.backend.SubscribeAccount(pubkey, p, 1)
 	}
 	return nil
 }
