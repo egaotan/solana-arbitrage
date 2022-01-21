@@ -132,6 +132,11 @@ func (proxy *Proxy) SendTransaction(tx []byte) {
 	atomic.StoreInt32(&proxy.lock, 0)
 	for addr, conn := range tpuConnections {
 		proxy.logger.Printf("send tx to %s", addr)
-		conn.Write(tx)
+		n, err := conn.Write(tx)
+		if err != nil {
+			proxy.logger.Printf("send err: %s", err.Error())
+		} else {
+			proxy.logger.Printf("send (%d, %d)", n, len(tx))
+		}
 	}
 }
