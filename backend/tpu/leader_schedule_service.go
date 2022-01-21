@@ -81,6 +81,10 @@ func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
 	if slot >= ans.firstSlot && slot <= ans.GetLastSlot() {
 		return ans.leaders[slot]
 	}
+	item, ok := ans.leaders[slot]
+	if ok {
+		return item
+	}
 	return solana.PublicKey{}
 }
 
@@ -91,7 +95,10 @@ func (ans *LeaderScheduleService) Refresh() {
 		L:
 			for {
 				select {
-				case <-ans.newFresh:
+				case item := <-ans.newFresh:
+					if item < slot {
+						slot = item
+					}
 				default:
 					break L
 				}
