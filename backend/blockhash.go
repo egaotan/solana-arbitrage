@@ -21,7 +21,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 					break L
 				}
 			}
-			getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
+			getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentConfirmed)
 			if err != nil {
 				backend.logger.Printf("GetRecentBlockhash, err: %s", err.Error())
 				continue
