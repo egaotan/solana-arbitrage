@@ -180,7 +180,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	//
 	store := store.NewStore(ctx, cfg.DBUrl, cfg.DBScheme, cfg.DBUser, cfg.DBPasswd)
 	arb.store = store
-	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash)
+	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash, cfg.TpuClient)
 	backend.ImportWallet(cfg.Key)
 	backend.SetPlayer(cfg.User)
 	backend.SetStore(store)

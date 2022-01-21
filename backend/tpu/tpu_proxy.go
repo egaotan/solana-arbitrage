@@ -3,11 +3,12 @@ package tpu
 import (
 	"context"
 	"fmt"
+	"github.com/egaotan/solana-arbitrage/config"
+	"github.com/egaotan/solana-arbitrage/utils"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"log"
 	"net"
-	"os"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -26,25 +27,15 @@ type Proxy struct {
 	logger       *log.Logger
 }
 
-func NewLog(dir, name string) *log.Logger {
-	fileName := fmt.Sprintf("%s%s.log", dir, name)
-	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		panic(err)
-	}
-	log := log.New(file, "", log.LstdFlags|log.Lmicroseconds)
-	return log
-}
-
-func NewProxy(ctx context.Context, client *rpc.Client) *Proxy {
+func NewProxy(ctx context.Context, tpuclient string) *Proxy {
 	proxy := &Proxy{
 		ctx:          ctx,
-		client:       client,
+		client:       rpc.New(tpuclient),
 		latestSlots:  make(chan uint64, 1024),
 		transactions: make(chan []byte, 1024),
 		tpuConns:     make(map[string]net.Conn),
 	}
-	proxy.logger = NewLog("./", "tpu_proxy")
+	proxy.logger = utils.NewLog(config.LogPath, config.TPULog)
 	proxy.ans = NewAvailableNodesService(proxy.ctx, proxy.client, proxy.logger)
 	proxy.lss = NewLeaderScheduleService(proxy.ctx, proxy.client, proxy.logger)
 	return proxy

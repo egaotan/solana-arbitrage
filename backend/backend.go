@@ -35,7 +35,7 @@ type Backend struct {
 	tpu *tpu.Proxy
 }
 
-func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash string) *Backend {
+func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash string, tpuclient string) *Backend {
 	rpcClient := rpc.New(nodes[0].Rpc)
 	wsClients := make([]*ws.Client, 0, len(nodes))
 	for _, node := range nodes {
@@ -67,7 +67,6 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 	backend.commandChans = commandChans
 	backend.clients = clients
 
-	tpuclient := rpc.New(blockHash)
 	backend.tpu = tpu.NewProxy(ctx, tpuclient)
 	return backend
 }

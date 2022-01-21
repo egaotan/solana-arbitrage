@@ -27,6 +27,7 @@
     }
   ],
   "block_hash": "https://free.rpcpool.com",
+  "tpu_client": "https://free.rpcpool.com",
   "transaction_node_size": 100,
   "node_id": 0,
   "programs": [
@@ -40,7 +41,7 @@
     "cyclic","serum"
   ],
   "which": 1,
-  "valid-yield": -10,
+  "valid-yield": 30,
   "local": true,
   "simulate": true,
   "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",
@@ -49,5 +50,5 @@
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
   "listen": "0.0.0.0:8088",
-  "usdc": 28700
+  "usdc": 30100
 }

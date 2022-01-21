@@ -38,6 +38,7 @@ var (
 	LogPath                      = "./logs/"
 	BackendLog                   = "backend"
 	ExecutorLog                  = "executor"
+	TPULog = "tpu_executor"
 	NetworkLog = "network"
 )
 
@@ -52,6 +53,7 @@ type Config struct {
 	Nodes            []*Node            `json:"nodes"`
 	TransactionNodes []*Node            `json:"transaction_nodes"`
 	BlochHash string `json:"block_hash"`
+	TpuClient string `json:"tpu_client"`
 	TransactionNodeSize int `json:"transaction_node_size"`
 	NodeId int `json:"node_id"`
 	Programs         []solana.PublicKey `json:"programs"`
