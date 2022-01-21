@@ -58,6 +58,7 @@ func (ans *AvailableNodesService) GetNode(key solana.PublicKey) string {
 }
 
 func (ans *AvailableNodesService) refresh() {
+	ans.fetchAvailableNodes()
 	ticker := time.NewTicker(time.Minute * 5)
 	for {
 		select {

@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/config"
@@ -178,7 +177,6 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	}
 
 	backend.tpu.CommitTransaction(txData)
-	backend.tpu.CommitTransaction([]byte(base64.StdEncoding.EncodeToString(txData)))
 	for i := 0; i < len(backend.commandChans); i++ {
 		backend.commandChans[i] <- command
 	}
