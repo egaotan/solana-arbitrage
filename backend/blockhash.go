@@ -9,10 +9,19 @@ import (
 func (backend *Backend) CacheRecentBlockHash() {
 	defer backend.wg.Done()
 	//ticker := time.NewTicker(time.Second * 2)
+	rpcClient := rpc.New("https://ssc-dao.genesysgo.net")
 	for {
 		select {
 		case <-backend.updateBlockHash:
-			getRecentBlockHashResult, err := backend.rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
+		L:
+			for {
+				select {
+				case <-backend.updateBlockHash:
+				default:
+					break L
+				}
+			}
+			getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 			if err != nil {
 				backend.logger.Printf("GetRecentBlockhash, err: %s", err.Error())
 				continue
