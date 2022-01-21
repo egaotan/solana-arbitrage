@@ -76,7 +76,7 @@ func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
 	for !atomic.CompareAndSwapInt32(&ans.lock, 0, 1) {
 		continue
 	}
-	ans.logger.Printf("slots (%d, %d), slot: %s", ans.firstSlot, ans.GetLastSlot(), slot)
+	//ans.logger.Printf("slots (%d, %d), slot: %d", ans.firstSlot, ans.GetLastSlot(), slot)
 	defer atomic.StoreInt32(&ans.lock, 0)
 	if slot >= ans.firstSlot && slot <= ans.GetLastSlot() {
 		return ans.leaders[slot]
