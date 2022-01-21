@@ -50,8 +50,11 @@ func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
 	}
 	defer atomic.StoreInt32(&ans.lock, 0)
 	for i, leader := range leaders {
+		ans.logger.Printf("(slot: %d, leader: %s)", slot+uint64(i), leader.String())
 		ans.leaders[slot+uint64(i)] = leader
 	}
+	ans.logger.Printf("current slot: %d", slot)
+	ans.firstSlot = slot
 }
 
 func (ans *LeaderScheduleService) GetFirstSlot() uint64 {
@@ -73,6 +76,7 @@ func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
 	for !atomic.CompareAndSwapInt32(&ans.lock, 0, 1) {
 		continue
 	}
+	ans.logger.Printf("slots (%d, %d), slot: %s", ans.firstSlot, ans.GetLastSlot(), slot)
 	defer atomic.StoreInt32(&ans.lock, 0)
 	if slot >= ans.firstSlot && slot <= ans.GetLastSlot() {
 		return ans.leaders[slot]
@@ -99,7 +103,6 @@ func (ans *LeaderScheduleService) Refresh() {
 
 func (ans *LeaderScheduleService) refresh(slot uint64) {
 	firstSlot := slot - PAST_SLOT_SEARCH
-	counter :=  UPCOMING_SLOT_SEARCH*2
+	counter :=  UPCOMING_SLOT_SEARCH*3
 	ans.fetchLeaders(firstSlot, counter)
-	ans.firstSlot = firstSlot
 }
