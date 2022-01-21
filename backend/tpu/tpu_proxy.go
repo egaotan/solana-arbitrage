@@ -53,12 +53,15 @@ func (proxy *Proxy) RefreshConnection() {
 	endSlot := proxy.curSlot + UPCOMING_SLOT_SEARCH
 	leaderAddress := make(map[solana.PublicKey]bool)
 	tpuAddress := make(map[string]uint64)
+	proxy.logger.Printf("refresh connection, slot (%d, %d)", startSlot, endSlot)
 	for slot := startSlot; slot < endSlot; slot++ {
 		leader := proxy.lss.GetSlotLeader(slot)
+		proxy.logger.Printf("slot leader (%d, %s)", slot, leader.String())
 		if !leader.IsZero() && !leaderAddress[leader] {
 			leaderAddress[leader] = true
 			tpu := proxy.ans.GetNode(leader)
 			if tpu != "" {
+				proxy.logger.Printf("leader tpu (%s, %s)", leader.String(), tpu)
 				tpuAddress[tpu] = slot
 			} else {
 				proxy.logger.Printf("tpu address is invalid, slot: %d, leader: %s", slot, leader.String())
@@ -77,6 +80,7 @@ func (proxy *Proxy) RefreshConnection() {
 		}
 		tpuConnctions[tpu] = con
 	}
+	proxy.logger.Printf("there are %d connections", len(tpuConnctions))
 	for !atomic.CompareAndSwapInt32(&proxy.lock, 0, 1) {
 		continue
 	}
