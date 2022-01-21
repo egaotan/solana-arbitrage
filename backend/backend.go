@@ -29,9 +29,10 @@ type Backend struct {
 	store           *store.Store
 	commandChans    []chan *Command
 	clients         []*rpc.Client
+	blockHash string
 }
 
-func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node) *Backend {
+func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash string) *Backend {
 	rpcClient := rpc.New(nodes[0].Rpc)
 	wsClients := make([]*ws.Client, 0, len(nodes))
 	for _, node := range nodes {
@@ -51,6 +52,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		updateBlockHash: make(chan bool, 1024),
 		cachedBlockHash:make([]solana.Hash, 0, 3),
 		transaction:     transaction,
+		blockHash: blockHash,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))

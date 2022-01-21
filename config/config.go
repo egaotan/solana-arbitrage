@@ -51,6 +51,7 @@ type Node struct {
 type Config struct {
 	Nodes            []*Node            `json:"nodes"`
 	TransactionNodes []*Node            `json:"transaction_nodes"`
+	BlochHash string `json:"block_hash"`
 	TransactionNodeSize int `json:"transaction_node_size"`
 	NodeId int `json:"node_id"`
 	Programs         []solana.PublicKey `json:"programs"`

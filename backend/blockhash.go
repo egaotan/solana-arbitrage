@@ -9,7 +9,7 @@ import (
 func (backend *Backend) CacheRecentBlockHash() {
 	defer backend.wg.Done()
 	//ticker := time.NewTicker(time.Second * 2)
-	rpcClient := rpc.New("https://ssc-dao.genesysgo.net")
+	rpcClient := rpc.New(backend.blockHash)
 	for {
 		select {
 		case <-backend.updateBlockHash:
