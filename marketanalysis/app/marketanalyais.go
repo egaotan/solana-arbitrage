@@ -87,7 +87,7 @@ func NewMarketAnalysis(ctx context.Context, cfg *config.Config, market string, s
 	logger.SetOutput(file)
 	arb.log = logger
 	//
-	backend := backend.NewBackend(ctx, cfg.Nodes, false, nil)
+	backend := backend.NewBackend(ctx, cfg.Nodes, false, nil, cfg.BlochHash, cfg.TpuClient)
 	arb.backend = backend
 	splToken := spltoken.NewProgram(ctx, backend, nil)
 	arb.splToken = splToken
