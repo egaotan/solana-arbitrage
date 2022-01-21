@@ -130,13 +130,15 @@ func (proxy *Proxy) SendTransaction(tx []byte) {
 	}
 	tpuConnections := proxy.tpuConns
 	atomic.StoreInt32(&proxy.lock, 0)
-	for addr, conn := range tpuConnections {
-		proxy.logger.Printf("send tx to %s", addr)
-		n, err := conn.Write(tx)
-		if err != nil {
-			proxy.logger.Printf("send err: %s", err.Error())
-		} else {
-			proxy.logger.Printf("send (%d, %d)", n, len(tx))
+	for i := 0;i < 10;i ++ {
+		for addr, conn := range tpuConnections {
+			proxy.logger.Printf("send tx to %s", addr)
+			n, err := conn.Write(tx)
+			if err != nil {
+				proxy.logger.Printf("send err: %s", err.Error())
+			} else {
+				proxy.logger.Printf("send (%d, %d)", n, len(tx))
+			}
 		}
 	}
 }
