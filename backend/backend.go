@@ -2,6 +2,8 @@ package backend
 
 import (
 	"context"
+	"fmt"
+	"github.com/egaotan/solana-arbitrage/backend/tpu"
 	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/store"
 	"github.com/egaotan/solana-arbitrage/utils"
@@ -30,6 +32,7 @@ type Backend struct {
 	commandChans    []chan *Command
 	clients         []*rpc.Client
 	blockHash string
+	tpu *tpu.Proxy
 }
 
 func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash string) *Backend {
@@ -57,11 +60,15 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))
 	for _, node := range transactionNodes {
+		fmt.Printf("node url: %s\n", node.Rpc)
 		commandChans = append(commandChans, make(chan *Command, 1024))
 		clients = append(clients, rpc.New(node.Rpc))
 	}
 	backend.commandChans = commandChans
 	backend.clients = clients
+
+	tpuclient := rpc.New(blockHash)
+	backend.tpu = tpu.NewProxy(ctx, tpuclient)
 	return backend
 }
 
@@ -86,6 +93,7 @@ func (backend *Backend) Start() {
 	go backend.CacheRecentBlockHash()
 	//backend.updateBlockHash <- true
 	backend.cachedBlockHash = append(backend.cachedBlockHash, []solana.Hash{{},{},{}}...)
+	backend.tpu.Start()
 }
 
 func (backend *Backend) Stop() {

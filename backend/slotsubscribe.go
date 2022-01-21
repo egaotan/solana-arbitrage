@@ -48,6 +48,7 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 		backend.logger.Printf("receive slot, %d", got.Slot)
 		atomic.StoreInt64(tt, time.Now().UnixNano())
 		backend.updateBlockHash <- true
+		backend.tpu.CommitSlot(got.Slot)
 		data := got
 		slot := &Slot{
 			Number: data.Slot,

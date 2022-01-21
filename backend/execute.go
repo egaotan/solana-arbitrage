@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/config"
@@ -170,6 +171,14 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		Simulate: simulate,
 		Accounts: accounts,
 	}
+	//
+	txData, err := trx.MarshalBinary()
+	if err != nil {
+		backend.logger.Printf("trx.MarshalBinary err: %s", err.Error())
+	}
+
+	backend.tpu.CommitTransaction(txData)
+	backend.tpu.CommitTransaction([]byte(base64.StdEncoding.EncodeToString(txData)))
 	for i := 0; i < len(backend.commandChans); i++ {
 		backend.commandChans[i] <- command
 	}
