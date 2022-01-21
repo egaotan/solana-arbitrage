@@ -91,7 +91,7 @@ func (ans *LeaderScheduleService) Refresh() {
 		L:
 			for {
 				select {
-				case slot = <-ans.newFresh:
+				case <-ans.newFresh:
 				default:
 					break L
 				}
@@ -103,6 +103,6 @@ func (ans *LeaderScheduleService) Refresh() {
 
 func (ans *LeaderScheduleService) refresh(slot uint64) {
 	firstSlot := slot - PAST_SLOT_SEARCH
-	counter :=  UPCOMING_SLOT_SEARCH*3
+	counter :=  UPCOMING_SLOT_SEARCH*4
 	ans.fetchLeaders(firstSlot, counter)
 }
