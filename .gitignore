@@ -9,3 +9,4 @@ tools/xxxxx
 *_log
 script/nohup.out
 script/solana_arbitrage
+*.log

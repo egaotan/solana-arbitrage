@@ -54,6 +54,7 @@ func (proxy *Proxy) Start() {
 	proxy.ans.Start()
 	proxy.lss.Start()
 	go proxy.newSlot()
+	go proxy.SendTransactions()
 }
 
 func (proxy *Proxy) RefreshConnection() {

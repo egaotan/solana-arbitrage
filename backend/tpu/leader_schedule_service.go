@@ -91,7 +91,7 @@ func (ans *LeaderScheduleService) Refresh() {
 
 func (ans *LeaderScheduleService) refresh(slot uint64) {
 	firstSlot := slot - PAST_SLOT_SEARCH
-	counter := slot + UPCOMING_SLOT_SEARCH*2
+	counter :=  UPCOMING_SLOT_SEARCH*2
 	ans.fetchLeaders(firstSlot, counter)
 	ans.firstSlot = firstSlot
 }
