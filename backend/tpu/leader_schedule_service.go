@@ -84,6 +84,14 @@ func (ans *LeaderScheduleService) Refresh() {
 	for {
 		select {
 		case slot := <-ans.newFresh:
+		L:
+			for {
+				select {
+				case slot = <-ans.newFresh:
+				default:
+					break L
+				}
+			}
 			ans.refresh(slot)
 		}
 	}

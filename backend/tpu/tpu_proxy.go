@@ -23,7 +23,7 @@ type Proxy struct {
 	latestSlots  chan uint64
 	transactions chan []byte
 	lock         int32
-	logger *log.Logger
+	logger       *log.Logger
 }
 
 func NewLog(dir, name string) *log.Logger {
@@ -42,7 +42,7 @@ func NewProxy(ctx context.Context, client *rpc.Client) *Proxy {
 		client:       client,
 		latestSlots:  make(chan uint64, 1024),
 		transactions: make(chan []byte, 1024),
-		tpuConns: make(map[string]net.Conn),
+		tpuConns:     make(map[string]net.Conn),
 	}
 	proxy.logger = NewLog("./", "tpu_proxy")
 	proxy.ans = NewAvailableNodesService(proxy.ctx, proxy.client, proxy.logger)
@@ -79,9 +79,9 @@ func (proxy *Proxy) RefreshConnection() {
 		datas := strings.Split(tpu, ":")
 		host := datas[0]
 		port, _ := strconv.ParseUint(datas[1], 10, 64)
-		con, err := net.Dial("UDP", fmt.Sprintf("%s:%d", host, port))
+		con, err := net.Dial("udp", fmt.Sprintf("%s:%d", host, port))
 		if err != nil {
-			proxy.logger.Printf("cannot dial udp, address: %s, slot: %d", tpu, slot)
+			proxy.logger.Printf("cannot dial udp, err: %s, address: %s, slot: %d", err.Error(), tpu, slot)
 			continue
 		}
 		tpuConnctions[tpu] = con
@@ -135,7 +135,8 @@ func (proxy *Proxy) SendTransaction(tx []byte) {
 	}
 	tpuConnections := proxy.tpuConns
 	atomic.StoreInt32(&proxy.lock, 0)
-	for _, conn := range tpuConnections {
+	for addr, conn := range tpuConnections {
+		proxy.logger.Printf("send tx to %s", addr)
 		conn.Write(tx)
 	}
 }
