@@ -2,7 +2,6 @@ package backend
 
 import (
 	"context"
-	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend/tpu"
 	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/store"
@@ -60,7 +59,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))
 	for _, node := range transactionNodes {
-		fmt.Printf("node url: %s\n", node.Rpc)
+		backend.logger.Printf("transaction node (%s)", node.Rpc)
 		commandChans = append(commandChans, make(chan *Command, 1024))
 		clients = append(clients, rpc.New(node.Rpc))
 	}
