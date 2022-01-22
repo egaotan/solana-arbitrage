@@ -52,7 +52,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 				backend.logger.Printf("GetBlock, err: %s", err.Error())
 				continue
 			}
-			backend.logger.Printf("get recent block hash. (%s, %d)",
+			backend.logger.Printf("get recent block hash. (%s, %d, %d)",
 				getBlockResult.Blockhash.String(), getBlockResult.BlockHeight, getBlockResult.ParentSlot)
 			if backend.cachedBlockHash[2] == getBlockResult.Blockhash {
 				continue

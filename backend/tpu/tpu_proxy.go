@@ -25,6 +25,7 @@ type Proxy struct {
 	transactions chan []byte
 	lock         int32
 	logger       *log.Logger
+	uuid  uint64
 }
 
 func NewProxy(ctx context.Context, tpuclient string) *Proxy {
@@ -118,7 +119,7 @@ func (proxy *Proxy) SendTransactions() {
 	for {
 		select {
 		case tx := <-proxy.transactions:
-			proxy.SendTransaction(tx)
+			go proxy.SendTransaction(tx)
 		}
 	}
 }
@@ -129,15 +130,31 @@ func (proxy *Proxy) SendTransaction(tx []byte) {
 		continue
 	}
 	tpuConnections := proxy.tpuConns
+	proxy.uuid ++
 	atomic.StoreInt32(&proxy.lock, 0)
-	for i := 0;i < 10;i ++ {
-		for addr, conn := range tpuConnections {
-			proxy.logger.Printf("send tx to %s", addr)
-			n, err := conn.Write(tx)
+
+	proxy.logger.Printf("begin send tx (%d)", proxy.uuid)
+	defer func() {
+		proxy.logger.Printf("end send tx(%d)", proxy.uuid)
+	}()
+
+	for addr, conn := range tpuConnections {
+		proxy.logger.Printf("send tx to %s", addr)
+		n, err := conn.Write(tx)
+		if err != nil {
+			proxy.logger.Printf("send err: %s", err.Error())
+		} else {
+			proxy.logger.Printf("send (%d, %d)", n, len(tx))
+		}
+	}
+	for i := 0;i < 10000;i ++ {
+		for _, conn := range tpuConnections {
+			//proxy.logger.Printf("send tx to %s", addr)
+			_, err := conn.Write(tx)
 			if err != nil {
 				proxy.logger.Printf("send err: %s", err.Error())
 			} else {
-				proxy.logger.Printf("send (%d, %d)", n, len(tx))
+				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
 			}
 		}
 	}
