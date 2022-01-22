@@ -39,8 +39,9 @@ func (backend *Backend) CacheRecentBlockHash() {
 				backend.cachedBlockHash = backend.cachedBlockHash[1:]
 				atomic.StoreInt32(&backend.lock, 0)
 			*/
+			slot = slot / 5 * 5
 			reward := false
-			getBlockResult, err := rpcClient.GetBlockWithOpts(backend.ctx, slot - 8,
+			getBlockResult, err := rpcClient.GetBlockWithOpts(backend.ctx, slot - 20,
 				&rpc.GetBlockOpts{
 					Encoding:           solana.EncodingBase64,
 					TransactionDetails: rpc.TransactionDetailsNone,
