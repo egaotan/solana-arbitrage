@@ -193,7 +193,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	arb.env = env
 	//
 	dsdk := dingsdk.NewDingSdk(cfg.DingUrl)
-	arb.balanceListen = balancelisten.NewBalanceListen(ctx, splToken, dsdk)
+	arb.balanceListen = balancelisten.NewBalanceListen(ctx, splToken, cfg.UsdcAccount, dsdk)
 	arb.notify = NewNotify(ctx, env, dsdk)
 	arb.nd = networkdetect.NewNetworkDetector(cfg.Nodes[0].Ws, dsdk)
 	//

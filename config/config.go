@@ -73,4 +73,5 @@ type Config struct {
 	DBPasswd         string             `json:"db_passwd"`
 	Listen           string             `json:"listen"`
 	Usdc             uint64             `json:"usdc"`
+	UsdcAccount  string `json:"usdc_account"`
 }

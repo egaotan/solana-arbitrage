@@ -51,5 +51,6 @@
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
   "listen": "0.0.0.0:8088",
-  "usdc": 30100
+  "usdc_account": "8KK7jEoWApu45V4u223BEet2Uzu1WWq7PnfGcG8fkEVY",
+  "usdc": 32000
 }

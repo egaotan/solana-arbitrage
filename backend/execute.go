@@ -177,9 +177,11 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	}
 
 	if backend.transactionSend == 2 || backend.transactionSend == 3 {
+		backend.logger.Printf("send transaction to tpu")
 		backend.tpu.CommitTransaction(txData)
 	}
 	if backend.transactionSend == 1 || backend.transactionSend == 3 {
+		backend.logger.Printf("sent transaction to rpc")
 		for i := 0; i < len(backend.commandChans); i++ {
 			backend.commandChans[i] <- command
 		}

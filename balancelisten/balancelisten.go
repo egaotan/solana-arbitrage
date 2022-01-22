@@ -3,9 +3,9 @@ package balancelisten
 import (
 	"context"
 	"fmt"
-	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/dingsdk"
 	"github.com/egaotan/solana-arbitrage/spltoken"
+	"github.com/gagliardetto/solana-go"
 	"github.com/shopspring/decimal"
 	"sync"
 	"time"
@@ -19,13 +19,15 @@ type BalanceListen struct {
 	ctx      context.Context
 	wg       sync.WaitGroup
 	spltoken *spltoken.Program
+	usdcAccount string
 	dsdk     *dingsdk.DingSdk
 }
 
-func NewBalanceListen(ctx context.Context, spltoken *spltoken.Program, dsdk *dingsdk.DingSdk) *BalanceListen {
+func NewBalanceListen(ctx context.Context, spltoken *spltoken.Program, usdcAccount string, dsdk *dingsdk.DingSdk) *BalanceListen {
 	bl := &BalanceListen{
 		ctx:      ctx,
 		spltoken: spltoken,
+		usdcAccount: usdcAccount,
 		dsdk:     dsdk,
 	}
 	return bl
@@ -38,11 +40,12 @@ func (bl *BalanceListen) Start() {
 
 func (bl *BalanceListen) AccountBalance() {
 	defer bl.wg.Done()
+	usdcAccount := solana.MustPublicKeyFromBase58(bl.usdcAccount)
 	timer2 := time.NewTicker(time.Second * 10)
 	for {
 		select {
 		case <-timer2.C:
-			balance, err := bl.spltoken.GetBalance(config.USDC_USER)
+			balance, err := bl.spltoken.GetBalance(usdcAccount)
 			if err != nil {
 				continue
 			}
