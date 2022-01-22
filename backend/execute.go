@@ -175,9 +175,13 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	if err != nil {
 		backend.logger.Printf("trx.MarshalBinary err: %s", err.Error())
 	}
-	
-	backend.tpu.CommitTransaction(txData)
-	for i := 0; i < len(backend.commandChans); i++ {
-		backend.commandChans[i] <- command
+
+	if backend.transactionSend == 2 || backend.transactionSend == 3 {
+		backend.tpu.CommitTransaction(txData)
+	}
+	if backend.transactionSend == 1 || backend.transactionSend == 3 {
+		for i := 0; i < len(backend.commandChans); i++ {
+			backend.commandChans[i] <- command
+		}
 	}
 }

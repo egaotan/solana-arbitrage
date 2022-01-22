@@ -55,6 +55,7 @@ type Config struct {
 	BlochHash string `json:"block_hash"`
 	TpuClient string `json:"tpu_client"`
 	TransactionNodeSize int `json:"transaction_node_size"`
+	TransactionSend int `json:"transaction_send"`
 	NodeId int `json:"node_id"`
 	Programs         []solana.PublicKey `json:"programs"`
 	User             solana.PublicKey   `json:"user"`

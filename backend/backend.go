@@ -32,9 +32,10 @@ type Backend struct {
 	clients         []*rpc.Client
 	blockHash string
 	tpu *tpu.Proxy
+	transactionSend int
 }
 
-func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash string, tpuclient string) *Backend {
+func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash string, tpuclient string, transactionSend int) *Backend {
 	rpcClient := rpc.New(nodes[0].Rpc)
 	wsClients := make([]*ws.Client, 0, len(nodes))
 	for _, node := range nodes {
@@ -55,6 +56,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		cachedBlockHash:make([]solana.Hash, 0, 3),
 		transaction:     transaction,
 		blockHash: blockHash,
+		transactionSend: transactionSend,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))
