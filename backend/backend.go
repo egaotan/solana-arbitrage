@@ -26,7 +26,7 @@ type Backend struct {
 	player          solana.PublicKey
 	lock            int32
 	cachedBlockHash []solana.Hash
-	updateBlockHash chan bool
+	updateBlockHash chan uint64
 	transaction     bool
 	store           *store.Store
 	commandChans    []chan *Command
@@ -52,7 +52,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		logger:          utils.NewLog(config.LogPath, config.BackendLog),
 		accountSubs:     make([]*ws.AccountSubscription, 0),
 		slotSubs:        make([]*ws.SlotSubscription, 0),
-		updateBlockHash: make(chan bool, 1024),
+		updateBlockHash: make(chan uint64, 1024),
 		cachedBlockHash:make([]solana.Hash, 0, 3),
 		transaction:     transaction,
 		blockHash: blockHash,

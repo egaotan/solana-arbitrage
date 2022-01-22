@@ -12,32 +12,50 @@ func (backend *Backend) CacheRecentBlockHash() {
 	rpcClient := rpc.New(backend.blockHash)
 	for {
 		select {
-		case <-backend.updateBlockHash:
+		case slot := <-backend.updateBlockHash:
 		L:
 			for {
 				select {
-				case <-backend.updateBlockHash:
+				case slot = <-backend.updateBlockHash:
 				default:
 					break L
 				}
 			}
-			getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentConfirmed)
+			/*
+			getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 			if err != nil {
 				backend.logger.Printf("GetRecentBlockhash, err: %s", err.Error())
 				continue
 			}
+						backend.logger.Printf("get recent block hash. (%s, %d)",
+					getRecentBlockHashResult.Value.Blockhash.String(), getRecentBlockHashResult.Context.Slot)
+				if backend.cachedBlockHash[2] == getRecentBlockHashResult.Value.Blockhash {
+					continue
+				}
+				for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
+					continue
+				}
+				backend.cachedBlockHash = append(backend.cachedBlockHash, getRecentBlockHashResult.Value.Blockhash)
+				backend.cachedBlockHash = backend.cachedBlockHash[1:]
+				atomic.StoreInt32(&backend.lock, 0)
+			*/
+			getBlockResult, err := rpcClient.GetBlock(backend.ctx, slot - 8)
+			if err != nil {
+				backend.logger.Printf("GetBlock, err: %s", err.Error())
+				continue
+			}
 			backend.logger.Printf("get recent block hash. (%s, %d)",
-				getRecentBlockHashResult.Value.Blockhash.String(), getRecentBlockHashResult.Context.Slot)
-			if backend.cachedBlockHash[2] == getRecentBlockHashResult.Value.Blockhash {
+				getBlockResult.Blockhash.String(), getBlockResult.BlockHeight, getBlockResult.ParentSlot)
+			if backend.cachedBlockHash[2] == getBlockResult.Blockhash {
 				continue
 			}
 			for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
 				continue
 			}
-			backend.cachedBlockHash = append(backend.cachedBlockHash, getRecentBlockHashResult.Value.Blockhash)
+			backend.cachedBlockHash = append(backend.cachedBlockHash, getBlockResult.Blockhash)
 			backend.cachedBlockHash = backend.cachedBlockHash[1:]
 			atomic.StoreInt32(&backend.lock, 0)
-			backend.logger.Printf("receive block hash, %s", getRecentBlockHashResult.Value.Blockhash.String())
+			backend.logger.Printf("receive block hash, %s", getBlockResult.Blockhash.String())
 		case <-backend.ctx.Done():
 			backend.logger.Printf("recent block hash cache exit")
 			return
