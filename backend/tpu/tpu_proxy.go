@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync/atomic"
+	"time"
 )
 
 type Proxy struct {
@@ -119,23 +120,23 @@ func (proxy *Proxy) SendTransactions() {
 	for {
 		select {
 		case tx := <-proxy.transactions:
-			go proxy.SendTransaction(tx)
+			proxy.uuid ++
+			go proxy.SendTransaction(tx, proxy.uuid)
 		}
 	}
 }
 
-func (proxy *Proxy) SendTransaction(tx []byte) {
+func (proxy *Proxy) SendTransaction(tx []byte, id uint64) {
 	proxy.logger.Printf("send transaction......")
 	for !atomic.CompareAndSwapInt32(&proxy.lock, 0, 1) {
 		continue
 	}
 	tpuConnections := proxy.tpuConns
-	proxy.uuid ++
 	atomic.StoreInt32(&proxy.lock, 0)
 
-	proxy.logger.Printf("begin send tx (%d)", proxy.uuid)
+	proxy.logger.Printf("begin send tx (%d)", id)
 	defer func() {
-		proxy.logger.Printf("end send tx(%d)", proxy.uuid)
+		proxy.logger.Printf("end send tx (%d)", id)
 	}()
 
 	for addr, conn := range tpuConnections {
@@ -156,6 +157,9 @@ func (proxy *Proxy) SendTransaction(tx []byte) {
 			} else {
 				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
 			}
+		}
+		if i % 100 == 99 {
+			time.Sleep(time.Millisecond * 100)
 		}
 	}
 }
