@@ -39,7 +39,14 @@ func (backend *Backend) CacheRecentBlockHash() {
 				backend.cachedBlockHash = backend.cachedBlockHash[1:]
 				atomic.StoreInt32(&backend.lock, 0)
 			*/
-			getBlockResult, err := rpcClient.GetBlock(backend.ctx, slot - 8)
+			reward := false
+			getBlockResult, err := rpcClient.GetBlockWithOpts(backend.ctx, slot - 8,
+				&rpc.GetBlockOpts{
+					Encoding:           solana.EncodingBase64,
+					TransactionDetails: rpc.TransactionDetailsNone,
+					Rewards:            &reward,
+					Commitment:         rpc.CommitmentConfirmed,
+				})
 			if err != nil {
 				backend.logger.Printf("GetBlock, err: %s", err.Error())
 				continue
