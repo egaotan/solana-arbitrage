@@ -93,6 +93,11 @@ func (proxy *Proxy) RefreshConnection() {
 				proxy.logger.Printf("cannot dial udp, err: %s, address: %s, slot: %d", err.Error(), tpu, slot)
 				continue
 			}
+			n, err = con.Write([]byte{1})
+			if err != nil || n != 1 {
+				proxy.logger.Printf("can not connect, tpu: %s, err: %s", tpu, err.Error())
+				continue
+			}
 			tpuConnctions[tpu] = con
 		}
 	}
