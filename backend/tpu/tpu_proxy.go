@@ -47,7 +47,7 @@ func (proxy *Proxy) Start() {
 	proxy.ans.Start()
 	proxy.lss.Start()
 	go proxy.newSlot()
-	for i := 0;i < 32;i ++ {
+	for i := 0;i < 64;i ++ {
 		go proxy.SendTransactions()
 	}
 }
@@ -142,7 +142,7 @@ func (proxy *Proxy) SendTransactions() {
 		select {
 		case tx := <-proxy.transactions:
 			proxy.uuid ++
-			go proxy.SendTransaction(tx, proxy.uuid)
+			proxy.SendTransaction(tx, proxy.uuid)
 		}
 	}
 }
@@ -169,7 +169,7 @@ func (proxy *Proxy) SendTransaction(tx []byte, id uint64) {
 			proxy.logger.Printf("send (%d, %d)", n, len(tx))
 		}
 	}
-	for i := 0;i < 10000;i ++ {
+	for i := 0;i < 5000;i ++ {
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx to %s", addr)
 			_, err := conn.Write(tx)
