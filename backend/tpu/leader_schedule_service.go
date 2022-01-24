@@ -50,10 +50,10 @@ func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
 	}
 	defer atomic.StoreInt32(&ans.lock, 0)
 	for i, leader := range leaders {
-		ans.logger.Printf("(slot: %d, leader: %s)", slot+uint64(i), leader.String())
+		//ans.logger.Printf("(slot: %d, leader: %s)", slot+uint64(i), leader.String())
 		ans.leaders[slot+uint64(i)] = leader
 	}
-	ans.logger.Printf("current slot: %d", slot)
+	//ans.logger.Printf("current slot: %d", slot)
 	ans.firstSlot = slot
 }
 

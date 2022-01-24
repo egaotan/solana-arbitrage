@@ -58,12 +58,12 @@ func (proxy *Proxy) RefreshConnection() {
 	proxy.logger.Printf("refresh connection, slot (%d, %d)", startSlot, endSlot)
 	for slot := startSlot; slot < endSlot; slot++ {
 		leader := proxy.lss.GetSlotLeader(slot)
-		proxy.logger.Printf("slot leader (%d, %s)", slot, leader.String())
+		//proxy.logger.Printf("slot leader (%d, %s)", slot, leader.String())
 		if !leader.IsZero() && !leaderAddress[leader] {
 			leaderAddress[leader] = true
 			tpu := proxy.ans.GetNode(leader)
 			if tpu != "" {
-				proxy.logger.Printf("leader tpu (%s, %s)", leader.String(), tpu)
+				//proxy.logger.Printf("leader tpu (%s, %s)", leader.String(), tpu)
 				tpuAddress[tpu] = slot
 			} else {
 				proxy.logger.Printf("tpu address is invalid, slot: %d, leader: %s", slot, leader.String())
@@ -75,12 +75,26 @@ func (proxy *Proxy) RefreshConnection() {
 		datas := strings.Split(tpu, ":")
 		host := datas[0]
 		port, _ := strconv.ParseUint(datas[1], 10, 64)
-		con, err := net.Dial("udp", fmt.Sprintf("%s:%d", host, port))
-		if err != nil {
-			proxy.logger.Printf("cannot dial udp, err: %s, address: %s, slot: %d", err.Error(), tpu, slot)
-			continue
+		con, ok := proxy.tpuConns[tpu]
+		var err error
+		n := 0
+		if ok {
+			n, err = con.Write([]byte{1})
+			if err != nil || n != 1 {
+				proxy.logger.Printf("connect has invalid, reconnect, tpu: %s", tpu)
+				ok = false
+			} else {
+				tpuConnctions[tpu] = con
+			}
 		}
-		tpuConnctions[tpu] = con
+		if !ok {
+			con, err = net.Dial("udp", fmt.Sprintf("%s:%d", host, port))
+			if err != nil {
+				proxy.logger.Printf("cannot dial udp, err: %s, address: %s, slot: %d", err.Error(), tpu, slot)
+				continue
+			}
+			tpuConnctions[tpu] = con
+		}
 	}
 	proxy.logger.Printf("there are %d connections", len(tpuConnctions))
 	for !atomic.CompareAndSwapInt32(&proxy.lock, 0, 1) {
