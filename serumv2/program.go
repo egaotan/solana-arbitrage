@@ -598,8 +598,8 @@ func (p *Program) updateAccount(account *backend.Account) {
 		p.log.Printf("there is no market for the order book: %s", account.PubKey.String())
 		return
 	}
-	oldBidTick0 := model.BidTick0[0]
-	oldAskTick0 := model.AskTick0[0]
+	//oldBidTick0 := model.BidTick0[0]
+	//oldAskTick0 := model.AskTick0[0]
 	bidTicks := model.bids(5)
 	for i, bidTick := range bidTicks {
 		model.BidTick0[i].Copy(bidTick)
@@ -608,12 +608,15 @@ func (p *Program) updateAccount(account *backend.Account) {
 	for i, askTick := range askTicks {
 		model.AskTick0[i].Copy(askTick)
 	}
+	p.cb.OnStateUpdate(account.Height)
+	/*
 	if model.BidTick0[0].Price.Div(oldBidTick0.Price).Cmp(decimal.NewFromFloat(0.992)) < 0 ||
 		model.AskTick0[0].Price.Div(oldAskTick0.Price).Cmp(decimal.NewFromFloat(1.008)) > 0 {
 		if p.cb != nil {
 			p.cb.OnStateUpdate(account.Height)
 		}
 	}
+	 */
 	//
 
 }

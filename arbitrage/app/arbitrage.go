@@ -368,9 +368,8 @@ func (arb *Arbitrage) OnSlotUpdate(slot *backend.Slot) error {
 }
 
 func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, newBalance uint64, oldBalance uint64, tokenKey solana.PublicKey, slot uint64) error {
-	locked := atomic.CompareAndSwapInt32(&arb.status, Started, Pause)
-	if !locked {
-		return nil
+	for !atomic.CompareAndSwapInt32(&arb.status, Started, Pause) {
+		continue
 	}
 	arb.trade <- &InfoUpdated{
 		Slot:       slot,
@@ -383,9 +382,8 @@ func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, newBalance uint6
 }
 
 func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
-	locked := atomic.CompareAndSwapInt32(&arb.status, Started, Pause)
-	if !locked {
-		return nil
+	for !atomic.CompareAndSwapInt32(&arb.status, Started, Pause) {
+		continue
 	}
 	arb.trade <- &InfoUpdated{
 		Slot: slot,
@@ -408,6 +406,7 @@ func (arb *Arbitrage) Tick() {
 }
 
 func (arb *Arbitrage) try(info *InfoUpdated) {
+	/*
 	if !info.TokenKey.IsZero() && info.NewBalance != 0 && info.OldBalance != 0 {
 		balance1 := decimal.NewFromInt(int64(info.NewBalance))
 		balance2 := decimal.NewFromInt(int64(info.OldBalance))
@@ -419,6 +418,7 @@ func (arb *Arbitrage) try(info *InfoUpdated) {
 			return
 		}
 	}
+	 */
 	arb.log.Printf("**************** slot update: %d ****************", info.Slot)
 	arb.selector = 0
 	for _, calculator := range arb.calculators {
@@ -468,6 +468,10 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	level := 0
 	if usdcAmount < 10000*1000000 {
 		if yield > 200 {
+			cacheSize += 1
+			level ++
+		}
+		if yield > 400 {
 			cacheSize += 1
 			level ++
 		}
@@ -562,8 +566,6 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		caches = caches[len(caches)-cacheSize:]
 	}
 	arb.cache[cacheKey] = caches
-	//
-	blockHashIndex := (len(caches) - 1 + arb.nodeId) % cacheSize
 	//
 	defer func() {
 		committedArbitrage := &store.CommittedArbitrage{
@@ -660,7 +662,16 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			}
 			ins = append(ins, result...)
 		}
+		blockHashIndex := (len(caches) - 1 + arb.nodeId) % cacheSize
 		arb.backend.Commit(blockHashIndex, id, ins, false, nil)
+		if data.yield > 200 {
+			blockHashIndex = (blockHashIndex + 1) % cacheSize
+			arb.backend.Commit(blockHashIndex, id, ins, false, nil)
+		}
+		if data.yield > 400 {
+			blockHashIndex = (blockHashIndex + 1) % cacheSize
+			arb.backend.Commit(blockHashIndex, id, ins, false, nil)
+		}
 		arb.latestCommitTime = time.Now().Unix()
 	}
 	return nil

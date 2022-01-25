@@ -10,3 +10,4 @@ tools/xxxxx
 script/nohup.out
 script/solana_arbitrage
 *.log
+keys
