@@ -106,6 +106,7 @@ func (backend *Backend) Stop() {
 	for _, accountSub := range backend.accountSubs {
 		accountSub.Unsubscribe()
 	}
+	backend.tpu.Stop()
 	backend.wg.Wait()
 }
 

@@ -25,7 +25,7 @@ var (
 
 var (
 	//OwnerKey = solana.MustPrivateKeyFromBase58("")
-	PlayerKey = "58WF8aF3FDDYLQoPjHiERk53gd2UgLtiJk1rr8saVsDHWz1ieJtEteNYhsDrYGPEYcbZ3SdqvG7TZbvwChaXMS5e"
+	PlayerKey = ""
 )
 
 func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
@@ -44,7 +44,7 @@ func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
 	systemProgram.Start()
 	tokenProgram.Start()
 	backend.SubscribeSlot(nil)
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * 15)
 
 	// create a new private key
 	wallet := solana.NewWallet()
@@ -65,6 +65,9 @@ func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
 		panic(err)
 	}
 	backend.Commit(0, uint64(time.Now().UnixNano()/1000), []solana.Instruction{in1, in2}, false, nil)
+	time.Sleep(time.Second * 5)
+	//
+	backend.Stop()
 	return newTokenAccount
 }
 
@@ -75,7 +78,7 @@ func Test_CreateSplTokenAccountSingle(t *testing.T) {
 }
 
 func Test_CreateSplTokenAccount(t *testing.T) {
-	userJson, err := os.ReadFile("./config1/tokens_user.json")
+	userJson, err := os.ReadFile("./config/tokens_new_user.json")
 	if err != nil {
 		panic(err)
 	}

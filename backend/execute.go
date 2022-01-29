@@ -3,6 +3,7 @@ package backend
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/egaotan/solana-arbitrage/backend/tpu"
 	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/store"
 	"github.com/egaotan/solana-arbitrage/utils"
@@ -164,23 +165,26 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	}
 	trx.Sign(backend.getWallet)
 	//
-	command := &Command{
-		Id:       id,
-		Trx:      trx,
-		Simulate: simulate,
-		Accounts: accounts,
-	}
 	//
 	if backend.transactionSend == 2 || backend.transactionSend == 3 {
 		backend.logger.Printf("send transaction to tpu")
-		txData, err := trx.MarshalBinary()
+		command := &tpu.Command{
+			Id:       id,
+		}
+		command.Tx, err = trx.MarshalBinary()
 		if err != nil {
 			backend.logger.Printf("trx.MarshalBinary err: %s", err.Error())
 		}
-		backend.tpu.CommitTransaction(txData)
+		backend.tpu.CommitTransaction(command)
 	}
 	if backend.transactionSend == 1 || backend.transactionSend == 3 {
 		backend.logger.Printf("sent transaction to rpc")
+		command := &Command{
+			Id:       id,
+			Trx:      trx,
+			Simulate: simulate,
+			Accounts: accounts,
+		}
 		for i := 0; i < len(backend.commandChans); i++ {
 			backend.commandChans[i] <- command
 		}
