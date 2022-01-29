@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	UPCOMING_SLOT_SEARCH = uint64(100)
+	UPCOMING_SLOT_SEARCH = uint64(50)
 	PAST_SLOT_SEARCH     = uint64(5)
 )
 

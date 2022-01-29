@@ -176,7 +176,7 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 			proxy.logger.Printf("send (%d, %d)", n, len(tx.Tx))
 		}
 	}
-	for i := 0;i < 5000;i ++ {
+	for i := 0;i < 2000;i ++ {
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx to %s", addr)
 			_, err := conn.Write(tx.Tx)
