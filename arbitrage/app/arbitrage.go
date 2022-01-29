@@ -458,7 +458,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		arb.log.Printf("the yield is %d, too low, retry......", yield)
 		return nil
 	}
-	if usdcAmount < 100*1000000 {
+	if usdcAmount < 600*1000000 {
 		arb.log.Printf("usdc amount is too small, %d", usdcAmount)
 		return nil
 	}
@@ -466,7 +466,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	//
 	cacheSize := CacheSize
 	level := 0
-	if usdcAmount < 10000*1000000 {
+	if usdcAmount < 15000*1000000 {
 		if yield > 200 {
 			cacheSize += 1
 			level ++
@@ -475,7 +475,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			cacheSize += 1
 			level ++
 		}
-	} else if usdcAmount < 20000*1000000 {
+	} else if usdcAmount < 30000*1000000 {
 		if yield > 150 {
 			cacheSize += 1
 			level ++
@@ -484,7 +484,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			cacheSize += 1
 			level ++
 		}
-	} else if usdcAmount > 20000*1000000 {
+	} else if usdcAmount > 30000*1000000 {
 		if yield > 150 {
 			cacheSize += 1
 			level ++
@@ -631,7 +631,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	// update first usdc amount
 	if data.amount > config.USDC_AMOUNT {
 		data.amount = config.USDC_AMOUNT
-	} else if data.amount < 200000000 && data.yield < 200 {
+	} else if data.amount < 600000000 && data.yield < 200 {
 		arb.log.Printf("amount is too small")
 		return nil
 	}
