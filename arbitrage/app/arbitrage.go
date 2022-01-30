@@ -175,6 +175,9 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	logger.SetOutput(file)
 	arb.log = logger
 	//
+	program.Arbitrage = solana.MustPublicKeyFromBase58(cfg.ArbitrageContract)
+	program.Exchange = solana.MustPublicKeyFromBase58(cfg.ExchangeContract)
+	//
 	//peer, ttl := networkdetect.DetectPeers(cfg.Nodes[0].Wss)
 	//logger.Printf("peer: %s, ttl: %d", peer, ttl/1000000)
 	//
