@@ -83,7 +83,7 @@ func Test_CreateSplTokenAccountSingle(t *testing.T) {
 }
 
 func Test_CreateSplTokenAccount(t *testing.T) {
-	userJson, err := os.ReadFile("./config/tokens_new_user.json")
+	userJson, err := os.ReadFile("./config2/tokens_user.json")
 	if err != nil {
 		panic(err)
 	}
@@ -154,7 +154,7 @@ func Test_CreateOpenOrders4UserSingle(t *testing.T) {
 }
 
 func Test_CreateOpenOrders4User(t *testing.T) {
-	userJson, err := os.ReadFile("./config1/markets_openorder.json")
+	userJson, err := os.ReadFile("./config2/markets_openorder.json")
 	if err != nil {
 		panic(err)
 	}
