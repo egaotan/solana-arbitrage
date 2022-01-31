@@ -176,18 +176,4 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 			proxy.logger.Printf("send (%d, %d)", n, len(tx.Tx))
 		}
 	}
-	for i := 0;i < 2000;i ++ {
-		for _, conn := range tpuConnections {
-			//proxy.logger.Printf("send tx to %s", addr)
-			_, err := conn.Write(tx.Tx)
-			if err != nil {
-				proxy.logger.Printf("send err: %s", err.Error())
-			} else {
-				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
-			}
-		}
-		if i % 100 == 99 {
-			time.Sleep(time.Millisecond * 100)
-		}
-	}
 }
