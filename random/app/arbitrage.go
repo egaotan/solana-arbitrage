@@ -212,7 +212,7 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 }
 
 func (arb *Arbitrage) randomArbitrage() {
-	ticker := time.NewTicker(time.Second * 1)
+	ticker := time.NewTicker(time.Second * time.Duration(arb.config.RandomTicker))
 	for {
 		select {
 		case <- ticker.C:
@@ -225,7 +225,7 @@ func (arb *Arbitrage) randomArbitrage() {
 
 func (arb *Arbitrage) Arbitrage() error {
 	//
-	amount := arb.config.UsdcAccount
+	amount := config.USDC_AMOUNT
 	if true {
 		ins := make([]solana.Instruction, 0)
 		{

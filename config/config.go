@@ -76,4 +76,5 @@ type Config struct {
 	Listen           string             `json:"listen"`
 	Usdc             uint64             `json:"usdc"`
 	UsdcAccount  string `json:"usdc_account"`
+	RandomTicker uint64 `json:"random_ticker"`
 }
