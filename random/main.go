@@ -42,6 +42,25 @@ func main() {
 	fmt.Printf("work space: %s\n", workspace)
 
 	//
+	oldNodes := cfg.Nodes
+	usableNodes := make([]*config.Node, 0)
+	for _, node := range oldNodes {
+		if node.Usable {
+			usableNodes = append(usableNodes, node)
+		}
+	}
+	cfg.Nodes = usableNodes
+
+	oldValidators := cfg.TransactionNodes
+	usableValidators := make([]*config.Node, 0)
+	for _, oldValidator := range oldValidators {
+		if oldValidator.Usable {
+			usableValidators = append(usableValidators, oldValidator)
+		}
+	}
+	cfg.TransactionNodes = usableValidators
+
+	//
 	t := time.Now()
 	t_str := t.Format("2006-01-02")
 	dir := fmt.Sprintf("./%s_log/", t_str)
