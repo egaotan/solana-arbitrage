@@ -35,7 +35,7 @@ func NewCyclic(algorithm string, ctx context.Context, env *env.Env, cb Callback)
 		cb:        cb,
 		ctx:       ctx,
 		env:       env,
-		am:        NewAdjacencyMatrix(),
+		am:        NewAdjacencyMatrix(3),
 		models:    make([]program.Model, 0),
 	}
 	return sg
@@ -185,7 +185,7 @@ func (cyclic *Cyclic) Calculate() error {
 }
 
 func (cyclic *Cyclic) price() error {
-	am := NewAdjacencyMatrix()
+	am := NewAdjacencyMatrix(3)
 	for _, model := range cyclic.models {
 		am.AddItem(model)
 	}

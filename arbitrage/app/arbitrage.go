@@ -108,7 +108,7 @@ type Arbitrage struct {
 	httpServer       *http.Server
 	rpcPort          string
 	cache            map[string][]*ArbitrageData
-	selector         int64
+	//selector         int64
 	startTime        int64
 	latestCommitTime int64
 	nd *networkdetect.NetworkDetector
@@ -423,7 +423,7 @@ func (arb *Arbitrage) try(info *InfoUpdated) {
 	}
 	 */
 	arb.log.Printf("**************** slot update: %d ****************", info.Slot)
-	arb.selector = 0
+	//arb.selector = 0
 	for _, calculator := range arb.calculators {
 		calculator.Calculate()
 	}
@@ -450,12 +450,14 @@ func (arb *Arbitrage) OnArbitrage(result *calculator.Result) error {
 
 func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64, usdcAmount uint64, models []program.Model, yield int64) error {
 	//
+	/*
 	if arb.selector == 0 {
 		arb.selector = yield
 	} else if yield-arb.selector < 20 {
 		arb.log.Printf("has arbitrage in cyclic")
 		return nil
 	}
+	*/
 	//
 	if yield < arb.validYield {
 		arb.log.Printf("the yield is %d, too low, retry......", yield)
