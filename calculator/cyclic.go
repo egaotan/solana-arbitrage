@@ -35,7 +35,7 @@ func NewCyclic(algorithm string, ctx context.Context, env *env.Env, cb Callback)
 		cb:        cb,
 		ctx:       ctx,
 		env:       env,
-		am:        NewAdjacencyMatrix(3),
+		am:        NewAdjacencyMatrix(4),
 		models:    make([]program.Model, 0),
 	}
 	return sg

@@ -39,7 +39,7 @@ func NewSerum(algorithm string, ctx context.Context, env *env.Env, cb Callback) 
 		env:         env,
 		serumModels: make([]program.Model, 0),
 		ammModels:   make([]program.Model, 0),
-		am:          NewAdjacencyMatrix(2),
+		am:          NewAdjacencyMatrix(3),
 	}
 	return sg
 }
