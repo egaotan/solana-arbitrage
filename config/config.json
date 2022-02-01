@@ -8,7 +8,7 @@
     {
       "rpc": "https://solana-api.projectserum.com",
       "ws": "wss://solana-api.projectserum.com",
-      "usable": false
+      "usable": true
     },
     {
       "rpc": "https://solend.genesysgo.net",
@@ -33,7 +33,7 @@
     {
       "rpc": "https://free.rpcpool.com",
       "ws": "wss://free.rpcpool.com",
-      "usable": true
+      "usable": false
     },
     {
       "rpc": "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
@@ -67,8 +67,8 @@
   ],
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
-  "arbitrage_contract": "",
-  "exchange_contract": "",
+  "arbitrage_contract": "7H4ShpibmzrKS8yPJX9wi1ZyrRYzw5tLym7RjWvAxcHA",
+  "exchange_contract": "HhUVfHYvGby6k7zHrAcmA52YQLB7sWD41wkcb1WyUw8Z",
   "calculators": [
     "cyclic","serum"
   ],
