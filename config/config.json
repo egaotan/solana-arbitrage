@@ -73,6 +73,7 @@
     "cyclic","serum"
   ],
   "which": 1,
+  "bomb": 0,
   "valid-yield": 30,
   "local": true,
   "simulate": true,
