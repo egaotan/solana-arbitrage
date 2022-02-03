@@ -70,6 +70,7 @@ type Arbitrage struct {
 	system       *system.Program
 	programs     map[solana.PublicKey]program.Program
 	blockHash    int
+	nonce        byte
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -289,6 +290,9 @@ func (arb *Arbitrage) Arbitrage() error {
 	data := make([]byte, 2)
 	data[0] = 1
 	data[1] = byte(size)
+	data[2] = arb.nonce
+	arb.nonce ++
+	arb.nonce = arb.nonce % 250
 	usdc_acc := arb.env.TokenUser(program.USDC)
 	sol_acc := arb.env.TokenUser(program.SOL)
 	//msol_acc := arb.env.TokenUser(program.MSOL)
