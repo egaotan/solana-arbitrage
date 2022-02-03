@@ -53,7 +53,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		accountSubs:     make([]*ws.AccountSubscription, 0),
 		slotSubs:        make([]*ws.SlotSubscription, 0),
 		updateBlockHash: make(chan uint64, 1024),
-		cachedBlockHash:make([]solana.Hash, 0, 3),
+		cachedBlockHash:make([]solana.Hash, 0, 6),
 		transaction:     transaction,
 		blockHash: blockHash,
 		transactionSend: transactionSend,
@@ -92,7 +92,7 @@ func (backend *Backend) Start() {
 	backend.wg.Add(1)
 	go backend.CacheRecentBlockHash()
 	//backend.updateBlockHash <- true
-	backend.cachedBlockHash = append(backend.cachedBlockHash, []solana.Hash{{},{},{}}...)
+	backend.cachedBlockHash = append(backend.cachedBlockHash, []solana.Hash{{},{},{},{},{},{}}...)
 	backend.tpu.Start()
 }
 

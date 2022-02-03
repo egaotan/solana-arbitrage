@@ -54,7 +54,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 			}
 			backend.logger.Printf("get recent block hash. (%s, %d, %d)",
 				getBlockResult.Blockhash.String(), getBlockResult.BlockHeight, getBlockResult.ParentSlot)
-			if backend.cachedBlockHash[2] == getBlockResult.Blockhash {
+			if backend.cachedBlockHash[5] == getBlockResult.Blockhash {
 				continue
 			}
 			for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
@@ -76,5 +76,5 @@ func (backend *Backend) GetRecentBlockHash(level int) solana.Hash {
 	for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
 		continue
 	}
-	return backend.cachedBlockHash[2 - level]
+	return backend.cachedBlockHash[5 - level]
 }

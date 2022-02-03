@@ -69,6 +69,7 @@ type Arbitrage struct {
 	splToken     *spltoken.Program
 	system       *system.Program
 	programs     map[solana.PublicKey]program.Program
+	blockHash    int
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -308,7 +309,9 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	{
 		id := time.Now().UnixNano() / 1000
-		arb.backend.Commit(0, uint64(id), ins, false, nil)
+		arb.backend.Commit(arb.blockHash, uint64(id), ins, false, nil)
+		arb.blockHash ++
+		arb.blockHash = arb.blockHash % 6
 	}
 	return nil
 }
