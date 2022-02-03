@@ -287,7 +287,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	ins := make([]solana.Instruction, 0)
 	//
-	data := make([]byte, 2)
+	data := make([]byte, 3)
 	data[0] = 1
 	data[1] = byte(size)
 	data[2] = arb.nonce
