@@ -615,3 +615,34 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn sola
 	}
 	return instruction, nil
 }
+
+func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	var market solana.PublicKey
+	if item, ok := parameter["market"]; !ok {
+		return nil, fmt.Errorf("no parameter - market in instruct construction parameter")
+	} else {
+		market = item.(solana.PublicKey)
+	}
+
+	var model *Model
+	if item, ok := p.models[market]; !ok {
+		return nil, fmt.Errorf("no model of this market - %s", market)
+	} else {
+		model = item
+	}
+
+	authority, _, err := solana.FindProgramAddress([][]byte{market.Bytes()}, p.id)
+	if err != nil {
+		return nil, err
+	}
+	IsAccounts := []*solana.AccountMeta{
+		{PublicKey: market, IsSigner: false, IsWritable: false},
+		{PublicKey: authority, IsSigner: false, IsWritable: false},
+		{PublicKey: model.TokenSwap.SwapA, IsSigner: false, IsWritable: true},
+		{PublicKey: model.TokenSwap.SwapB, IsSigner: false, IsWritable: true},
+		{PublicKey: model.TokenSwap.PoolToken, IsSigner: false, IsWritable: true},
+		{PublicKey: model.TokenSwap.PoolFeeAccount, IsSigner: false, IsWritable: true},
+	}
+	return IsAccounts, nil
+}
+

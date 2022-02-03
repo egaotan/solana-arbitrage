@@ -72,6 +72,27 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 			logger.Printf("SendTransactionWithOpts err: %s", err.Error())
 		}
 		return signature
+		/*
+		response, err := backend.rpcClient.SimulateTransactionWithOpts(backend.ctx, trx, &rpc.SimulateTransactionOpts{
+			SigVerify:  false,
+			Commitment: rpc.CommitmentFinalized,
+		})
+		if err != nil {
+			logger.Printf("SimulateTransactionWithOpts err: %s", err.Error())
+			return solana.Signature{}
+		}
+		simulateTransactionResponse := response.Value
+		if simulateTransactionResponse.Logs == nil {
+			logger.Printf("log is nil, simulate failed before the transaction was able to executed, such as signature verification failure or invalid blockhash")
+			return solana.Signature{}
+		}
+		logsJson, _ := json.MarshalIndent(simulateTransactionResponse.Logs, "", "    ")
+		logger.Printf("logs: %s", string(logsJson))
+		if simulateTransactionResponse.Err != nil {
+			logger.Printf("SimulateTransactionWithOpts err: %s", simulateTransactionResponse.Err)
+		}
+		return solana.Signature{}
+		 */
 	}
 	check := func(signature solana.Signature) error {
 		if signature.IsZero() {

@@ -610,3 +610,7 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn sola
 	}
 	return instruction, nil
 }
+
+func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	return nil, nil
+}

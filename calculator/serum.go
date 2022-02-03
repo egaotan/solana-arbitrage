@@ -39,7 +39,7 @@ func NewSerum(algorithm string, ctx context.Context, env *env.Env, cb Callback) 
 		env:         env,
 		serumModels: make([]program.Model, 0),
 		ammModels:   make([]program.Model, 0),
-		am:          NewAdjacencyMatrix(),
+		am:          NewAdjacencyMatrix(3),
 	}
 	return sg
 }
@@ -150,6 +150,7 @@ func (serum *Serum) build() error {
 func (serum *Serum) AddModel(model program.Model) error {
 	if model.Type() == program.OrderBook {
 		serum.serumModels = append(serum.serumModels, model)
+		//fmt.Printf("xxxxxx : %s", model.Id().String())
 		model.SetState(program.StateUsed, true)
 	} else if model.Type() == program.AMM {
 		serum.ammModels = append(serum.ammModels, model)
@@ -171,7 +172,7 @@ func (serum *Serum) Calculate() error {
 }
 
 func (serum *Serum) price() error {
-	am := NewAdjacencyMatrix()
+	am := NewAdjacencyMatrix(3)
 	for _, model := range serum.ammModels {
 		am.AddItem(model)
 	}

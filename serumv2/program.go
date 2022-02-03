@@ -1149,3 +1149,42 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, token solana
 	}
 	return instruction, nil
 }
+
+func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	var market solana.PublicKey
+	if item, ok := parameter["market"]; !ok {
+		return nil, fmt.Errorf("no parameter - swap in instruct construction parameter")
+	} else {
+		market = item.(solana.PublicKey)
+	}
+
+	var model *Model
+	if item, ok := p.models[market]; !ok {
+		return nil, fmt.Errorf("no model of this market - %s", market)
+	} else {
+		model = item
+	}
+	openOrdersKey := p.env.MarketOpenOrder(market)
+	if openOrdersKey.IsZero() {
+		return nil, fmt.Errorf("no parameter - swap in instruct construction parameter")
+	}
+	nonce := make([]byte, 8)
+	binary.LittleEndian.PutUint64(nonce, model.Market.VaultSignerNonce)
+	vaultSigner, err := solana.CreateProgramAddress([][]byte{market.Bytes(), nonce}, p.id)
+	if err != nil {
+		return nil, err
+	}
+	IsAccounts := []*solana.AccountMeta{
+		{PublicKey: market, IsSigner: false, IsWritable: true},
+		{PublicKey: openOrdersKey, IsSigner: false, IsWritable: true},
+		{PublicKey: model.Market.RequestQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: model.Market.EventQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: model.Market.Bids, IsSigner: false, IsWritable: true},
+		{PublicKey: model.Market.Asks, IsSigner: false, IsWritable: true},
+		{PublicKey: model.Market.BaseVault, IsSigner: false, IsWritable: true},
+		{PublicKey: model.Market.QuoteVault, IsSigner: false, IsWritable: true},
+		{PublicKey: vaultSigner, IsSigner: false, IsWritable: false},
+	}
+	return IsAccounts, nil
+}
+

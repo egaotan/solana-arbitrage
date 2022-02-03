@@ -225,88 +225,90 @@ func (arb *Arbitrage) randomArbitrage() {
 
 func (arb *Arbitrage) Arbitrage() error {
 	//
-	amount := config.USDC_AMOUNT
-	if true {
-		ins := make([]solana.Instruction, 0)
-		{
-			p := program.SerumV22
-			tokenIn := program.USDC
-			amountIn := amount
-			key := solana.MustPublicKeyFromBase58("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT")
-			parameter := make(map[string]interface{})
-			parameter["market"] = key
-			parameter["token"] = tokenIn
-			parameter["amount"] = amountIn
-			parameter["flag"] = uint8(0)
-			result, err := arb.GetProgram(p).ArbitrageStep(parameter)
-			if err != nil {
-				arb.log.Printf("err: %v", err)
-				return err
-			}
-			ins = append(ins, result...)
+	size := 1
+	accounts := make([]*solana.AccountMeta, 0)
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
+	// serum
+	if size >= 1 {
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
-		{
-			p := program.OrcaV2
-			tokenIn := program.SOL
-			amountIn := amount
-			key := solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
-			parameter := make(map[string]interface{})
-			parameter["market"] = key
-			parameter["token"] = tokenIn
-			parameter["amount"] = amountIn
-			parameter["flag"] = uint8(2)
-			result, err := arb.GetProgram(p).ArbitrageStep(parameter)
-			if err != nil {
-				arb.log.Printf("err: %v", err)
-				return err
-			}
-			ins = append(ins, result...)
+		parameter := make(map[string]interface{})
+		parameter["market"] = solana.MustPublicKeyFromBase58("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT")
+		accs, err := p.RandomAccounts(parameter)
+		if err != nil {
+			return err
 		}
-		{
-			id := time.Now().UnixNano() / 1000
-			arb.backend.Commit(0, uint64(id), ins, false, nil)
-		}
+		accounts = append(accounts, accs...)
 	}
-	if true {
-		ins := make([]solana.Instruction, 0)
-		{
-			p := program.OrcaV2
-			tokenIn := program.USDC
-			amountIn := amount
-			key := solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
-			parameter := make(map[string]interface{})
-			parameter["market"] = key
-			parameter["token"] = tokenIn
-			parameter["amount"] = amountIn
-			parameter["flag"] = uint8(0)
-			result, err := arb.GetProgram(p).ArbitrageStep(parameter)
-			if err != nil {
-				arb.log.Printf("err: %v", err)
-				return err
-			}
-			ins = append(ins, result...)
+	if size >= 2 {
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
-		{
-			p := program.SerumV22
-			tokenIn := program.SOL
-			amountIn := amount
-			key := solana.MustPublicKeyFromBase58("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT")
-			parameter := make(map[string]interface{})
-			parameter["market"] = key
-			parameter["token"] = tokenIn
-			parameter["amount"] = amountIn
-			parameter["flag"] = uint8(2)
-			result, err := arb.GetProgram(p).ArbitrageStep(parameter)
-			if err != nil {
-				arb.log.Printf("err: %v", err)
-				return err
-			}
-			ins = append(ins, result...)
+		parameter := make(map[string]interface{})
+		parameter["market"] = solana.MustPublicKeyFromBase58("6oGsL2puUgySccKzn9XA9afqF217LfxP5ocq4B3LWsjy")
+		accs, err := p.RandomAccounts(parameter)
+		if err != nil {
+			return err
 		}
-		{
-			id := time.Now().UnixNano() / 1000
-			arb.backend.Commit(0, uint64(id), ins, false, nil)
+		accounts = append(accounts, accs...)
+	}
+	// orca
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.OrcaV2, IsSigner: false, IsWritable: false})
+	if size >= 1 {
+		p, ok := arb.programs[program.OrcaV2]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.OrcaV2)
 		}
+		parameter := make(map[string]interface{})
+		parameter["market"] = solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
+		accs, err := p.RandomAccounts(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+	}
+	if size >= 2 {
+		p, ok := arb.programs[program.OrcaV2]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.OrcaV2)
+		}
+		parameter := make(map[string]interface{})
+		parameter["market"] = solana.MustPublicKeyFromBase58("Hme4Jnqhdz2jAPUMnS7jGE5zv6Y1ynqrUEhmUAWkXmzn")
+		accs, err := p.RandomAccounts(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+	}
+	ins := make([]solana.Instruction, 0)
+	//
+	data := make([]byte, 2)
+	data[0] = 1
+	data[1] = byte(size)
+	usdc_acc := arb.env.TokenUser(program.USDC)
+	sol_acc := arb.env.TokenUser(program.SOL)
+	//msol_acc := arb.env.TokenUser(program.MSOL)
+
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: sol_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
+
+	instruction := &program.Instruction{
+		IsAccounts: accounts,
+		IsData:      data,
+		IsProgramID: program.Arbitrage,
+	}
+	for i := 0;i < 14;i ++ {
+		ins = append(ins, instruction)
+	}
+	{
+		id := time.Now().UnixNano() / 1000
+		arb.backend.Commit(0, uint64(id), ins, false, nil)
 	}
 	return nil
 }

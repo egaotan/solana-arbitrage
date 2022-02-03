@@ -3,12 +3,12 @@
     {
       "rpc": "https://api.mainnet-beta.solana.com",
       "ws": "wss://api.mainnet-beta.solana.com",
-      "usable": true
+      "usable": false
     },
     {
       "rpc": "https://solana-api.projectserum.com",
       "ws": "wss://solana-api.projectserum.com",
-      "usable": false
+      "usable": true
     },
     {
       "rpc": "https://solend.genesysgo.net",
@@ -65,7 +65,7 @@
     "SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ",
     "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
   ],
-  "user": "4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX",
+  "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
   "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
   "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
@@ -73,6 +73,7 @@
     "cyclic","serum"
   ],
   "which": 1,
+  "bomb": 100,
   "valid-yield": 30,
   "local": true,
   "simulate": true,
@@ -84,5 +85,5 @@
   "listen": "0.0.0.0:8088",
   "random_ticker": 1,
   "usdc_account": "4ZB5bXn24CaCaRm2PtBa8n3oNQrsaV9452iNe6acQ7st",
-  "usdc": 97100,
+  "usdc": 97100
 }

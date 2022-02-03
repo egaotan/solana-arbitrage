@@ -22,10 +22,13 @@ type AdjacencyMatrix struct {
 	Indexes   []solana.PublicKey
 	UsdcIndex int
 	Matrices  [][]*AdjacencyItem
+	Depth     int
 }
 
-func NewAdjacencyMatrix() *AdjacencyMatrix {
-	am := &AdjacencyMatrix{}
+func NewAdjacencyMatrix(depth int) *AdjacencyMatrix {
+	am := &AdjacencyMatrix{
+		Depth: depth,
+	}
 	return am
 }
 
@@ -195,7 +198,7 @@ func (am *AdjacencyMatrix) bsf(curNode *Node, dstIndex int, logger *log.Logger) 
 		if i == dstIndex {
 			end = true
 		}
-		if len(childData.path) == 3 {
+		if len(childData.path) == am.Depth {
 			end = true
 		}
 		if childData.amount == 0 {

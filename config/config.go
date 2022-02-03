@@ -15,6 +15,10 @@ var (
 	USDC_AMOUNT = uint64(0)
 )
 
+var (
+	Bomb = 2000
+)
+
 const (
 	MarketFromChain = iota
 	MarketFromConfig
@@ -65,6 +69,7 @@ type Config struct {
 	Calculators      []string           `json:"calculators"`
 	ValidYield       int64              `json:"valid-yield"`
 	Which            int                `json:"which"`
+	Bomb int `json:"bomb"`
 	Local            bool               `json:"local"`
 	Simulate         bool               `json:"simulate"`
 	WorkSpace        string             `json:"workspace"`

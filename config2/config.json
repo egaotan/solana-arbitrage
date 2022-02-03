@@ -36,10 +36,10 @@
     "SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ",
     "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
   ],
-  "user": "3pfNpRNu31FBzx84TnefG6iBkSqQxGtuL5G5v9aaxyv8",
+  "user": "4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX",
   "key":"",
-  "arbitrage_contract": "",
-  "exchange_contract": "",
+  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
+  "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
   "calculators": [
     "cyclic","serum"
   ],
