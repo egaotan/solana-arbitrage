@@ -21,7 +21,7 @@ import (
 
 var (
 	//Owner = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
-	Player = solana.MustPublicKeyFromBase58("3pfNpRNu31FBzx84TnefG6iBkSqQxGtuL5G5v9aaxyv8")
+	Player = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
 )
 
 var (
@@ -83,7 +83,7 @@ func Test_CreateSplTokenAccountSingle(t *testing.T) {
 }
 
 func Test_CreateSplTokenAccount(t *testing.T) {
-	userJson, err := os.ReadFile("./config2/tokens_user.json")
+	userJson, err := os.ReadFile("./config/tokens_new_user.json")
 	if err != nil {
 		panic(err)
 	}

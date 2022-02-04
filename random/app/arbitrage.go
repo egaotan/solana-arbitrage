@@ -231,26 +231,13 @@ func (arb *Arbitrage) Arbitrage() error {
 	accounts := make([]*solana.AccountMeta, 0)
 	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
 	// serum
-	if size >= 1 {
+	{
 		p, ok := arb.programs[program.SerumV22]
 		if !ok {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
 		parameter := make(map[string]interface{})
-		parameter["market"] = solana.MustPublicKeyFromBase58("9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT")
-		accs, err := p.RandomAccounts(parameter)
-		if err != nil {
-			return err
-		}
-		accounts = append(accounts, accs...)
-	}
-	if size >= 2 {
-		p, ok := arb.programs[program.SerumV22]
-		if !ok {
-			return fmt.Errorf("program %s is invalid", program.SerumV22)
-		}
-		parameter := make(map[string]interface{})
-		parameter["market"] = solana.MustPublicKeyFromBase58("6oGsL2puUgySccKzn9XA9afqF217LfxP5ocq4B3LWsjy")
+		parameter["market"] = arb.config.Serum
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
 			return err
@@ -259,26 +246,13 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	// orca
 	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.OrcaV2, IsSigner: false, IsWritable: false})
-	if size >= 1 {
+	{
 		p, ok := arb.programs[program.OrcaV2]
 		if !ok {
 			return fmt.Errorf("program %s is invalid", program.OrcaV2)
 		}
 		parameter := make(map[string]interface{})
-		parameter["market"] = solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
-		accs, err := p.RandomAccounts(parameter)
-		if err != nil {
-			return err
-		}
-		accounts = append(accounts, accs...)
-	}
-	if size >= 2 {
-		p, ok := arb.programs[program.OrcaV2]
-		if !ok {
-			return fmt.Errorf("program %s is invalid", program.OrcaV2)
-		}
-		parameter := make(map[string]interface{})
-		parameter["market"] = solana.MustPublicKeyFromBase58("Hme4Jnqhdz2jAPUMnS7jGE5zv6Y1ynqrUEhmUAWkXmzn")
+		parameter["market"] = arb.config.Orca
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
 			return err
@@ -287,12 +261,6 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	ins := make([]solana.Instruction, 0)
 	//
-	data := make([]byte, 3)
-	data[0] = 1
-	data[1] = byte(size)
-	data[2] = arb.nonce
-	arb.nonce ++
-	arb.nonce = arb.nonce % 250
 	usdc_acc := arb.env.TokenUser(program.USDC)
 	sol_acc := arb.env.TokenUser(program.SOL)
 	//msol_acc := arb.env.TokenUser(program.MSOL)
@@ -303,12 +271,20 @@ func (arb *Arbitrage) Arbitrage() error {
 	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
 	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
 
-	instruction := &program.Instruction{
-		IsAccounts: accounts,
-		IsData:      data,
-		IsProgramID: program.Arbitrage,
-	}
+	arb.nonce ++
+	arb.nonce = arb.nonce % 250
 	for i := 0;i < 14;i ++ {
+		data := make([]byte, 3)
+		data[0] = 1
+		data[1] = byte(size)
+		data[2] = arb.nonce
+		//data[3] = byte(i)
+
+		instruction := &program.Instruction{
+			IsAccounts: accounts,
+			IsData:      data,
+			IsProgramID: program.Arbitrage,
+		}
 		ins = append(ins, instruction)
 	}
 	{
