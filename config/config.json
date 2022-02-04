@@ -67,6 +67,7 @@
   ],
   "serum": "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
   "orca": "EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U",
+  "instruction_size": 14,
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
   "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",

@@ -64,6 +64,7 @@ type Config struct {
 	Programs         []solana.PublicKey `json:"programs"`
 	Serum solana.PublicKey `json:"serum"`
 	Orca solana.PublicKey `json:"orca"`
+	InstructionSize int `json:"instruction_size"`
 	User             solana.PublicKey   `json:"user"`
 	Key              string             `json:"key"`
 	ArbitrageContract string `json:"arbitrage_contract"`

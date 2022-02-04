@@ -227,7 +227,6 @@ func (arb *Arbitrage) randomArbitrage() {
 
 func (arb *Arbitrage) Arbitrage() error {
 	//
-	size := 1
 	accounts := make([]*solana.AccountMeta, 0)
 	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
 	// serum
@@ -273,12 +272,15 @@ func (arb *Arbitrage) Arbitrage() error {
 
 	arb.nonce ++
 	arb.nonce = arb.nonce % 250
-	for i := 0;i < 14;i ++ {
+	for i := 0;i < arb.config.InstructionSize;i ++ {
+		// very dangerous
 		data := make([]byte, 3)
 		data[0] = 1
-		data[1] = byte(size)
-		data[2] = arb.nonce
-		//data[3] = byte(i)
+		data[1] = arb.nonce
+		data[2] = byte(i)
+		if i == arb.config.InstructionSize - 1 {
+			data[2] = byte(100)
+		}
 
 		instruction := &program.Instruction{
 			IsAccounts: accounts,
