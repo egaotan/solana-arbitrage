@@ -295,7 +295,7 @@ func (arb *Arbitrage) Arbitrage() error {
 		id := time.Now().UnixNano() / 1000
 		arb.backend.Commit(arb.blockHash, uint64(id), ins, false, nil)
 		arb.blockHash ++
-		arb.blockHash = arb.blockHash % 6
+		arb.blockHash = arb.blockHash % 3
 	}
 	return nil
 }
