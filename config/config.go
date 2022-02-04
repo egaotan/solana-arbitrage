@@ -67,8 +67,8 @@ type Config struct {
 	InstructionSize int `json:"instruction_size"`
 	User             solana.PublicKey   `json:"user"`
 	Key              string             `json:"key"`
-	ArbitrageContract string `json:"arbitrage_contract"`
-	ExchangeContract string `json:"exchange_contract"`
+	ArbitrageContract solana.PublicKey `json:"arbitrage_contract"`
+	ExchangeContract solana.PublicKey `json:"exchange_contract"`
 	Calculators      []string           `json:"calculators"`
 	ValidYield       int64              `json:"valid-yield"`
 	Which            int                `json:"which"`

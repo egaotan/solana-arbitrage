@@ -59,6 +59,7 @@
   "tpu_client": "https://free.rpcpool.com",
   "transaction_node_size": 10,
   "transaction_send": 2,
+  "bomb": 500,
   "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
@@ -76,7 +77,6 @@
     "cyclic","serum"
   ],
   "which": 1,
-  "bomb": 100,
   "valid-yield": 30,
   "local": true,
   "simulate": true,

@@ -117,8 +117,8 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	logger.SetOutput(file)
 	arb.log = logger
 	//
-	program.Arbitrage = solana.MustPublicKeyFromBase58(cfg.ArbitrageContract)
-	program.Exchange = solana.MustPublicKeyFromBase58(cfg.ExchangeContract)
+	program.Arbitrage = cfg.ArbitrageContract
+	program.Exchange = cfg.ExchangeContract
 	//
 	//peer, ttl := networkdetect.DetectPeers(cfg.Nodes[0].Wss)
 	//logger.Printf("peer: %s, ttl: %d", peer, ttl/1000000)
@@ -228,6 +228,7 @@ func (arb *Arbitrage) randomArbitrage() {
 func (arb *Arbitrage) Arbitrage() error {
 	//
 	accounts := make([]*solana.AccountMeta, 0)
+	accounts = append(accounts,&solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
 	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
 	// serum
 	{
