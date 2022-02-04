@@ -155,6 +155,15 @@ func (p *Program) GetMarket(key solana.PublicKey) program.Model {
 	return model
 }
 
+func (p *Program) searchMarket(tokenA solana.PublicKey, tokenB solana.PublicKey) *KeyedMarket {
+	for _, market := range p.markets {
+		if market.BaseToken == tokenA && market.QuoteToken == tokenB {
+			return market
+		}
+	}
+	return nil
+}
+
 func (p *Program) programAccounts() ([]*backend.Account, error) {
 	if p.which == config.MarketFromChain {
 		return p.backend.ProgramAccounts(p.id, []uint64{uint64(MarketLayoutSize)})
@@ -1149,3 +1158,48 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, token solana
 	}
 	return instruction, nil
 }
+
+func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	var tokenA solana.PublicKey
+	if item, ok := parameter["tokenA"]; !ok {
+		return nil, fmt.Errorf("no parameter token A - swap in instruct construction parameter")
+	} else {
+		tokenA = item.(solana.PublicKey)
+	}
+
+	var tokenB solana.PublicKey
+	if item, ok := parameter["tokenB"]; !ok {
+		return nil, fmt.Errorf("no parameter token B - swap in instruct construction parameter")
+	} else {
+		tokenB = item.(solana.PublicKey)
+	}
+
+	market := p.searchMarket(tokenA, tokenB)
+	if market == nil {
+		return nil, fmt.Errorf("no market for tokens")
+	}
+
+	openOrdersKey := p.env.MarketOpenOrder(market.Key)
+	if openOrdersKey.IsZero() {
+		return nil, fmt.Errorf("no parameter - swap in instruct construction parameter")
+	}
+	nonce := make([]byte, 8)
+	binary.LittleEndian.PutUint64(nonce, market.VaultSignerNonce)
+	vaultSigner, err := solana.CreateProgramAddress([][]byte{market.Key.Bytes(), nonce}, p.id)
+	if err != nil {
+		return nil, err
+	}
+	IsAccounts := []*solana.AccountMeta{
+		{PublicKey: market.Key, IsSigner: false, IsWritable: true},
+		{PublicKey: openOrdersKey, IsSigner: false, IsWritable: true},
+		{PublicKey: market.RequestQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: market.Bids, IsSigner: false, IsWritable: true},
+		{PublicKey: market.Asks, IsSigner: false, IsWritable: true},
+		{PublicKey: market.BaseVault, IsSigner: false, IsWritable: true},
+		{PublicKey: market.QuoteVault, IsSigner: false, IsWritable: true},
+		{PublicKey: vaultSigner, IsSigner: false, IsWritable: false},
+	}
+	return IsAccounts, nil
+}
+

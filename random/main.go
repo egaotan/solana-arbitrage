@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/egaotan/solana-arbitrage/arbitrage/app"
 	"github.com/egaotan/solana-arbitrage/config"
+	"github.com/egaotan/solana-arbitrage/random/app"
 	"os"
 	"os/signal"
 	"syscall"
@@ -35,15 +35,11 @@ func main() {
 	}
 
 	//
-	infoJson, err = os.ReadFile(config.ValidatorFile)
-	if err != nil {
-		panic(err)
-	}
-	validatorNodes := make([]*config.Node, 0)
-	err = json.Unmarshal(infoJson, &validatorNodes)
-	if err != nil {
-		panic(err)
-	}
+	config.USDC_AMOUNT = cfg.Usdc * 1000000
+
+	cfg.WorkSpace = workSpace
+	workspace, _ := os.Getwd()
+	fmt.Printf("work space: %s\n", workspace)
 
 	//
 	oldNodes := cfg.Nodes
@@ -54,6 +50,7 @@ func main() {
 		}
 	}
 	cfg.Nodes = usableNodes
+
 	oldValidators := cfg.TransactionNodes
 	usableValidators := make([]*config.Node, 0)
 	for _, oldValidator := range oldValidators {
@@ -62,31 +59,6 @@ func main() {
 		}
 	}
 	cfg.TransactionNodes = usableValidators
-	//
-	usableValidators1 := make([]*config.Node, 0)
-	for _, validator := range validatorNodes {
-		if validator.Usable {
-			usableValidators1 = append(usableValidators1, validator)
-		}
-	}
-	//
-	selectedValidators := make([]*config.Node, 0)
-	for i := 0;i < len(usableValidators1);i ++ {
-		if i % 3 == cfg.NodeId {
-			selectedValidators = append(selectedValidators, usableValidators1[i])
-		}
-		if len(selectedValidators) > cfg.TransactionNodeSize {
-			break
-		}
-	}
-	cfg.TransactionNodes = append(cfg.TransactionNodes, selectedValidators...)
-
-	//
-	config.USDC_AMOUNT = cfg.Usdc * 1000000
-
-	cfg.WorkSpace = workSpace
-	workspace, _ := os.Getwd()
-	fmt.Printf("work space: %s\n", workspace)
 
 	//
 	t := time.Now()

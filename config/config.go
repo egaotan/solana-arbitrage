@@ -64,8 +64,8 @@ type Config struct {
 	Programs         []solana.PublicKey `json:"programs"`
 	User             solana.PublicKey   `json:"user"`
 	Key              string             `json:"key"`
-	ArbitrageContract string `json:"arbitrage_contract"`
-	ExchangeContract string `json:"exchange_contract"`
+	ArbitrageContract solana.PublicKey `json:"arbitrage_contract"`
+	ExchangeContract solana.PublicKey `json:"exchange_contract"`
 	Calculators      []string           `json:"calculators"`
 	ValidYield       int64              `json:"valid-yield"`
 	Which            int                `json:"which"`
@@ -81,4 +81,8 @@ type Config struct {
 	Listen           string             `json:"listen"`
 	Usdc             uint64             `json:"usdc"`
 	UsdcAccount  string `json:"usdc_account"`
+	TokenA solana.PublicKey `json:"token_a"`
+	TokenB solana.PublicKey `json:"token_b"`
+	InstructionSize int `json:"instruction_size"`
+	RandomTicker uint64 `json:"random_ticker"`
 }

@@ -21,6 +21,7 @@ var (
 	USDT      = solana.MustPublicKeyFromBase58("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB")
 	USDC      = solana.MustPublicKeyFromBase58("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
 	SOL       = solana.MustPublicKeyFromBase58("So11111111111111111111111111111111111111112")
+	MSOL = solana.MustPublicKeyFromBase58("mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So")
 	Exchange  = solana.MustPublicKeyFromBase58("HhUVfHYvGby6k7zHrAcmA52YQLB7sWD41wkcb1WyUw8Z")
 	Arbitrage = solana.MustPublicKeyFromBase58("7H4ShpibmzrKS8yPJX9wi1ZyrRYzw5tLym7RjWvAxcHA")
 )
@@ -79,4 +80,5 @@ type Program interface {
 	Local(parameter map[string]interface{}) (*LocalState, error)
 	//Simulate(parameter map[string]interface{}) (*SimulateState, error)
 	ArbitrageStep(parameter map[string]interface{}) ([]solana.Instruction, error)
+	RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error)
 }

@@ -726,3 +726,7 @@ func (p *Program) Execute(is []solana.Instruction) (*program.SimulateState, erro
 	*/
 	return nil, fmt.Errorf("not implement")
 }
+
+func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	return nil, nil
+}
