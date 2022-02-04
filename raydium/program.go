@@ -27,7 +27,7 @@ type Program struct {
 	id              solana.PublicKey
 	splTokenProgram *spltoken.Program
 	systemProgram   *system.Program
-	amms           map[solana.PublicKey]*KeyedAmmInfo
+	amms            map[solana.PublicKey]*KeyedAmmInfo
 	models          map[solana.PublicKey]*Model
 }
 
@@ -43,7 +43,7 @@ func NewProgram(id solana.PublicKey, context context.Context, which int, env *en
 		splTokenProgram: splTokenProgram,
 		systemProgram:   systemProgram,
 		models:          make(map[solana.PublicKey]*Model),
-		amms:           make(map[solana.PublicKey]*KeyedAmmInfo),
+		amms:            make(map[solana.PublicKey]*KeyedAmmInfo),
 	}
 	return p
 }
@@ -132,8 +132,8 @@ func (p *Program) upsertSwap(pubkey solana.PublicKey, height uint64, swap AmmInf
 	keyedSwap, ok := p.amms[pubkey]
 	if !ok {
 		keyedSwap = &KeyedAmmInfo{
-			Key:        pubkey,
-			Height:     height,
+			Key:           pubkey,
+			Height:        height,
 			AmmInfoLayout: swap,
 		}
 		p.amms[pubkey] = keyedSwap
@@ -148,7 +148,7 @@ func (p *Program) upsertModel(tokenSwap *KeyedAmmInfo, tokenA *spltoken.KeyedUse
 	model, ok := p.models[tokenSwap.Key]
 	if !ok {
 		model = &Model{
-			AmmInfo: tokenSwap,
+			AmmInfo:   tokenSwap,
 			SwapA:     tokenA,
 			SwapB:     tokenB,
 			ProgramId: p.id,

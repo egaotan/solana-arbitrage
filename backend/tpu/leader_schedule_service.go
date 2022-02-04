@@ -20,14 +20,14 @@ type LeaderScheduleService struct {
 	leaders   map[uint64]solana.PublicKey
 	newFresh  chan uint64
 	lock      int32
-	logger *log.Logger
+	logger    *log.Logger
 }
 
 func NewLeaderScheduleService(ctx context.Context, client *rpc.Client, logger *log.Logger) *LeaderScheduleService {
 	lss := &LeaderScheduleService{
 		ctx:      ctx,
 		client:   client,
-		logger: logger,
+		logger:   logger,
 		leaders:  make(map[uint64]solana.PublicKey),
 		newFresh: make(chan uint64, 1024),
 	}
@@ -110,6 +110,6 @@ func (ans *LeaderScheduleService) Refresh() {
 
 func (ans *LeaderScheduleService) refresh(slot uint64) {
 	firstSlot := slot - PAST_SLOT_SEARCH
-	counter :=  UPCOMING_SLOT_SEARCH*3
+	counter := UPCOMING_SLOT_SEARCH * 3
 	ans.fetchLeaders(firstSlot, counter)
 }

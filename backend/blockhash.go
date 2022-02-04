@@ -22,26 +22,26 @@ func (backend *Backend) CacheRecentBlockHash() {
 				}
 			}
 			/*
-			getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
-			if err != nil {
-				backend.logger.Printf("GetRecentBlockhash, err: %s", err.Error())
-				continue
-			}
-						backend.logger.Printf("get recent block hash. (%s, %d)",
-					getRecentBlockHashResult.Value.Blockhash.String(), getRecentBlockHashResult.Context.Slot)
-				if backend.cachedBlockHash[2] == getRecentBlockHashResult.Value.Blockhash {
+				getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
+				if err != nil {
+					backend.logger.Printf("GetRecentBlockhash, err: %s", err.Error())
 					continue
 				}
-				for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
-					continue
-				}
-				backend.cachedBlockHash = append(backend.cachedBlockHash, getRecentBlockHashResult.Value.Blockhash)
-				backend.cachedBlockHash = backend.cachedBlockHash[1:]
-				atomic.StoreInt32(&backend.lock, 0)
+							backend.logger.Printf("get recent block hash. (%s, %d)",
+						getRecentBlockHashResult.Value.Blockhash.String(), getRecentBlockHashResult.Context.Slot)
+					if backend.cachedBlockHash[2] == getRecentBlockHashResult.Value.Blockhash {
+						continue
+					}
+					for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
+						continue
+					}
+					backend.cachedBlockHash = append(backend.cachedBlockHash, getRecentBlockHashResult.Value.Blockhash)
+					backend.cachedBlockHash = backend.cachedBlockHash[1:]
+					atomic.StoreInt32(&backend.lock, 0)
 			*/
 			slot = slot / 5 * 5
 			reward := false
-			getBlockResult, err := rpcClient.GetBlockWithOpts(backend.ctx, slot - 20,
+			getBlockResult, err := rpcClient.GetBlockWithOpts(backend.ctx, slot-20,
 				&rpc.GetBlockOpts{
 					Encoding:           solana.EncodingBase64,
 					TransactionDetails: rpc.TransactionDetailsNone,
@@ -76,5 +76,5 @@ func (backend *Backend) GetRecentBlockHash(level int) solana.Hash {
 	for !atomic.CompareAndSwapInt32(&backend.lock, 0, 1) {
 		continue
 	}
-	return backend.cachedBlockHash[2 - level]
+	return backend.cachedBlockHash[2-level]
 }

@@ -9,7 +9,7 @@ import (
 
 type Model struct {
 	ProgramId solana.PublicKey
-	AmmInfo *KeyedAmmInfo
+	AmmInfo   *KeyedAmmInfo
 	SwapA     *spltoken.KeyedUser
 	SwapB     *spltoken.KeyedUser
 	States    map[string]interface{}
@@ -79,4 +79,3 @@ func (m *Model) getSwapAccounts(token solana.PublicKey) (solana.PublicKey, solan
 	}
 	return mintSrc, tokenSrc, mintDst, tokenDst, nil
 }
-

@@ -57,7 +57,6 @@ func TestProgram_Start(t *testing.T) {
 	startProgram()
 }
 
-
 func TestProgram_ErrorCode(t *testing.T) {
 	code := 0x100086d
 	data := make([]byte, 4)

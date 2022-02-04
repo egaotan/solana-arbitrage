@@ -24,7 +24,7 @@ type CommittedArbitrageStep struct {
 	TokenIn              string `gorm:"type:varchar(48);not null"`
 	AmountIn             uint64 `gorm:"type:bigint(20);not null"`
 	TokenOut             string `gorm:"type:varchar(48);not null"`
-	AmountOut        uint64 `gorm:"type:bigint(20);not null"`
+	AmountOut            uint64 `gorm:"type:bigint(20);not null"`
 	CommittedArbitrageId uint64 `gorm:"type:bigint(20);not null"`
 }
 

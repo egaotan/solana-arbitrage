@@ -98,20 +98,20 @@ type Arbitrage struct {
 	tokens       map[solana.PublicKey]bool
 	swapAccounts map[solana.PublicKey]bool
 	//calculators   map[string]calculator.Calculator
-	calculators      []calculator.Calculator
-	validYield       int64
-	nodeId int
-	store            *store.Store
-	balanceListen    *balancelisten.BalanceListen
-	notify           *Notify
-	stateListen      *statelisten.StateListen
-	httpServer       *http.Server
-	rpcPort          string
-	cache            map[string][]*ArbitrageData
+	calculators   []calculator.Calculator
+	validYield    int64
+	nodeId        int
+	store         *store.Store
+	balanceListen *balancelisten.BalanceListen
+	notify        *Notify
+	stateListen   *statelisten.StateListen
+	httpServer    *http.Server
+	rpcPort       string
+	cache         map[string][]*ArbitrageData
 	//selector         int64
 	startTime        int64
 	latestCommitTime int64
-	nd *networkdetect.NetworkDetector
+	nd               *networkdetect.NetworkDetector
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -162,7 +162,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 		cache:        make(map[string][]*ArbitrageData),
 		validYield:   cfg.ValidYield,
 		rpcPort:      cfg.Listen,
-		nodeId: cfg.NodeId,
+		nodeId:       cfg.NodeId,
 	}
 	//
 	logger := log.Default()
@@ -410,18 +410,18 @@ func (arb *Arbitrage) Tick() {
 
 func (arb *Arbitrage) try(info *InfoUpdated) {
 	/*
-	if !info.TokenKey.IsZero() && info.NewBalance != 0 && info.OldBalance != 0 {
-		balance1 := decimal.NewFromInt(int64(info.NewBalance))
-		balance2 := decimal.NewFromInt(int64(info.OldBalance))
-		balanceDiff := balance1.Sub(balance2).Abs()
-		token := arb.env.Token(info.TokenKey)
-		balanceUi := token.AmountUi(balanceDiff.BigInt().Uint64())
-		usdAmount := balanceUi.Mul(token.Price)
-		if usdAmount.Cmp(decimal.NewFromInt(10000)) < 0 {
-			return
+		if !info.TokenKey.IsZero() && info.NewBalance != 0 && info.OldBalance != 0 {
+			balance1 := decimal.NewFromInt(int64(info.NewBalance))
+			balance2 := decimal.NewFromInt(int64(info.OldBalance))
+			balanceDiff := balance1.Sub(balance2).Abs()
+			token := arb.env.Token(info.TokenKey)
+			balanceUi := token.AmountUi(balanceDiff.BigInt().Uint64())
+			usdAmount := balanceUi.Mul(token.Price)
+			if usdAmount.Cmp(decimal.NewFromInt(10000)) < 0 {
+				return
+			}
 		}
-	}
-	 */
+	*/
 	arb.log.Printf("**************** slot update: %d ****************", info.Slot)
 	//arb.selector = 0
 	for _, calculator := range arb.calculators {
@@ -429,12 +429,12 @@ func (arb *Arbitrage) try(info *InfoUpdated) {
 	}
 	//
 	/*
-	tt := time.Now().Unix()
-	if tt-arb.startTime > 12*60*60 && tt-arb.latestCommitTime > 5*60 {
-		// restart
-		arb.log.Printf("restart server")
-		syscall.Kill(syscall.Getpid(), syscall.SIGABRT)
-	}
+		tt := time.Now().Unix()
+		if tt-arb.startTime > 12*60*60 && tt-arb.latestCommitTime > 5*60 {
+			// restart
+			arb.log.Printf("restart server")
+			syscall.Kill(syscall.Getpid(), syscall.SIGABRT)
+		}
 	*/
 }
 
@@ -451,12 +451,12 @@ func (arb *Arbitrage) OnArbitrage(result *calculator.Result) error {
 func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64, usdcAmount uint64, models []program.Model, yield int64) error {
 	//
 	/*
-	if arb.selector == 0 {
-		arb.selector = yield
-	} else if yield-arb.selector < 20 {
-		arb.log.Printf("has arbitrage in cyclic")
-		return nil
-	}
+		if arb.selector == 0 {
+			arb.selector = yield
+		} else if yield-arb.selector < 20 {
+			arb.log.Printf("has arbitrage in cyclic")
+			return nil
+		}
 	*/
 	//
 	if yield < arb.validYield {
@@ -474,29 +474,29 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	if usdcAmount < 15000*1000000 {
 		if yield > 200 {
 			cacheSize += 1
-			level ++
+			level++
 		}
 		if yield > 400 {
 			cacheSize += 1
-			level ++
+			level++
 		}
 	} else if usdcAmount < 30000*1000000 {
 		if yield > 150 {
 			cacheSize += 1
-			level ++
+			level++
 		}
 		if yield > 350 {
 			cacheSize += 1
-			level ++
+			level++
 		}
 	} else if usdcAmount > 30000*1000000 {
 		if yield > 150 {
 			cacheSize += 1
-			level ++
+			level++
 		}
 		if yield > 300 {
 			cacheSize += 1
-			level ++
+			level++
 		}
 	}
 
@@ -508,7 +508,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	caches := arb.cache[cacheKey]
 	newCaches := make([]*ArbitrageData, 0, 3)
 	for _, cache := range caches {
-		if id - cache.id < 60 * 1000000 {
+		if id-cache.id < 60*1000000 {
 			newCaches = append(newCaches, cache)
 		}
 	}
@@ -580,11 +580,11 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		}
 		for _, step := range data.steps {
 			committedArbitrageStep := &store.CommittedArbitrageStep{
-				Program:  step.program.Id().String(),
-				Market:   step.model.Id().String(),
-				TokenIn:  step.tokenIn.String(),
-				AmountIn: step.amountIn,
-				TokenOut: step.tokenOut.String(),
+				Program:   step.program.Id().String(),
+				Market:    step.model.Id().String(),
+				TokenIn:   step.tokenIn.String(),
+				AmountIn:  step.amountIn,
+				TokenOut:  step.tokenOut.String(),
 				AmountOut: step.amountOut,
 			}
 			committedArbitrage.CommittedArbitrageSteps = append(committedArbitrage.CommittedArbitrageSteps, committedArbitrageStep)

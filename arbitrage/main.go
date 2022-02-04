@@ -71,8 +71,8 @@ func main() {
 	}
 	//
 	selectedValidators := make([]*config.Node, 0)
-	for i := 0;i < len(usableValidators1);i ++ {
-		if i % 3 == cfg.NodeId {
+	for i := 0; i < len(usableValidators1); i++ {
+		if i%3 == cfg.NodeId {
 			selectedValidators = append(selectedValidators, usableValidators1[i])
 		}
 		if len(selectedValidators) > cfg.TransactionNodeSize {

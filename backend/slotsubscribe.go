@@ -47,7 +47,7 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 		}
 		backend.logger.Printf("receive slot, %d", got.Slot)
 		atomic.StoreInt64(tt, time.Now().UnixNano())
-		if got.Slot % 5 == 0 {
+		if got.Slot%5 == 0 {
 			backend.updateBlockHash <- got.Slot
 		}
 		backend.tpu.CommitSlot(got.Slot)

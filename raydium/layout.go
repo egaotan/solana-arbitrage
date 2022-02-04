@@ -78,5 +78,5 @@ func (ammInfo *AmmInfoLayout) unpack(data []byte) error {
 type KeyedAmmInfo struct {
 	AmmInfoLayout
 	Height uint64
-	Key solana.PublicKey
+	Key    solana.PublicKey
 }

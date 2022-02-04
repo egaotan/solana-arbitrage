@@ -659,4 +659,3 @@ func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.Ac
 	}
 	return IsAccounts, nil
 }
-

@@ -60,17 +60,17 @@ type InfoUpdated struct {
 }
 
 type Arbitrage struct {
-	ctx          context.Context
-	log          *log.Logger
-	config       *config.Config
-	wg           sync.WaitGroup
-	backend      *backend.Backend
-	env          *env.Env
-	splToken     *spltoken.Program
-	system       *system.Program
-	programs     map[solana.PublicKey]program.Program
-	blockHash    int
-	nonce        byte
+	ctx       context.Context
+	log       *log.Logger
+	config    *config.Config
+	wg        sync.WaitGroup
+	backend   *backend.Backend
+	env       *env.Env
+	splToken  *spltoken.Program
+	system    *system.Program
+	programs  map[solana.PublicKey]program.Program
+	blockHash int
+	nonce     byte
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -103,8 +103,8 @@ func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env 
 
 func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	arb := &Arbitrage{
-		ctx:          ctx,
-		config:       cfg,
+		ctx:    ctx,
+		config: cfg,
 	}
 	//
 	logger := log.Default()
@@ -187,7 +187,6 @@ func (arb *Arbitrage) Stop() {
 	arb.log.Printf("auto trader has stopped......")
 }
 
-
 func (arb *Arbitrage) OnModelInit(model program.Model) error {
 	return nil
 }
@@ -217,9 +216,9 @@ func (arb *Arbitrage) randomArbitrage() {
 	ticker := time.NewTicker(time.Second * time.Duration(arb.config.RandomTicker))
 	for {
 		select {
-		case <- ticker.C:
+		case <-ticker.C:
 			arb.Arbitrage()
-		case <- arb.ctx.Done():
+		case <-arb.ctx.Done():
 			return
 		}
 	}
@@ -228,8 +227,8 @@ func (arb *Arbitrage) randomArbitrage() {
 func (arb *Arbitrage) Arbitrage() error {
 	//
 	accounts := make([]*solana.AccountMeta, 0)
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
 	// serum
 	{
 		p, ok := arb.programs[program.SerumV22]
@@ -246,7 +245,7 @@ func (arb *Arbitrage) Arbitrage() error {
 		accounts = append(accounts, accs...)
 	}
 	// orca
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.OrcaV2, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.OrcaV2, IsSigner: false, IsWritable: false})
 	{
 		p, ok := arb.programs[program.OrcaV2]
 		if !ok {
@@ -266,26 +265,26 @@ func (arb *Arbitrage) Arbitrage() error {
 	usdc_acc := arb.env.TokenUser(arb.config.TokenB)
 	other_acc := arb.env.TokenUser(arb.config.TokenA)
 
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: other_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
-	accounts = append(accounts,&solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: other_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
 
-	arb.nonce ++
+	arb.nonce++
 	arb.nonce = arb.nonce % 250
-	for i := 0;i < arb.config.InstructionSize;i ++ {
+	for i := 0; i < arb.config.InstructionSize; i++ {
 		// very dangerous
 		data := make([]byte, 3)
 		data[0] = 1
 		data[1] = arb.nonce
 		data[2] = byte(i)
-		if i == arb.config.InstructionSize - 1 {
+		if i == arb.config.InstructionSize-1 {
 			data[2] = byte(100)
 		}
 
 		instruction := &program.Instruction{
-			IsAccounts: accounts,
+			IsAccounts:  accounts,
 			IsData:      data,
 			IsProgramID: program.Arbitrage,
 		}
@@ -294,10 +293,8 @@ func (arb *Arbitrage) Arbitrage() error {
 	{
 		id := time.Now().UnixNano() / 1000
 		arb.backend.Commit(arb.blockHash, uint64(id), ins, false, nil)
-		arb.blockHash ++
+		arb.blockHash++
 		arb.blockHash = arb.blockHash % 3
 	}
 	return nil
 }
-
-

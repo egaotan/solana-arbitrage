@@ -18,7 +18,7 @@ type NetworkDetector struct {
 	avg    []int64
 	pinger *ping.Pinger
 	logger *log.Logger
-	dsdk *dingsdk.DingSdk
+	dsdk   *dingsdk.DingSdk
 }
 
 func NewNetworkDetector(peer string, dsdk *dingsdk.DingSdk) *NetworkDetector {
@@ -26,10 +26,10 @@ func NewNetworkDetector(peer string, dsdk *dingsdk.DingSdk) *NetworkDetector {
 	address := peer[index+3:]
 	logger := utils.NewLog(config.LogPath, fmt.Sprintf("%s", config.NetworkLog))
 	nd := &NetworkDetector{
-		peer: address,
-		ttl: make([]int64, 0),
+		peer:   address,
+		ttl:    make([]int64, 0),
 		logger: logger,
-		dsdk: dsdk,
+		dsdk:   dsdk,
 	}
 	return nd
 }
@@ -78,22 +78,22 @@ func (nd *NetworkDetector) ping() {
 		avg := sum / int64(len(nd.ttl))
 		nd.avg = append(nd.avg, avg)
 		if len(nd.ttl) > 300 {
-			nd.ttl = nd.ttl[len(nd.ttl) - 300:]
+			nd.ttl = nd.ttl[len(nd.ttl)-300:]
 		}
 		if len(nd.avg) > 300 {
-			nd.avg = nd.avg[len(nd.avg) - 300:]
+			nd.avg = nd.avg[len(nd.avg)-300:]
 		}
 		isLow := false
 		for _, avgx := range nd.avg {
-			if avgx < 20 * 1000 * 1000 {
+			if avgx < 20*1000*1000 {
 				isLow = true
 			}
 		}
 		xx := time.Now().Unix()
-		nd.logger.Printf("ping ttl: %d", avg / 1000000)
+		nd.logger.Printf("ping ttl: %d", avg/1000000)
 		if !isLow {
 			nd.logger.Printf("network latenct is too large, restart")
-			if xx - notifyTime > 5 * 60 {
+			if xx-notifyTime > 5*60 {
 				nd.notify(nd.avg[len(nd.avg)-1])
 				notifyTime = xx
 			}
@@ -124,4 +124,3 @@ func (nd *NetworkDetector) Start() {
 func (nd *NetworkDetector) Stop() {
 	nd.pinger.Stop()
 }
-

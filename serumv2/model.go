@@ -192,7 +192,6 @@ func (m *Model) Swap(token solana.PublicKey, amount uint64) (*program.SwapResult
 	}
 }
 
-
 func (m *Model) Swap1(token solana.PublicKey, amount uint64) (*program.SwapResult, error) {
 	if token == m.Market.BaseToken {
 		if m.AskTick0[0].Quantity.IsZero() {
@@ -201,7 +200,7 @@ func (m *Model) Swap1(token solana.PublicKey, amount uint64) (*program.SwapResul
 
 		leftAmount := decimal.NewFromInt(int64(amount))
 		gotAmount := decimal.NewFromInt(0)
-		for i := 0;i < 5;i ++ {
+		for i := 0; i < 5; i++ {
 			if leftAmount.Cmp(m.AskTick0[i].Quantity) <= 0 {
 				gotAmount = gotAmount.Add(leftAmount.Mul(m.AskTick0[i].Price))
 				leftAmount = decimal.NewFromInt(0)
@@ -231,7 +230,7 @@ func (m *Model) Swap1(token solana.PublicKey, amount uint64) (*program.SwapResul
 
 		leftAmount := decimal.NewFromInt(int64(amount))
 		gotAmount := decimal.NewFromInt(0)
-		for i := 0;i < 5;i ++ {
+		for i := 0; i < 5; i++ {
 			tickQ := m.BidTick0[i].Price.Mul(m.BidTick0[i].Quantity)
 			if tickQ.Cmp(leftAmount) >= 0 {
 				gotAmount = gotAmount.Add(leftAmount.Div(m.BidTick0[i].Price))

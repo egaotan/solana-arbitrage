@@ -619,13 +619,13 @@ func (p *Program) updateAccount(account *backend.Account) {
 	}
 	p.cb.OnStateUpdate(account.Height)
 	/*
-	if model.BidTick0[0].Price.Div(oldBidTick0.Price).Cmp(decimal.NewFromFloat(0.992)) < 0 ||
-		model.AskTick0[0].Price.Div(oldAskTick0.Price).Cmp(decimal.NewFromFloat(1.008)) > 0 {
-		if p.cb != nil {
-			p.cb.OnStateUpdate(account.Height)
+		if model.BidTick0[0].Price.Div(oldBidTick0.Price).Cmp(decimal.NewFromFloat(0.992)) < 0 ||
+			model.AskTick0[0].Price.Div(oldAskTick0.Price).Cmp(decimal.NewFromFloat(1.008)) > 0 {
+			if p.cb != nil {
+				p.cb.OnStateUpdate(account.Height)
+			}
 		}
-	}
-	 */
+	*/
 	//
 
 }
@@ -1202,4 +1202,3 @@ func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.Ac
 	}
 	return IsAccounts, nil
 }
-

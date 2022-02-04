@@ -42,48 +42,48 @@ var (
 	LogPath                      = "./logs/"
 	BackendLog                   = "backend"
 	ExecutorLog                  = "executor"
-	TPULog = "tpu_executor"
-	NetworkLog = "network"
-	SentTxHash = "sent_tx"
+	TPULog                       = "tpu_executor"
+	NetworkLog                   = "network"
+	SentTxHash                   = "sent_tx"
 )
 
 type Node struct {
-	Rpc    string `json:"rpc"`
-	Ws     string `json:"ws"`
+	Rpc    string   `json:"rpc"`
+	Ws     string   `json:"ws"`
 	Wss    []string `json:"wss"`
-	Usable bool   `json:"usable"`
+	Usable bool     `json:"usable"`
 }
 
 type Config struct {
-	Nodes            []*Node            `json:"nodes"`
-	TransactionNodes []*Node            `json:"transaction_nodes"`
-	BlochHash string `json:"block_hash"`
-	TpuClient string `json:"tpu_client"`
-	TransactionNodeSize int `json:"transaction_node_size"`
-	TransactionSend int `json:"transaction_send"`
-	NodeId int `json:"node_id"`
-	Programs         []solana.PublicKey `json:"programs"`
-	User             solana.PublicKey   `json:"user"`
-	Key              string             `json:"key"`
-	ArbitrageContract solana.PublicKey `json:"arbitrage_contract"`
-	ExchangeContract solana.PublicKey `json:"exchange_contract"`
-	Calculators      []string           `json:"calculators"`
-	ValidYield       int64              `json:"valid-yield"`
-	Which            int                `json:"which"`
-	Bomb int `json:"bomb"`
-	Local            bool               `json:"local"`
-	Simulate         bool               `json:"simulate"`
-	WorkSpace        string             `json:"workspace"`
-	DingUrl          string             `json:"ding-url"`
-	DBUrl            string             `json:"db_url"`
-	DBScheme         string             `json:"db_scheme"`
-	DBUser           string             `json:"db_user"`
-	DBPasswd         string             `json:"db_passwd"`
-	Listen           string             `json:"listen"`
-	Usdc             uint64             `json:"usdc"`
-	UsdcAccount  string `json:"usdc_account"`
-	TokenA solana.PublicKey `json:"token_a"`
-	TokenB solana.PublicKey `json:"token_b"`
-	InstructionSize int `json:"instruction_size"`
-	RandomTicker uint64 `json:"random_ticker"`
+	Nodes               []*Node            `json:"nodes"`
+	TransactionNodes    []*Node            `json:"transaction_nodes"`
+	BlochHash           string             `json:"block_hash"`
+	TpuClient           string             `json:"tpu_client"`
+	TransactionNodeSize int                `json:"transaction_node_size"`
+	TransactionSend     int                `json:"transaction_send"`
+	NodeId              int                `json:"node_id"`
+	Programs            []solana.PublicKey `json:"programs"`
+	User                solana.PublicKey   `json:"user"`
+	Key                 string             `json:"key"`
+	ArbitrageContract   solana.PublicKey   `json:"arbitrage_contract"`
+	ExchangeContract    solana.PublicKey   `json:"exchange_contract"`
+	Calculators         []string           `json:"calculators"`
+	ValidYield          int64              `json:"valid-yield"`
+	Which               int                `json:"which"`
+	Bomb                int                `json:"bomb"`
+	Local               bool               `json:"local"`
+	Simulate            bool               `json:"simulate"`
+	WorkSpace           string             `json:"workspace"`
+	DingUrl             string             `json:"ding-url"`
+	DBUrl               string             `json:"db_url"`
+	DBScheme            string             `json:"db_scheme"`
+	DBUser              string             `json:"db_user"`
+	DBPasswd            string             `json:"db_passwd"`
+	Listen              string             `json:"listen"`
+	Usdc                uint64             `json:"usdc"`
+	UsdcAccount         string             `json:"usdc_account"`
+	TokenA              solana.PublicKey   `json:"token_a"`
+	TokenB              solana.PublicKey   `json:"token_b"`
+	InstructionSize     int                `json:"instruction_size"`
+	RandomTicker        uint64             `json:"random_ticker"`
 }

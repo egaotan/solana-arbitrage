@@ -51,7 +51,7 @@ func (proxy *Proxy) Start() {
 	proxy.ans.Start()
 	proxy.lss.Start()
 	go proxy.newSlot()
-	for i := 0;i < 64;i ++ {
+	for i := 0; i < 64; i++ {
 		go proxy.SendTransactions()
 	}
 }
@@ -176,7 +176,7 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 			proxy.logger.Printf("send (%d, %d)", n, len(tx.Tx))
 		}
 	}
-	for i := 0;i < config.Bomb;i ++ {
+	for i := 0; i < config.Bomb; i++ {
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx to %s", addr)
 			_, err := conn.Write(tx.Tx)
@@ -186,7 +186,7 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
 			}
 		}
-		if i % 100 == 99 {
+		if i%100 == 99 {
 			time.Sleep(time.Millisecond * 100)
 		}
 	}

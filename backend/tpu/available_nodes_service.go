@@ -14,7 +14,7 @@ type AvailableNodesService struct {
 	client         *rpc.Client
 	availableNodes map[solana.PublicKey]string
 	lock           int32
-	logger *log.Logger
+	logger         *log.Logger
 }
 
 func NewAvailableNodesService(ctx context.Context, client *rpc.Client, logger *log.Logger) *AvailableNodesService {
@@ -22,7 +22,7 @@ func NewAvailableNodesService(ctx context.Context, client *rpc.Client, logger *l
 		ctx:            ctx,
 		client:         client,
 		availableNodes: make(map[solana.PublicKey]string),
-		logger: logger,
+		logger:         logger,
 	}
 	return ans
 }

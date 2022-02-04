@@ -15,7 +15,7 @@ import (
 
 type Backend struct {
 	logger          *log.Logger
-	txLogger *log.Logger
+	txLogger        *log.Logger
 	rpcClient       *rpc.Client
 	wsClients       []*ws.Client
 	ctx             context.Context
@@ -31,8 +31,8 @@ type Backend struct {
 	store           *store.Store
 	commandChans    []chan *Command
 	clients         []*rpc.Client
-	blockHash string
-	tpu *tpu.Proxy
+	blockHash       string
+	tpu             *tpu.Proxy
 	transactionSend int
 }
 
@@ -51,13 +51,13 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		wsClients:       wsClients,
 		ctx:             ctx,
 		logger:          utils.NewLog(config.LogPath, config.BackendLog),
-		txLogger: utils.NewLog(config.LogPath, config.SentTxHash),
+		txLogger:        utils.NewLog(config.LogPath, config.SentTxHash),
 		accountSubs:     make([]*ws.AccountSubscription, 0),
 		slotSubs:        make([]*ws.SlotSubscription, 0),
 		updateBlockHash: make(chan uint64, 1024),
-		cachedBlockHash:make([]solana.Hash, 0, 3),
+		cachedBlockHash: make([]solana.Hash, 0, 3),
 		transaction:     transaction,
-		blockHash: blockHash,
+		blockHash:       blockHash,
 		transactionSend: transactionSend,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
@@ -94,7 +94,7 @@ func (backend *Backend) Start() {
 	backend.wg.Add(1)
 	go backend.CacheRecentBlockHash()
 	//backend.updateBlockHash <- true
-	backend.cachedBlockHash = append(backend.cachedBlockHash, []solana.Hash{{},{},{}}...)
+	backend.cachedBlockHash = append(backend.cachedBlockHash, []solana.Hash{{}, {}, {}}...)
 	backend.tpu.Start()
 }
 

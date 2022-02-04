@@ -16,19 +16,19 @@ var (
 )
 
 type BalanceListen struct {
-	ctx      context.Context
-	wg       sync.WaitGroup
-	spltoken *spltoken.Program
+	ctx         context.Context
+	wg          sync.WaitGroup
+	spltoken    *spltoken.Program
 	usdcAccount string
-	dsdk     *dingsdk.DingSdk
+	dsdk        *dingsdk.DingSdk
 }
 
 func NewBalanceListen(ctx context.Context, spltoken *spltoken.Program, usdcAccount string, dsdk *dingsdk.DingSdk) *BalanceListen {
 	bl := &BalanceListen{
-		ctx:      ctx,
-		spltoken: spltoken,
+		ctx:         ctx,
+		spltoken:    spltoken,
 		usdcAccount: usdcAccount,
-		dsdk:     dsdk,
+		dsdk:        dsdk,
 	}
 	return bl
 }
