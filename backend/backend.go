@@ -15,6 +15,7 @@ import (
 
 type Backend struct {
 	logger          *log.Logger
+	txLogger *log.Logger
 	rpcClient       *rpc.Client
 	wsClients       []*ws.Client
 	ctx             context.Context
@@ -50,6 +51,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		wsClients:       wsClients,
 		ctx:             ctx,
 		logger:          utils.NewLog(config.LogPath, config.BackendLog),
+		txLogger: utils.NewLog(config.LogPath, config.SentTxHash),
 		accountSubs:     make([]*ws.AccountSubscription, 0),
 		slotSubs:        make([]*ws.SlotSubscription, 0),
 		updateBlockHash: make(chan uint64, 1024),

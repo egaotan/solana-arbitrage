@@ -44,6 +44,7 @@ var (
 	ExecutorLog                  = "executor"
 	TPULog = "tpu_executor"
 	NetworkLog = "network"
+	SentTxHash = "sent_tx"
 )
 
 type Node struct {
