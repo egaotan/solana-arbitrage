@@ -213,7 +213,7 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 }
 
 func (arb *Arbitrage) randomArbitrage() {
-	ticker := time.NewTicker(time.Second * time.Duration(arb.config.RandomTicker))
+	ticker := time.NewTicker(time.Millisecond * time.Duration(arb.config.RandomTicker))
 	for {
 		select {
 		case <-ticker.C:
