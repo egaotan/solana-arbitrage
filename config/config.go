@@ -73,6 +73,7 @@ type Config struct {
 	Bomb                int                `json:"bomb"`
 	Local               bool               `json:"local"`
 	DumpState           bool               `json:"dump_state"`
+	DumpLog             bool               `json:"dump_log"`
 	Simulate            bool               `json:"simulate"`
 	WorkSpace           string             `json:"workspace"`
 	DingUrl             string             `json:"ding-url"`

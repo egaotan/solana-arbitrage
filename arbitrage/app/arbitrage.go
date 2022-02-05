@@ -442,10 +442,14 @@ func (arb *Arbitrage) try(info *InfoUpdated) {
 
 func (arb *Arbitrage) OnArbitrage(result *calculator.Result) error {
 	yield := (int64(result.AmountOut) - int64(result.AmountIn)) * 10000 / int64(result.AmountIn)
-	arb.log.Printf("got an calculator, yield: %d, id: %d, arbitrager: %s", yield, result.Id, result.Calculator)
+	if arb.config.DumpLog {
+		arb.log.Printf("got an calculator, yield: %d, id: %d, arbitrager: %s", yield, result.Id, result.Calculator)
+	}
 	err := arb.Arbitrage(result.Id, result.TokenIn, result.AmountIn, result.UsdcAmount, result.Models, yield)
 	if err != nil {
-		arb.log.Printf("calculator err: %v", err)
+		if arb.config.DumpLog {
+			arb.log.Printf("calculator err: %v", err)
+		}
 	}
 	return nil
 }
@@ -462,14 +466,14 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	*/
 	//
 	if yield < arb.validYield {
-		arb.log.Printf("the yield is %d, too low, retry......", yield)
-		return nil
+		return fmt.Errorf("the yield is %d, too low, retry", yield)
 	}
 	if usdcAmount < 600*1000000 {
-		arb.log.Printf("usdc amount is too small, %d", usdcAmount)
-		return nil
+		return fmt.Errorf("usdc amount is too small, %d", usdcAmount)
 	}
-	arb.log.Printf("try this calculator......")
+	if arb.config.DumpLog {
+		arb.log.Printf("try this calculator......")
+	}
 	//
 	cacheSize := CacheSize
 	level := 0
@@ -519,8 +523,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		amountDiff := decimal.NewFromInt(int64(usdcAmount)).Sub(decimal.NewFromInt(int64(caches[0].initUsdcAmount))).Abs()
 		yieldDiff := decimal.NewFromInt(yield).Sub(decimal.NewFromInt(caches[0].yield)).Abs()
 		if amountDiff.Cmp(decimal.NewFromInt(1000*1000000)) < 0 && yieldDiff.Cmp(decimal.NewFromInt(100)) < 0 {
-			arb.log.Printf("so much arbitrage transactions in 60 seconds, usdc amount: %d......", usdcAmount)
-			return nil
+			return fmt.Errorf("so much arbitrage transactions in 60 seconds, usdc amount: %d", usdcAmount)
 		}
 	}
 	//
@@ -564,8 +567,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	}
 
 	if data.yield < arb.validYield {
-		arb.log.Printf("the yield is %d, too low, retry......", yield)
-		return nil
+		return fmt.Errorf("the yield is %d, too low, retry", yield)
 	}
 	//
 	caches = append(caches, data)
@@ -623,8 +625,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		}
 	}
 	if i == len(data.steps) {
-		arb.log.Printf("there is no usdc in this paths")
-		return nil
+		return fmt.Errorf("there is no usdc in this paths")
 	}
 	newSteps := make([]*ArbitrageStep, 0, len(data.steps))
 	for j := i; j < len(data.steps); j++ {
@@ -639,8 +640,7 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 	if data.amount > config.USDC_AMOUNT {
 		data.amount = config.USDC_AMOUNT
 	} else if data.amount < 600000000 && data.yield < 200 {
-		arb.log.Printf("amount is too small")
-		return nil
+		return fmt.Errorf("amount is too small")
 	}
 	data.amount = (data.amount / 100000000) * 100000000
 	if true {
@@ -664,7 +664,6 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			}
 			result, err := p.ArbitrageStep(parameter)
 			if err != nil {
-				arb.log.Printf("err: %v", err)
 				return err
 			}
 			ins = append(ins, result...)
