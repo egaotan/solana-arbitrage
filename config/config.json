@@ -80,6 +80,7 @@
   "which": 1,
   "valid-yield": 30,
   "local": true,
+  "dump_state": false,
   "simulate": true,
   "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",
   "db_url": "127.0.0.1:3306",

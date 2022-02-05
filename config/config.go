@@ -72,6 +72,7 @@ type Config struct {
 	Which               int                `json:"which"`
 	Bomb                int                `json:"bomb"`
 	Local               bool               `json:"local"`
+	DumpState           bool               `json:"dump_state"`
 	Simulate            bool               `json:"simulate"`
 	WorkSpace           string             `json:"workspace"`
 	DingUrl             string             `json:"ding-url"`
