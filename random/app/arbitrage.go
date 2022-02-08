@@ -272,12 +272,16 @@ func (arb *Arbitrage) Arbitrage() error {
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
 
 	arb.nonce++
-	arb.nonce = arb.nonce % 250
+	arb.nonce = arb.nonce % 100
+	nonce := arb.nonce
+	if arb.config.TokenA == program.MSOL && arb.config.TokenB == program.USDC {
+		nonce += 100
+	}
 	for i := 0; i < arb.config.InstructionSize; i++ {
 		// very dangerous
 		data := make([]byte, 3)
 		data[0] = 1
-		data[1] = arb.nonce
+		data[1] = nonce
 		data[2] = byte(i)
 		if i == arb.config.InstructionSize-1 {
 			data[2] = byte(100)
