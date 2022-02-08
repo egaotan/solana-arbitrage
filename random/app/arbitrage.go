@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
 	"github.com/egaotan/solana-arbitrage/config"
+	"github.com/egaotan/solana-arbitrage/dingsdk"
 	"github.com/egaotan/solana-arbitrage/env"
 	"github.com/egaotan/solana-arbitrage/orca"
 	"github.com/egaotan/solana-arbitrage/program"
@@ -21,44 +22,6 @@ import (
 	"time"
 )
 
-type ArbitrageStep struct {
-	program   program.Program
-	model     program.Model
-	tokenIn   solana.PublicKey
-	amountIn  uint64
-	slotIn    uint64
-	tokenOut  solana.PublicKey
-	amountOut uint64
-	slotOut   uint64
-}
-
-type ArbitrageData struct {
-	id             uint64
-	yield          int64
-	amount         uint64
-	initUsdcAmount uint64
-	steps          []*ArbitrageStep
-}
-
-func (ad *ArbitrageData) Copy() *ArbitrageData {
-	c := &ArbitrageData{
-		id:     ad.id,
-		yield:  ad.yield,
-		amount: ad.amount,
-		steps:  make([]*ArbitrageStep, 0, len(ad.steps)),
-	}
-	c.steps = append(c.steps, ad.steps...)
-	return c
-}
-
-type InfoUpdated struct {
-	Slot       uint64
-	UserKey    solana.PublicKey
-	NewBalance uint64
-	OldBalance uint64
-	TokenKey   solana.PublicKey
-}
-
 type Arbitrage struct {
 	ctx       context.Context
 	log       *log.Logger
@@ -71,6 +34,8 @@ type Arbitrage struct {
 	programs  map[solana.PublicKey]program.Program
 	blockHash int
 	nonce     byte
+	latestNotify uint64
+	dsdk *dingsdk.DingSdk
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -134,6 +99,9 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	arb.system = system
 	env := env.NewEnv(ctx)
 	arb.env = env
+	//
+	dsdk := dingsdk.NewDingSdk(cfg.DingUrl)
+	arb.dsdk = dsdk
 	//
 	programs := make(map[solana.PublicKey]program.Program)
 	for _, program := range cfg.Programs {
@@ -295,10 +263,31 @@ func (arb *Arbitrage) Arbitrage() error {
 		ins = append(ins, instruction)
 	}
 	{
-		id := time.Now().UnixNano() / 1000
-		arb.backend.Commit(arb.blockHash, uint64(id), ins, false, nil)
+		id := uint64(time.Now().UnixNano() / 1000)
+		arb.backend.Commit(arb.blockHash, id, ins, false, nil)
 		arb.blockHash++
 		arb.blockHash = arb.blockHash % 3
+
+		//
+		if id - arb.latestNotify > 1000000 * 60 * 5 {
+			arb.latestNotify = id
+			arb.tryNotify(id)
+		}
 	}
 	return nil
+}
+
+func (arb *Arbitrage) tryNotify(id uint64) {
+	ttStr := time.Unix(int64(id)/1000000, int64(id)%1000000*1000).Format("2006-01-02 15:04:05.000")
+	text := fmt.Sprintf("arbitrage: check tt: %s", ttStr)
+	dingNotify := &dingsdk.DingNotify{
+		MsgType: "text",
+		Text: dingsdk.DingContent{
+			Content: text,
+		},
+		At: dingsdk.DingAt{
+			IsAtAll: false,
+		},
+	}
+	arb.dsdk.Notify(dingNotify)
 }
