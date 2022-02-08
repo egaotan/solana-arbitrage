@@ -186,7 +186,7 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
 			}
 		}
-		if i%100 == 99 {
+		if i%50 == 49 {
 			time.Sleep(time.Millisecond * 100)
 		}
 	}
