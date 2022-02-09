@@ -139,7 +139,7 @@ func (arb *Arbitrage) Start() {
 
 func (arb *Arbitrage) Stop() {
 	arb.backend.Stop()
-	arb.wg.Wait()
+	//arb.wg.Wait()
 	if err := arb.splToken.Stop(); err != nil {
 		arb.log.Printf("spl token program stop err: %v", err)
 	}
