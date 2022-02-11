@@ -2,7 +2,7 @@
 
 ## 支持的市场
 
-### ORCA [9W959DqAfofkb7JTc32rdpqiyc3RDmGF5s9N6W1ujcdYVfGZ5JeEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP]
+### ORCA [9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP]
 
 * mSOL/USDC [Hme4Jnqhdz2jAPUMnS7jGE5zv6Y1ynqrUEhmUAWkXmzn]
 * mSOL/USDT [Afofkb7JTc32rdpqiyc3RDmGF5s9N6W1ujcdYVfGZ5Je]

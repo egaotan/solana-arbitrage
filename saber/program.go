@@ -136,6 +136,15 @@ func (p *Program) GetMarket(key solana.PublicKey) program.Model {
 	return model
 }
 
+func (p *Program) searchMarket(tokenA solana.PublicKey, tokenB solana.PublicKey) *KeyedStableSwap {
+	for _, market := range p.stableSwaps {
+		if market.TokenA == tokenA && market.TokenB == tokenB {
+			return market
+		}
+	}
+	return nil
+}
+
 func (p *Program) programAccounts() ([]*backend.Account, error) {
 	if p.which == config.MarketFromChain {
 		return p.backend.ProgramAccounts(p.id, []uint64{uint64(StableSwapLayoutSize)})
@@ -612,5 +621,36 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn sola
 }
 
 func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
-	return nil, nil
+	var tokenA solana.PublicKey
+	if item, ok := parameter["tokenA"]; !ok {
+		return nil, fmt.Errorf("no parameter token A - swap in instruct construction parameter")
+	} else {
+		tokenA = item.(solana.PublicKey)
+	}
+
+	var tokenB solana.PublicKey
+	if item, ok := parameter["tokenB"]; !ok {
+		return nil, fmt.Errorf("no parameter token B - swap in instruct construction parameter")
+	} else {
+		tokenB = item.(solana.PublicKey)
+	}
+
+	market := p.searchMarket(tokenA, tokenB)
+	if market == nil {
+		return nil, fmt.Errorf("no market for tokens")
+	}
+
+	authority, _, err := solana.FindProgramAddress([][]byte{market.Key.Bytes()}, p.id)
+	if err != nil {
+		return nil, err
+	}
+	IsAccounts := []*solana.AccountMeta{
+		{PublicKey: market.Key, IsSigner: false, IsWritable: true},
+		{PublicKey: authority, IsSigner: false, IsWritable: true},
+		{PublicKey: market.SwapA, IsSigner: false, IsWritable: true},
+		{PublicKey: market.SwapB, IsSigner: false, IsWritable: true},
+		{PublicKey: market.AdminFeeKeyA, IsSigner: false, IsWritable: true},
+		{PublicKey: market.AdminFeeKeyB, IsSigner: false, IsWritable: true},
+	}
+	return IsAccounts, nil
 }

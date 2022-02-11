@@ -146,6 +146,7 @@ func (p *Program) searchMarket(tokenA solana.PublicKey, tokenB solana.PublicKey)
 func (p *Program) programAccounts() ([]*backend.Account, error) {
 	if p.which == config.MarketFromChain {
 		return p.backend.ProgramAccounts(p.id, []uint64{uint64(SwapLayoutSize)})
+		//return p.backend.ProgramAccounts(p.id, nil)
 	} else {
 		return p.backend.Accounts(p.env.Markets(p.id))
 	}

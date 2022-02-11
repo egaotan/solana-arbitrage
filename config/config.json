@@ -58,7 +58,7 @@
   "block_hash": "https://free.rpcpool.com",
   "tpu_client": "https://free.rpcpool.com",
   "transaction_node_size": 10,
-  "transaction_send": 2,
+  "transaction_send": 1,
   "bomb": 500,
   "node_id": 0,
   "programs": [
@@ -68,11 +68,11 @@
   ],
   "token_a": "So11111111111111111111111111111111111111112",
   "token_b": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "instruction_size": 12,
+  "instruction_size": 1,
   "random_ticker": 1000,
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
-  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
+  "arbitrage_contract": "FheW3DFdhsoinRFKKiYY8yTCfmojSZRBrf7u6cuQ7BVa",
   "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
   "calculators": [
     "cyclic","serum"

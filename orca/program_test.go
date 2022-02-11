@@ -2,8 +2,9 @@ package orca
 
 import (
 	"context"
-	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
+	"github.com/egaotan/solana-arbitrage/config"
+	"github.com/egaotan/solana-arbitrage/env"
 	"github.com/egaotan/solana-arbitrage/program"
 	"github.com/egaotan/solana-arbitrage/spltoken"
 	"github.com/egaotan/solana-arbitrage/system"
@@ -21,15 +22,27 @@ func (pc *ProgramCallback) OnModelInit(model program.Model) error {
 
 func startProgram() *Program {
 	ctx := context.Background()
-	backend := backend.NewBackend(ctx, rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS)
-	splTokenProgram := spltoken.NewProgram(ctx, backend)
+	backend := backend.NewBackend(
+		ctx,
+		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
+		false,
+		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
+		rpc.MainNetBetaSerum_RPC,
+		rpc.MainNetBetaSerum_RPC,
+		1,
+		)
+	splTokenProgram := spltoken.NewProgram(ctx, backend, nil)
 	systemProgram := system.NewProgram(ctx, backend)
-	cb := &ProgramCallback{}
-	program := NewProgram(ctx, backend, program.OrcaV2, splTokenProgram, systemProgram, cb)
+	env := env.NewEnv(ctx)
+	programId := solana.MustPublicKeyFromBase58("9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP")
+	program := NewProgram(programId, ctx, 0, env, backend, splTokenProgram, systemProgram, nil)
 	//
 	backend.Start()
+	env.Start()
 	systemProgram.Start()
 	splTokenProgram.Start()
+
+	//
 	err := program.Start()
 	if err != nil {
 		panic(err)
@@ -38,33 +51,6 @@ func startProgram() *Program {
 }
 
 func TestProgram_Start(t *testing.T) {
-	startProgram()
-}
-
-func TestProgram_Local(t *testing.T) {
-	program1 := startProgram()
-	parameter := make(map[string]interface{})
-	parameter["market"] = solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
-	parameter["token"] = solana.MustPublicKeyFromBase58("So11111111111111111111111111111111111111112")
-	parameter["amount"] = uint64(1000000000)
-	result, err := program1.Local(parameter)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("local: %s", result.State)
-}
-
-func TestProgram_Simulate(t *testing.T) {
-	program1 := startProgram()
-	parameter := make(map[string]interface{})
-	parameter["market"] = solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
-	parameter["token"] = solana.MustPublicKeyFromBase58("So11111111111111111111111111111111111111112")
-	parameter["amount"] = uint64(1000000000)
-	result, err := program1.Simulate(parameter)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("simulate txs: %s", result.Txs)
-	fmt.Printf("simulate logs: %s", result.Logs)
-	fmt.Printf("simulate state: %s", result.State)
+	program := startProgram()
+	program.Stop()
 }

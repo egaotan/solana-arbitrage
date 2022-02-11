@@ -28,7 +28,12 @@ func (pc *ProgramCallback) OnStateUpdate(slot uint64) error {
 
 func startProgram() *Program {
 	ctx := context.Background()
-	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}}, false, []*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}})
+	backend := backend.NewBackend(ctx,
+		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
+		false,
+		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
+		"", "", 2,
+		)
 	splTokenProgram := spltoken.NewProgram(ctx, backend, nil)
 	systemProgram := system.NewProgram(ctx, backend)
 	env := env.NewEnv(ctx)
@@ -58,7 +63,7 @@ func TestProgram_Start(t *testing.T) {
 }
 
 func TestProgram_ErrorCode(t *testing.T) {
-	code := 0x100086d
+	code := 0x1000879
 	data := make([]byte, 4)
 	binary.LittleEndian.PutUint32(data, uint32(code))
 	file := data[3]

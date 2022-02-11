@@ -67,15 +67,18 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 	}()
 	trx := command.Trx
 	send := func() solana.Signature {
-		signature, err := client.SendTransactionWithOpts(backend.ctx, trx, true, rpc.CommitmentFinalized)
-		if err != nil {
-			logger.Printf("SendTransactionWithOpts err: %s", err.Error())
+		if true {
+			signature, err := client.SendTransactionWithOpts(backend.ctx, trx, true, rpc.CommitmentFinalized)
+			if err != nil {
+				logger.Printf("SendTransactionWithOpts err: %s", err.Error())
+			}
+			return signature
 		}
-		return signature
-		/*
+		if false {
 			response, err := backend.rpcClient.SimulateTransactionWithOpts(backend.ctx, trx, &rpc.SimulateTransactionOpts{
 				SigVerify:  false,
 				Commitment: rpc.CommitmentFinalized,
+				ReplaceRecentBlockhash: true,
 			})
 			if err != nil {
 				logger.Printf("SimulateTransactionWithOpts err: %s", err.Error())
@@ -92,7 +95,8 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 				logger.Printf("SimulateTransactionWithOpts err: %s", simulateTransactionResponse.Err)
 			}
 			return solana.Signature{}
-		*/
+		}
+		return solana.Signature{}
 	}
 	check := func(signature solana.Signature) error {
 		if signature.IsZero() {
