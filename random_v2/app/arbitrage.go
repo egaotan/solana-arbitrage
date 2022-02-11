@@ -206,7 +206,7 @@ func (arb *Arbitrage) Arbitrage() error {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
 		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
+		parameter["tokenA"] = program.MSOL
 		parameter["tokenB"] = program.USDC
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
@@ -221,7 +221,7 @@ func (arb *Arbitrage) Arbitrage() error {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
 		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
+		parameter["tokenA"] = program.MSOL
 		parameter["tokenB"] = program.USDT
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
@@ -250,7 +250,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	//
 	usdc_acc := arb.env.TokenUser(program.USDC)
 	usdt_acc := arb.env.TokenUser(program.USDT)
-	other_acc := arb.env.TokenUser(program.SOL)
+	other_acc := arb.env.TokenUser(program.MSOL)
 
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
