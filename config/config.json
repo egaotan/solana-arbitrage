@@ -72,7 +72,7 @@
   "random_ticker": 1000,
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
-  "arbitrage_contract": "FheW3DFdhsoinRFKKiYY8yTCfmojSZRBrf7u6cuQ7BVa",
+  "arbitrage_contract": "2HC12eXaiWsHzPg6r2FThdtTj12EVEjxR47ba5dUPVky",
   "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
   "calculators": [
     "cyclic","serum"

@@ -221,8 +221,8 @@ func (arb *Arbitrage) Arbitrage() error {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
 		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
-		parameter["tokenB"] = program.USDT
+		parameter["tokenA"] = program.MSOL
+		parameter["tokenB"] = program.USDC
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
 			return err
@@ -238,8 +238,8 @@ func (arb *Arbitrage) Arbitrage() error {
 			return fmt.Errorf("program %s is invalid", program.OrcaV2)
 		}
 		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.USDC
-		parameter["tokenB"] = program.USDT
+		parameter["tokenA"] = program.MSOL
+		parameter["tokenB"] = program.SOL
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
 			return err
@@ -248,14 +248,14 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	ins := make([]solana.Instruction, 0)
 	//
+	sol_acc := arb.env.TokenUser(program.SOL)
+	msol_acc := arb.env.TokenUser(program.MSOL)
 	usdc_acc := arb.env.TokenUser(program.USDC)
-	usdt_acc := arb.env.TokenUser(program.USDT)
-	other_acc := arb.env.TokenUser(program.SOL)
 
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: sol_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: msol_acc, IsSigner: false, IsWritable: true})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdt_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: other_acc, IsSigner: false, IsWritable: true})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysClock, IsSigner: false, IsWritable: false})
@@ -265,7 +265,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	for i := 0; i < arb.config.InstructionSize; i++ {
 		// very dangerous
 		data := make([]byte, 1)
-		data[0] = arb.nonce + 5
+		data[0] = arb.nonce + 105
 
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
