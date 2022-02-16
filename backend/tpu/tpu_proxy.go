@@ -17,7 +17,7 @@ import (
 
 type Proxy struct {
 	ctx          context.Context
-	client       *rpc.Client
+	client       []*rpc.Client
 	curSlot      uint64
 	ans          *AvailableNodesService
 	lss          *LeaderScheduleService
@@ -33,14 +33,18 @@ type Command struct {
 	Tx []byte
 }
 
-func NewProxy(ctx context.Context, tpuclient string) *Proxy {
+func NewProxy(ctx context.Context, tpuclient []string) *Proxy {
 	proxy := &Proxy{
 		ctx:          ctx,
-		client:       rpc.New(tpuclient),
 		latestSlots:  make(chan uint64, 1024),
 		transactions: make(chan *Command, 1024),
 		tpuConns:     make(map[string]net.Conn),
 	}
+	clients := make([]*rpc.Client, 0)
+	for _, x := range tpuclient {
+		clients = append(clients, rpc.New(x))
+	}
+	proxy.client = clients
 	proxy.logger = utils.NewLog(config.LogPath, config.TPULog)
 	proxy.ans = NewAvailableNodesService(proxy.ctx, proxy.client, proxy.logger)
 	proxy.lss = NewLeaderScheduleService(proxy.ctx, proxy.client, proxy.logger)
@@ -135,6 +139,9 @@ func (proxy *Proxy) newSlot() {
 					break L
 				}
 			}
+			if slot - proxy.curSlot < 5 {
+				continue
+			}
 			proxy.curSlot = slot
 			proxy.RefreshConnection()
 		}
@@ -186,8 +193,8 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
 			}
 		}
-		if i%50 == 49 {
-			time.Sleep(time.Millisecond * 100)
+		if i%10 == 9 {
+			time.Sleep(time.Millisecond * 50)
 		}
 	}
 }

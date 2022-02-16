@@ -55,8 +55,8 @@
       "usable": true
     }
   ],
-  "block_hash": "https://free.rpcpool.com",
-  "tpu_client": "https://free.rpcpool.com",
+  "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
+  "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
   "transaction_node_size": 10,
   "transaction_send": 1,
   "bomb": 500,

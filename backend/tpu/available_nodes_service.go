@@ -11,13 +11,14 @@ import (
 
 type AvailableNodesService struct {
 	ctx            context.Context
-	client         *rpc.Client
+	client         []*rpc.Client
+	index          int
 	availableNodes map[solana.PublicKey]string
 	lock           int32
 	logger         *log.Logger
 }
 
-func NewAvailableNodesService(ctx context.Context, client *rpc.Client, logger *log.Logger) *AvailableNodesService {
+func NewAvailableNodesService(ctx context.Context, client []*rpc.Client, logger *log.Logger) *AvailableNodesService {
 	ans := &AvailableNodesService{
 		ctx:            ctx,
 		client:         client,
@@ -32,11 +33,23 @@ func (ans *AvailableNodesService) Start() {
 }
 
 func (ans *AvailableNodesService) fetchAvailableNodes() {
-	clusterNodes, err := ans.client.GetClusterNodes(ans.ctx)
+	var clusterNodes []*rpc.GetClusterNodesResult
+	var err error
+	for i := 0; i < len(ans.client);i ++ {
+		clusterNodes, err = ans.client[ans.index].GetClusterNodes(ans.ctx)
+		if err != nil {
+			ans.logger.Printf("GetClusterNodes err: %s", err.Error())
+			ans.index ++
+			ans.index = ans.index % len(ans.client)
+		} else {
+			break
+		}
+	}
 	if err != nil {
-		ans.logger.Printf("GetClusterNodes err: %s", err.Error())
+		ans.logger.Printf("GetClusterNodes all err: %s", err.Error())
 		return
 	}
+
 	ans.logger.Printf("get GetClusterNodes......")
 	for _, node := range clusterNodes {
 		if node.TPU != nil {

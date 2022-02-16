@@ -9,7 +9,11 @@ import (
 func (backend *Backend) CacheRecentBlockHash() {
 	defer backend.wg.Done()
 	//ticker := time.NewTicker(time.Second * 2)
-	rpcClient := rpc.New(backend.blockHash)
+	rpcClients := make([]*rpc.Client, 0)
+	for _, x := range backend.blockHash {
+		rpcClients = append(rpcClients, rpc.New(x))
+	}
+	index := 0
 	for {
 		select {
 		case slot := <-backend.updateBlockHash:
@@ -41,15 +45,26 @@ func (backend *Backend) CacheRecentBlockHash() {
 			*/
 			slot = slot / 5 * 5
 			reward := false
-			getBlockResult, err := rpcClient.GetBlockWithOpts(backend.ctx, slot-20,
-				&rpc.GetBlockOpts{
-					Encoding:           solana.EncodingBase64,
-					TransactionDetails: rpc.TransactionDetailsNone,
-					Rewards:            &reward,
-					Commitment:         rpc.CommitmentConfirmed,
-				})
+			var getBlockResult *rpc.GetBlockResult
+			var err error
+			for i := 0;i < len(rpcClients);i ++ {
+				getBlockResult, err = rpcClients[index].GetBlockWithOpts(backend.ctx, slot-30,
+					&rpc.GetBlockOpts{
+						Encoding:           solana.EncodingBase64,
+						TransactionDetails: rpc.TransactionDetailsNone,
+						Rewards:            &reward,
+						Commitment:         rpc.CommitmentConfirmed,
+					})
+				if err != nil {
+					backend.logger.Printf("GetBlock, err: %s", err.Error())
+					index ++
+					index = index % len(rpcClients)
+				} else {
+					break
+				}
+			}
 			if err != nil {
-				backend.logger.Printf("GetBlock, err: %s", err.Error())
+				backend.logger.Printf("GetBlock, all err: %s", err.Error())
 				continue
 			}
 			backend.logger.Printf("get recent block hash. (%s, %d, %d)",

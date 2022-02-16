@@ -15,7 +15,8 @@ var (
 
 type LeaderScheduleService struct {
 	ctx       context.Context
-	client    *rpc.Client
+	client    []*rpc.Client
+	index     int
 	firstSlot uint64
 	leaders   map[uint64]solana.PublicKey
 	newFresh  chan uint64
@@ -23,7 +24,7 @@ type LeaderScheduleService struct {
 	logger    *log.Logger
 }
 
-func NewLeaderScheduleService(ctx context.Context, client *rpc.Client, logger *log.Logger) *LeaderScheduleService {
+func NewLeaderScheduleService(ctx context.Context, client []*rpc.Client, logger *log.Logger) *LeaderScheduleService {
 	lss := &LeaderScheduleService{
 		ctx:      ctx,
 		client:   client,
@@ -39,11 +40,23 @@ func (ans *LeaderScheduleService) Start() {
 }
 
 func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
-	leaders, err := ans.client.GetSlotLeaders(ans.ctx, slot, counter)
+	var leaders []solana.PublicKey
+	var err error
+	for i := 0;i < len(ans.client);i ++ {
+		leaders, err = ans.client[ans.index].GetSlotLeaders(ans.ctx, slot, counter)
+		if err != nil {
+			ans.logger.Printf("GetSlotLeaders err: %s", err.Error())
+			ans.index ++
+			ans.index = ans.index % len(ans.client)
+		} else {
+			break
+		}
+	}
 	if err != nil {
-		ans.logger.Printf("GetSlotLeaders err: %s", err.Error())
+		ans.logger.Printf("GetSlotLeaders all err: %s", err.Error())
 		return
 	}
+
 	ans.logger.Printf("GetSlotLeaders, slot: %d, count: %d", slot, counter)
 	for !atomic.CompareAndSwapInt32(&ans.lock, 0, 1) {
 		continue
@@ -85,6 +98,7 @@ func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
 	if ok {
 		return item
 	}
+	ans.logger.Printf("get slot leader err")
 	return solana.PublicKey{}
 }
 
