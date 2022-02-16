@@ -131,12 +131,14 @@ func (proxy *Proxy) newSlot() {
 	for {
 		select {
 		case slot := <-proxy.latestSlots:
-		L:
-			for {
-				select {
-				case slot = <-proxy.latestSlots:
-				default:
-					break L
+			{
+			L:
+				for {
+					select {
+					case slot = <-proxy.latestSlots:
+					default:
+						break L
+					}
 				}
 			}
 			if slot - proxy.curSlot < 5 {

@@ -106,15 +106,17 @@ func (ans *LeaderScheduleService) Refresh() {
 	for {
 		select {
 		case slot := <-ans.newFresh:
-		L:
-			for {
-				select {
-				case item := <-ans.newFresh:
-					if item < slot {
-						slot = item
+			{
+			L:
+				for {
+					select {
+					case item := <-ans.newFresh:
+						if item < slot {
+							slot = item
+						}
+					default:
+						break L
 					}
-				default:
-					break L
 				}
 			}
 			ans.refresh(slot)
