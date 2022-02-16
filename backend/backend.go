@@ -32,6 +32,7 @@ type Backend struct {
 	commandChans    []chan *Command
 	clients         []*rpc.Client
 	blockHash       []string
+	blockHashTime   uint64
 	tpu             *tpu.Proxy
 	transactionSend int
 }

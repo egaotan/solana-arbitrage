@@ -16,15 +16,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 	index := 0
 	for {
 		select {
-		case slot := <-backend.updateBlockHash:
-		L:
-			for {
-				select {
-				case slot = <-backend.updateBlockHash:
-				default:
-					break L
-				}
-			}
+		case <-backend.updateBlockHash:
 			/*
 				getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 				if err != nil {
@@ -43,7 +35,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 					backend.cachedBlockHash = backend.cachedBlockHash[1:]
 					atomic.StoreInt32(&backend.lock, 0)
 			*/
-			slot = slot / 5 * 5
+			backend.logger.Printf("begin update block hash")
 			var getRecentBlockHashResult *rpc.GetRecentBlockhashResult
 			var err error
 			for i := 0;i < len(rpcClients);i ++ {
