@@ -61,7 +61,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 				continue
 			}
 			backend.logger.Printf("get recent block hash. (%s, %d, %d)",
-				getRecentBlockHashResult.Value.Blockhash.String(), getRecentBlockHashResult.Context.Slot)
+				getRecentBlockHashResult.Value.Blockhash.String(), getRecentBlockHashResult.Context.Slot, index)
 			if backend.cachedBlockHash[2] == getRecentBlockHashResult.Value.Blockhash {
 				continue
 			}
