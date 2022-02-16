@@ -48,16 +48,25 @@ func (backend *Backend) CacheRecentBlockHash() {
 			var getBlockResult *rpc.GetBlockResult
 			var err error
 			for i := 0;i < len(rpcClients);i ++ {
-				getBlockResult, err = rpcClients[index].GetBlockWithOpts(backend.ctx, slot-30,
-					&rpc.GetBlockOpts{
-						Encoding:           solana.EncodingBase64,
-						TransactionDetails: rpc.TransactionDetailsNone,
-						Rewards:            &reward,
-						Commitment:         rpc.CommitmentConfirmed,
-					})
+				rslot := slot - 30
+				for j := 0;j < 4;j ++ {
+					getBlockResult, err = rpcClients[index].GetBlockWithOpts(backend.ctx, rslot,
+						&rpc.GetBlockOpts{
+							Encoding:           solana.EncodingBase64,
+							TransactionDetails: rpc.TransactionDetailsNone,
+							Rewards:            &reward,
+							Commitment:         rpc.CommitmentConfirmed,
+						})
+					if err != nil {
+						backend.logger.Printf("GetBlock, %d %d err: %s", index, rslot, err.Error())
+						rslot -= 5
+					} else {
+						break
+					}
+				}
 				if err != nil {
-					backend.logger.Printf("GetBlock, err: %s", err.Error())
-					index ++
+					backend.logger.Printf("GetBlock, %d %d err: %s", index, rslot, err.Error())
+					index++
 					index = index % len(rpcClients)
 				} else {
 					break
