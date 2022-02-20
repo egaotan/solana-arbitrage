@@ -21,12 +21,12 @@ import (
 
 var (
 	//Owner = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
-	Player = solana.MustPublicKeyFromBase58("3pfNpRNu31FBzx84TnefG6iBkSqQxGtuL5G5v9aaxyv8")
+	Player = solana.MustPublicKeyFromBase58("5t695wLY2FPfx2MpGscG3YM3yhGVNPKCQC5d2qmtMibd")
 )
 
 var (
 	//OwnerKey = solana.MustPrivateKeyFromBase58("")
-	PlayerKey = ""
+	PlayerKey = "2oNrHdcEgWCnbfraEkD1kV4Ytv3HBgJBaQBbSDng1d24hnCrNkTx7K9VC3ehZks8Kk5e4qpt5x1Ea6n9vQhMjm3y"
 )
 
 var (
@@ -37,7 +37,7 @@ func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
 	ctx := context.Background()
 	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
 		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
-		"https://free.rpcpool.com", "https://free.rpcpool.com", 2,
+		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2,
 	)
 	backend.ImportWallet(PlayerKey)
 	backend.SetPlayer(Player)
@@ -83,7 +83,7 @@ func Test_CreateSplTokenAccountSingle(t *testing.T) {
 }
 
 func Test_CreateSplTokenAccount(t *testing.T) {
-	userJson, err := os.ReadFile("./config2/tokens_user.json")
+	userJson, err := os.ReadFile("./config/tokens_new_user.json")
 	if err != nil {
 		panic(err)
 	}
@@ -109,7 +109,7 @@ func CreateMarketOpenOrders(market solana.PublicKey) solana.PublicKey {
 	ctx := context.Background()
 	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
 		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
-		"https://free.rpcpool.com", "https://free.rpcpool.com", 2)
+		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2)
 	backend.ImportWallet(PlayerKey)
 	backend.SetPlayer(Player)
 	env := env.NewEnv(ctx)
@@ -154,7 +154,7 @@ func Test_CreateOpenOrders4UserSingle(t *testing.T) {
 }
 
 func Test_CreateOpenOrders4User(t *testing.T) {
-	userJson, err := os.ReadFile("./config2/markets_openorder.json")
+	userJson, err := os.ReadFile("./config/markets_openorder_new.json")
 	if err != nil {
 		panic(err)
 	}

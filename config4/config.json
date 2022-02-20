@@ -1,0 +1,58 @@
+{
+  "nodes": [
+    {
+      "rpc": "https://api.mainnet-beta.solana.com",
+      "ws": "wss://api.mainnet-beta.solana.com",
+      "wss": ["wss://86.109.14.237:443", "wss://147.75.66.251:443", "wss://145.40.93.109:443"],
+      "usable": true
+    },
+    {
+      "rpc": "https://solana-api.projectserum.com",
+      "ws": "wss://solana-api.projectserum.com",
+      "usable": false
+    }
+  ],
+  "transaction_nodes": [
+    {
+      "rpc": "https://api.mainnet-beta.solana.com",
+      "usable": true
+    },
+    {
+      "rpc": "https://solana-api.projectserum.com",
+      "usable": true
+    },
+    {
+      "rpc": "https://solana-mainnet.phantom.tech",
+      "usable": true
+    }
+  ],
+  "block_hash": "https://free.rpcpool.com",
+  "tpu_client": "https://free.rpcpool.com",
+  "transaction_node_size": 10,
+  "transaction_send": 2,
+  "node_id": 0,
+  "programs": [
+    "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+    "SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ",
+    "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
+  ],
+  "user": "4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX",
+  "key":"",
+  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
+  "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
+  "calculators": [
+    "cyclic","serum"
+  ],
+  "which": 1,
+  "valid-yield": 30,
+  "local": true,
+  "simulate": true,
+  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",
+  "db_url": "127.0.0.1:3306",
+  "db_scheme": "arbitrage",
+  "db_user": "root",
+  "db_passwd": "Tgy_#0010",
+  "listen": "0.0.0.0:8088",
+  "usdc_account": "4ZB5bXn24CaCaRm2PtBa8n3oNQrsaV9452iNe6acQ7st",
+  "usdc": 97100
+}
