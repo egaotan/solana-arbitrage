@@ -134,7 +134,7 @@ func (arb *Arbitrage) Start() {
 	}
 	arb.wg.Add(1)
 	arb.backend.SubscribeSlot(arb)
-	go arb.randomArbitrage()
+	arb.randomArbitrage()
 	//arb.Arbitrage()
 	arb.log.Printf("auto trader has started......")
 }
@@ -183,19 +183,11 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 }
 
 func (arb *Arbitrage) randomArbitrage() {
-	ticker := time.NewTicker(time.Millisecond * time.Duration(arb.config.RandomTicker))
-	for {
-		select {
-		case <-ticker.C:
-			arb.Arbitrage()
-			arb.Balance()
-		case <-arb.ctx.Done():
-			return
-		}
-	}
+	time.Sleep(time.Second * 5)
+	arb.ArbitrageClose()
 }
 
-func (arb *Arbitrage) Arbitrage() error {
+func (arb *Arbitrage) ArbitrageClose() error {
 	//
 	accounts := make([]*solana.AccountMeta, 0)
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
@@ -256,39 +248,9 @@ func (arb *Arbitrage) Arbitrage() error {
 		}
 		ins = append(ins, instruction)
 	}
-	{
+	if false {
 		data := make([]byte, 1)
-		data[0] = 2
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.Arbitrage,
-		}
-		ins = append(ins, instruction)
-	}
-	{
-		data := make([]byte, 1)
-		data[0] = 3
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.Arbitrage,
-		}
-		ins = append(ins, instruction)
-	}
-	{
-		data := make([]byte, 1)
-		data[0] = 4
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.Arbitrage,
-		}
-		ins = append(ins, instruction)
-	}
-	{
-		data := make([]byte, 1)
-		data[0] = 5
+		data[0] = 8
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
