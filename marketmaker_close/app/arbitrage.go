@@ -184,8 +184,8 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 
 func (arb *Arbitrage) randomArbitrage() {
 	time.Sleep(time.Second * 20)
-	//arb.ArbitrageClose()
-	arb.ArbitrageStart()
+	arb.ArbitrageClose()
+	//arb.ArbitrageStart()
 }
 
 func (arb *Arbitrage) ArbitrageClose() error {
@@ -240,7 +240,7 @@ func (arb *Arbitrage) ArbitrageClose() error {
 	arb.nonce = arb.nonce % 200
 	{
 		data := make([]byte, 2)
-		data[0] = 1
+		data[0] = 60
 		data[1] = arb.nonce
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,

@@ -34,6 +34,7 @@ type Arbitrage struct {
 	programs  map[solana.PublicKey]program.Program
 	blockHash int
 	nonce     byte
+	balanceCounter int
 	latestNotify uint64
 	dsdk *dingsdk.DingSdk
 }
@@ -247,7 +248,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	arb.nonce = arb.nonce % 200
 	{
 		data := make([]byte, 2)
-		data[0] = 1
+		data[0] = 10
 		data[1] = arb.nonce
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
@@ -258,7 +259,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	{
 		data := make([]byte, 1)
-		data[0] = 2
+		data[0] = 11
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
@@ -268,7 +269,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	{
 		data := make([]byte, 1)
-		data[0] = 3
+		data[0] = 20
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
@@ -278,7 +279,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	{
 		data := make([]byte, 1)
-		data[0] = 4
+		data[0] = 30
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
@@ -288,7 +289,17 @@ func (arb *Arbitrage) Arbitrage() error {
 	}
 	{
 		data := make([]byte, 1)
-		data[0] = 5
+		data[0] = 40
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.Arbitrage,
+		}
+		ins = append(ins, instruction)
+	}
+	{
+		data := make([]byte, 1)
+		data[0] = 50
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
@@ -335,11 +346,15 @@ func (arb *Arbitrage) Balance() error {
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysClock, IsSigner: false, IsWritable: false})
 
+	arb.balanceCounter ++
+	if arb.balanceCounter % 3 != 0 {
+		return nil
+	}
 	arb.nonce ++
 	arb.nonce = arb.nonce % 200
 	{
 		data := make([]byte, 2)
-		data[0] = 7
+		data[0] = 70
 		data[1] = arb.nonce
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
