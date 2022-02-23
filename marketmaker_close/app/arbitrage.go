@@ -183,8 +183,9 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 }
 
 func (arb *Arbitrage) randomArbitrage() {
-	time.Sleep(time.Second * 5)
-	arb.ArbitrageClose()
+	time.Sleep(time.Second * 10)
+	//arb.ArbitrageClose()
+	arb.ArbitrageStart()
 }
 
 func (arb *Arbitrage) ArbitrageClose() error {
@@ -267,18 +268,34 @@ func (arb *Arbitrage) ArbitrageClose() error {
 	return nil
 }
 
-func (arb *Arbitrage) Balance() error {
+func (arb *Arbitrage) ArbitrageStart() error {
 	//
 	accounts := make([]*solana.AccountMeta, 0)
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Saber, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
 	// serum
 	{
-		p, ok := arb.programs[program.Saber]
+		p, ok := arb.programs[program.SerumV22]
 		if !ok {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
 		}
 		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.USDC
+		parameter["tokenA"] = program.SOL
+		parameter["tokenB"] = program.USDC
+		accs, err := p.RandomAccounts(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+	}
+
+	{
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = program.SOL
 		parameter["tokenB"] = program.USDT
 		accs, err := p.RandomAccounts(parameter)
 		if err != nil {
@@ -290,18 +307,20 @@ func (arb *Arbitrage) Balance() error {
 	//
 	usdc_acc := arb.env.TokenUser(program.USDC)
 	usdt_acc := arb.env.TokenUser(program.USDT)
+	other_acc := arb.env.TokenUser(program.SOL)
 
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdt_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: other_acc, IsSigner: false, IsWritable: true})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysClock, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
 
 	arb.nonce ++
 	arb.nonce = arb.nonce % 200
 	{
 		data := make([]byte, 2)
-		data[0] = 7
+		data[0] = 9
 		data[1] = arb.nonce
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
