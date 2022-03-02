@@ -224,7 +224,9 @@ func (arb *Arbitrage) Service() {
 }
 
 func (arb *Arbitrage) Start() {
-	arb.nd.Start()
+	if arb.config.NetStatus {
+		arb.nd.Start()
+	}
 	arb.store.Start()
 	arb.backend.Start()
 	arb.env.Start()

@@ -269,9 +269,11 @@ func (arb *Arbitrage) Arbitrage() error {
 		arb.blockHash = arb.blockHash % 3
 
 		//
-		if id - arb.latestNotify > 1000000 * 60 * 5 {
-			arb.latestNotify = id
-			arb.tryNotify(id)
+		if arb.config.NetStatus {
+			if id-arb.latestNotify > 1000000*60*5 {
+				arb.latestNotify = id
+				arb.tryNotify(id)
+			}
 		}
 	}
 	return nil

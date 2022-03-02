@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/config"
-	"github.com/egaotan/solana-arbitrage/random/app"
+	"github.com/egaotan/solana-arbitrage/random_serum_sol_msol_usdc/app"
 	"os"
 	"os/signal"
 	"syscall"
