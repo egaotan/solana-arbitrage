@@ -55,6 +55,8 @@ func (e *Env) Markets(program1 solana.PublicKey) []solana.PublicKey {
 	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("DvmDTjsdnN77q7SST7gngLydP1ASNNpUVi4cNfU95oCr"))
 	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("77quYg4MGneUdjgXCunt9GgM1usmrxKY31twEy3WHwcS"))
 	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("5cLrMai1DsLRYc1Nio9qMTicsWtvzjzZfJPXyAoF4t1Z"))
+	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("2xiv8A5xrJ7RnGdxXB42uFEkYHJjszEhaJyKKt4WaLep"))
+	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("teE55QrL4a4QSfydR9dnHF97jgCfptpuigbb53Lo95g"))
 	return marketKeys
 }
 
