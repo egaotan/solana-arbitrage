@@ -16,6 +16,7 @@ import (
 const (
 	ExecutorSize = 8
 	Try          = 0
+	Test         = false
 )
 
 type Command struct {
@@ -67,14 +68,14 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 	}()
 	trx := command.Trx
 	send := func() solana.Signature {
-		if true {
+		if !Test {
 			signature, err := client.SendTransactionWithOpts(backend.ctx, trx, true, rpc.CommitmentFinalized)
 			if err != nil {
 				logger.Printf("SendTransactionWithOpts err: %s", err.Error())
 			}
 			return signature
 		}
-		if false {
+		if Test {
 			response, err := backend.rpcClient.SimulateTransactionWithOpts(backend.ctx, trx, &rpc.SimulateTransactionOpts{
 				SigVerify:  false,
 				Commitment: rpc.CommitmentFinalized,
@@ -188,13 +189,19 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		backend.logger.Printf("build err: %s", err.Error())
 		return
 	}
+
+	if Test {
+		txJson, _ := json.MarshalIndent(trx, "", "    ")
+		backend.logger.Printf("%s", txJson)
+	}
+
 	trx.Sign(backend.getWallet)
 
 	backend.txLogger.Printf("%s;%d;%s", trx.Signatures[0].String(), id,
 		time.Unix(int64(id)/1000000, int64(id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
 
 	//
-	if backend.transactionSend == 2 || backend.transactionSend == 3 {
+	if backend.transactionSend == 2 || backend.transactionSend == 3 && !Test {
 		backend.logger.Printf("send transaction to tpu")
 		command := &tpu.Command{
 			Id: id,
