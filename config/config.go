@@ -74,6 +74,7 @@ type Config struct {
 	Local               bool               `json:"local"`
 	DumpState           bool               `json:"dump_state"`
 	DumpLog             bool               `json:"dump_log"`
+	NetStatus           bool               `json:"net_status"`
 	Simulate            bool               `json:"simulate"`
 	WorkSpace           string             `json:"workspace"`
 	DingUrl             string             `json:"ding-url"`
