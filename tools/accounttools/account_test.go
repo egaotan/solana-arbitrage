@@ -21,16 +21,16 @@ import (
 
 var (
 	//Owner = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
-	Player = solana.MustPublicKeyFromBase58("5t695wLY2FPfx2MpGscG3YM3yhGVNPKCQC5d2qmtMibd")
+	Player = solana.MustPublicKeyFromBase58("3pfNpRNu31FBzx84TnefG6iBkSqQxGtuL5G5v9aaxyv8")
 )
 
 var (
 	//OwnerKey = solana.MustPrivateKeyFromBase58("")
-	PlayerKey = "2oNrHdcEgWCnbfraEkD1kV4Ytv3HBgJBaQBbSDng1d24hnCrNkTx7K9VC3ehZks8Kk5e4qpt5x1Ea6n9vQhMjm3y"
+	PlayerKey = "58WF8aF3FDDYLQoPjHiERk53gd2UgLtiJk1rr8saVsDHWz1ieJtEteNYhsDrYGPEYcbZ3SdqvG7TZbvwChaXMS5e"
 )
 
 var (
-	ArbitrageContract = solana.MustPublicKeyFromBase58("7H4ShpibmzrKS8yPJX9wi1ZyrRYzw5tLym7RjWvAxcHA")
+	ArbitrageContract = solana.MustPublicKeyFromBase58("9aKPKtXAgFv2Sg9zNDaZrNLRwqJcASbBwn3yj3L2RrdK")
 )
 
 func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
@@ -183,7 +183,7 @@ func CreateArbitrageAccount() solana.PublicKey {
 	}
 	blockHash := getRecentBlockHashResult.Value.Blockhash
 	//
-	space := uint64(72)
+	space := uint64(80)
 	lamports, err := client.GetMinimumBalanceForRentExemption(ctx, space, rpc.CommitmentFinalized)
 	if err != nil {
 		panic(err)

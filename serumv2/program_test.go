@@ -13,6 +13,7 @@ import (
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"testing"
+	"time"
 )
 
 type ProgramCallback struct {
@@ -30,9 +31,9 @@ func startProgram() *Program {
 	ctx := context.Background()
 	backend := backend.NewBackend(ctx,
 		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
-		false,
+		true,
 		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
-		[]string{""}, []string{""}, 2,
+		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2,
 		)
 	splTokenProgram := spltoken.NewProgram(ctx, backend, nil)
 	systemProgram := system.NewProgram(ctx, backend)
@@ -42,6 +43,9 @@ func startProgram() *Program {
 	program := NewProgram(programId, ctx, 1, env, backend, splTokenProgram, systemProgram, cb)
 	//
 	backend.Start()
+	backend.SetPlayer(solana.MustPublicKeyFromBase58("5t695wLY2FPfx2MpGscG3YM3yhGVNPKCQC5d2qmtMibd"))
+	backend.ImportWallet("2oNrHdcEgWCnbfraEkD1kV4Ytv3HBgJBaQBbSDng1d24hnCrNkTx7K9VC3ehZks8Kk5e4qpt5x1Ea6n9vQhMjm3y")
+	backend.SubscribeSlot(nil)
 	env.Start()
 	systemProgram.Start()
 	splTokenProgram.Start()
@@ -49,12 +53,19 @@ func startProgram() *Program {
 	if err != nil {
 		panic(err)
 	}
-	market := solana.MustPublicKeyFromBase58("Di66GTLsV64JgCCYGVcY21RZ173BHkjJVgPyezNN7P1K")
+	time.Sleep(time.Second * 15)
+	market := solana.MustPublicKeyFromBase58("HWHvQhFmJB3NUcu1aihKmrKegfVxBEHzwVX6yZCKEsi1")
 	state, err := program.RetrieveState(market)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("state: %s\n", state)
+	ins, err := program.InstructionNewOrder(market, solana.MustPublicKeyFromBase58("Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"), 1000000000, false)
+	if err != nil {
+		panic(err)
+	}
+	backend.Commit(0, uint64(time.Now().UnixNano()/1000), []solana.Instruction{ins}, false, nil)
+	time.Sleep(time.Second * 15)
 	return program
 }
 
