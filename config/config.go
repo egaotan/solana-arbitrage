@@ -3,11 +3,6 @@ package config
 import "github.com/gagliardetto/solana-go"
 
 var (
-	SOL_USDC  = solana.MustPublicKeyFromBase58("EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U")
-	USDC_USER = solana.MustPublicKeyFromBase58("C5dr2fk9zLvjuSjxe3tdvFurcZHKbfU1mHbpdv9Bfr7T")
-)
-
-var (
 //validYield = int64(-50)
 )
 
@@ -17,10 +12,6 @@ var (
 
 var (
 	Bomb = 2000
-)
-
-var (
-	ConsumeEvent = false
 )
 
 const (
@@ -54,7 +45,6 @@ var (
 type Node struct {
 	Rpc    string   `json:"rpc"`
 	Ws     string   `json:"ws"`
-	Wss    []string `json:"wss"`
 	Usable bool     `json:"usable"`
 }
 
@@ -79,7 +69,6 @@ type Config struct {
 	DumpState           bool               `json:"dump_state"`
 	DumpLog             bool               `json:"dump_log"`
 	NetStatus           bool               `json:"net_status"`
-	ConsumeEvent        bool               `json:"consume_event"`
 	Simulate            bool               `json:"simulate"`
 	WorkSpace           string             `json:"workspace"`
 	DingUrl             string             `json:"ding-url"`
