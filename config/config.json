@@ -3,12 +3,12 @@
     {
       "rpc": "https://api.mainnet-beta.solana.com",
       "ws": "wss://api.mainnet-beta.solana.com",
-      "usable": false
+      "usable": true
     },
     {
       "rpc": "https://solana-api.projectserum.com",
       "ws": "wss://solana-api.projectserum.com",
-      "usable": true
+      "usable": false
     },
     {
       "rpc": "https://solend.genesysgo.net",
@@ -53,13 +53,25 @@
     {
       "rpc": "https://solana-mainnet.phantom.tech",
       "usable": true
+    },
+    {
+      "rpc": "http://86.109.15.59:8899",
+      "usable": true
+    },
+    {
+      "rpc": "http://203.90.228.206:8899",
+      "usable": true
+    },
+    {
+      "rpc": "http://87.255.8.92:30333",
+      "usable": true
     }
   ],
   "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
   "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
   "transaction_node_size": 10,
-  "transaction_send": 1,
-  "bomb": 500,
+  "transaction_send": 3,
+  "bomb": 99,
   "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
@@ -69,26 +81,26 @@
   "token_a": "So11111111111111111111111111111111111111112",
   "token_b": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   "instruction_size": 1,
-  "random_ticker": 1000,
+  "random_ticker": 500,
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
-  "arbitrage_contract": "2HC12eXaiWsHzPg6r2FThdtTj12EVEjxR47ba5dUPVky",
+  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
   "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
   "calculators": [
     "cyclic","serum"
   ],
   "which": 1,
-  "valid-yield": 30,
+  "valid-yield": 10,
   "local": true,
   "dump_state": false,
   "dump_log": false,
   "simulate": true,
-  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",
+  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=74dc3391b40444744c817c3b46d0f396a1fd48a7b16024afb5ec931dfde22a64",
   "db_url": "127.0.0.1:3306",
   "db_scheme": "arbitrage",
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
   "listen": "0.0.0.0:8088",
   "usdc_account": "C5dr2fk9zLvjuSjxe3tdvFurcZHKbfU1mHbpdv9Bfr7T",
-  "usdc": 97100
+  "usdc": 147100
 }

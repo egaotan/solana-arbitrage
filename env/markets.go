@@ -3,7 +3,6 @@ package env
 import (
 	"encoding/json"
 	"github.com/egaotan/solana-arbitrage/config"
-	"github.com/egaotan/solana-arbitrage/program"
 	"github.com/gagliardetto/solana-go"
 	"os"
 )
@@ -37,6 +36,7 @@ func (e *Env) Markets(program1 solana.PublicKey) []solana.PublicKey {
 	for marketKey, _ := range markets {
 		marketKeys = append(marketKeys, marketKey)
 	}
+	/*
 	if program1 != program.SerumV22 {
 		return marketKeys
 	}
@@ -57,6 +57,7 @@ func (e *Env) Markets(program1 solana.PublicKey) []solana.PublicKey {
 	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("5cLrMai1DsLRYc1Nio9qMTicsWtvzjzZfJPXyAoF4t1Z"))
 	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("2xiv8A5xrJ7RnGdxXB42uFEkYHJjszEhaJyKKt4WaLep"))
 	marketKeys = append(marketKeys, solana.MustPublicKeyFromBase58("teE55QrL4a4QSfydR9dnHF97jgCfptpuigbb53Lo95g"))
+	*/
 	return marketKeys
 }
 

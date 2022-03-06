@@ -19,11 +19,16 @@ const (
 	Test         = false
 )
 
+type Callback interface {
+	OnCommandExecuted(account []*rpc.Account) error
+}
+
 type Command struct {
 	Id       uint64
 	Trx      *solana.Transaction
 	Simulate bool
 	Accounts []solana.PublicKey
+	Callback Callback
 }
 
 func (backend *Backend) Executor(id int, commandChan chan *Command, client *rpc.Client) {
@@ -80,6 +85,7 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 				SigVerify:  false,
 				Commitment: rpc.CommitmentFinalized,
 				ReplaceRecentBlockhash: true,
+				Accounts: &rpc.SimulateTransactionAccountsOpts{solana.EncodingBase64,command.Accounts},
 			})
 			if err != nil {
 				logger.Printf("SimulateTransactionWithOpts err: %s", err.Error())
@@ -94,6 +100,10 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 			logger.Printf("logs: %s", string(logsJson))
 			if simulateTransactionResponse.Err != nil {
 				logger.Printf("SimulateTransactionWithOpts err: %s", simulateTransactionResponse.Err)
+				return solana.Signature{}
+			}
+			if command.Callback != nil {
+				command.Callback.OnCommandExecuted(response.Value.Accounts)
 			}
 			return solana.Signature{}
 		}
@@ -176,7 +186,7 @@ func (backend *Backend) startExecutor() {
 	}
 }
 
-func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, simulate bool, accounts []solana.PublicKey) {
+func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, simulate bool, accounts []solana.PublicKey, callback Callback) {
 	// build transaction
 	builder := solana.NewTransactionBuilder()
 	for _, i := range ins {
@@ -201,7 +211,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		time.Unix(int64(id)/1000000, int64(id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
 
 	//
-	if backend.transactionSend == 2 || backend.transactionSend == 3 && !Test {
+	if (backend.transactionSend == 2 || backend.transactionSend == 3) && !Test {
 		backend.logger.Printf("send transaction to tpu")
 		command := &tpu.Command{
 			Id: id,
@@ -219,6 +229,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 			Trx:      trx,
 			Simulate: simulate,
 			Accounts: accounts,
+			Callback: callback,
 		}
 		for i := 0; i < len(backend.commandChans); i++ {
 			backend.commandChans[i] <- command

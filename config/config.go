@@ -19,6 +19,10 @@ var (
 	Bomb = 2000
 )
 
+var (
+	ConsumeEvent = false
+)
+
 const (
 	MarketFromChain = iota
 	MarketFromConfig
@@ -75,6 +79,7 @@ type Config struct {
 	DumpState           bool               `json:"dump_state"`
 	DumpLog             bool               `json:"dump_log"`
 	NetStatus           bool               `json:"net_status"`
+	ConsumeEvent        bool               `json:"consume_event"`
 	Simulate            bool               `json:"simulate"`
 	WorkSpace           string             `json:"workspace"`
 	DingUrl             string             `json:"ding-url"`

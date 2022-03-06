@@ -271,7 +271,7 @@ func (arb *Arbitrage) ArbitrageClose() error {
 	}
 	{
 		id := uint64(time.Now().UnixNano() / 1000)
-		arb.backend.Commit(arb.blockHash, id, ins, false, nil)
+		arb.backend.Commit(arb.blockHash, id, ins, false, nil, nil)
 		arb.blockHash++
 		arb.blockHash = arb.blockHash % 3
 	}
@@ -341,7 +341,7 @@ func (arb *Arbitrage) ArbitrageStart() error {
 	}
 	{
 		id := uint64(time.Now().UnixNano() / 1000)
-		arb.backend.Commit(arb.blockHash, id, ins, false, nil)
+		arb.backend.Commit(arb.blockHash, id, ins, false, nil, nil)
 		arb.blockHash++
 		arb.blockHash = arb.blockHash % 3
 	}

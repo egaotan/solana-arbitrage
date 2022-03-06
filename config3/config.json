@@ -3,7 +3,7 @@
     {
       "rpc": "https://api.mainnet-beta.solana.com",
       "ws": "wss://api.mainnet-beta.solana.com",
-      "usable": false
+      "usable": true
     },
     {
       "rpc": "https://solana-api.projectserum.com",
@@ -13,7 +13,7 @@
     {
       "rpc": "https://solend.genesysgo.net",
       "ws": "wss://solend.genesysgo.net",
-      "usable": true
+      "usable": false
     },
     {
       "rpc": "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913",
@@ -43,36 +43,62 @@
   ],
   "transaction_nodes": [
     {
-      "rpc": "https://api.mainnet-beta.solana.com"
+      "rpc": "https://api.mainnet-beta.solana.com",
+      "usable": true
     },
     {
-      "rpc": "https://solana-api.projectserum.com"
+      "rpc": "https://solana-api.projectserum.com",
+      "usable": true
     },
     {
-      "rpc": "http://203.90.228.206:8899"
+      "rpc": "https://solana-mainnet.phantom.tech",
+      "usable": true
     },
     {
-      "rpc": "http://87.255.8.92:30333"
+      "rpc": "http://86.109.15.59:8899",
+      "usable": true
+    },
+    {
+      "rpc": "http://203.90.228.206:8899",
+      "usable": true
+    },
+    {
+      "rpc": "http://87.255.8.92:30333",
+      "usable": true
     }
   ],
+  "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
+  "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
+  "transaction_node_size": 10,
+  "transaction_send": 3,
+  "bomb": 99,
+  "instruction_size": 1,
+  "random_ticker": 1000,
+  "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
     "SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ",
     "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
   ],
-  "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
+  "token_a": "So11111111111111111111111111111111111111112",
+  "token_b": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "user": "4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX",
   "key":"",
+  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
+  "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
   "calculators": [
     "cyclic","serum"
   ],
   "which": 1,
-  "valid-yield": 30,
+  "valid-yield": 10,
   "local": true,
   "simulate": true,
-  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",
+  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=6ff1deb6bd1ce754d79ed635536962bae4646a60711ea427ae68469ee54397d7",
   "db_url": "127.0.0.1:3306",
   "db_scheme": "arbitrage",
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
-  "listen": "0.0.0.0:8088"
+  "listen": "0.0.0.0:8088",
+  "usdc_account": "4ZB5bXn24CaCaRm2PtBa8n3oNQrsaV9452iNe6acQ7st",
+  "usdc": 147100
 }

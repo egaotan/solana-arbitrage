@@ -671,14 +671,14 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			ins = append(ins, result...)
 		}
 		blockHashIndex := (len(caches) - 1 + arb.nodeId) % cacheSize
-		arb.backend.Commit(blockHashIndex, id, ins, false, nil)
+		arb.backend.Commit(blockHashIndex, id, ins, false, nil, nil)
 		if data.yield > 200 {
 			blockHashIndex = (blockHashIndex + 1) % cacheSize
-			arb.backend.Commit(blockHashIndex, id, ins, false, nil)
+			arb.backend.Commit(blockHashIndex, id, ins, false, nil, nil)
 		}
 		if data.yield > 400 {
 			blockHashIndex = (blockHashIndex + 1) % cacheSize
-			arb.backend.Commit(blockHashIndex, id, ins, false, nil)
+			arb.backend.Commit(blockHashIndex, id, ins, false, nil, nil)
 		}
 		arb.latestCommitTime = time.Now().Unix()
 	}
