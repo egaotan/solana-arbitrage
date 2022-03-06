@@ -5,7 +5,7 @@
   [tokyo，account1]
   [ireland, account2]
   [frankfurt, account3]
-* serum sol/usdc & sol/usdt [2HC12eXaiWsHzPg6r2FThdtTj12EVEjxR47ba5dUPVky] [token, account1]
+* serum sol/usdc & sol/usdt [2HC12eXaiWsHzPg6r2FThdtTj12EVEjxR47ba5dUPVky] [tokyo, account1]
 * serum sol/usdc & msol/usdc [2HC12eXaiWsHzPg6r2FThdtTj12EVEjxR47ba5dUPVky] [ireland, account2]
 * serum sol/usdc & orca sol/usdc [GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp/9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo] [frankfurt, account3]
 ## 支持的市场
