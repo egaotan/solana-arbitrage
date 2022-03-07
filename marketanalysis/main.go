@@ -24,6 +24,7 @@ func main() {
 	}
 	workSpace := os.Args[1]
 	os.Chdir(workSpace)
+
 	market := os.Args[2]
 	slotStart, err := strconv.ParseUint(os.Args[3], 10, 64)
 	if err != nil {
@@ -38,14 +39,37 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	var config1 config.Config
-	err = json.Unmarshal(infoJson, &config1)
+	var cfg config.Config
+	err = json.Unmarshal(infoJson, &cfg)
 	if err != nil {
 		panic(err)
 	}
-	config1.WorkSpace = workSpace
+
+	//
+	config.USDC_AMOUNT = cfg.Usdc * 1000000
+
+	cfg.WorkSpace = workSpace
 	workspace, _ := os.Getwd()
 	fmt.Printf("work space: %s\n", workspace)
+
+	//
+	oldNodes := cfg.Nodes
+	usableNodes := make([]*config.Node, 0)
+	for _, node := range oldNodes {
+		if node.Usable {
+			usableNodes = append(usableNodes, node)
+		}
+	}
+	cfg.Nodes = usableNodes
+
+	oldValidators := cfg.TransactionNodes
+	usableValidators := make([]*config.Node, 0)
+	for _, oldValidator := range oldValidators {
+		if oldValidator.Usable {
+			usableValidators = append(usableValidators, oldValidator)
+		}
+	}
+	cfg.TransactionNodes = usableValidators
 
 	//
 	t := time.Now()
@@ -54,7 +78,7 @@ func main() {
 	os.Mkdir(dir, os.ModePerm)
 	config.LogPath = dir
 
-	at := app.NewMarketAnalysis(ctx, &config1, market, slotStart, slotEnd)
+	at := app.NewMarketAnalysis(ctx, &cfg, market, slotStart, slotEnd)
 	at.Service()
 }
 
