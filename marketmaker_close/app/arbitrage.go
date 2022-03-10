@@ -240,8 +240,17 @@ func (arb *Arbitrage) ArbitrageClose() error {
 	arb.nonce = arb.nonce % 200
 	{
 		data := make([]byte, 2)
+		data[0] = 0
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.Arbitrage,
+		}
+		ins = append(ins, instruction)
+	}
+	{
+		data := make([]byte, 1)
 		data[0] = 10
-		data[1] = arb.nonce
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
