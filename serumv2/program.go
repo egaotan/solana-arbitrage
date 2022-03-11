@@ -1262,6 +1262,8 @@ func (p *Program) ConsumeEvents(parameter map[string]interface{}) ([]*solana.Acc
 		{PublicKey: market.Key, IsSigner: false, IsWritable: true},
 		{PublicKey: market.Key, IsSigner: false, IsWritable: true},
 		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
 	}
 	return IsAccounts, nil
 }

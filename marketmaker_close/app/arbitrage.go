@@ -209,7 +209,7 @@ func (arb *Arbitrage) ArbitrageClose() error {
 		data := make([]byte, 7)
 		data[0] = 0
 		binary.LittleEndian.PutUint32(data[1:], 2)
-		binary.LittleEndian.PutUint16(data[5:], 3000)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
 
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
@@ -237,7 +237,7 @@ func (arb *Arbitrage) ArbitrageClose() error {
 		data := make([]byte, 7)
 		data[0] = 0
 		binary.LittleEndian.PutUint32(data[1:], 2)
-		binary.LittleEndian.PutUint16(data[5:], 3000)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
 
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
