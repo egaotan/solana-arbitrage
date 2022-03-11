@@ -654,3 +654,7 @@ func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.Ac
 	}
 	return IsAccounts, nil
 }
+
+func (p *Program) MatchOrders(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	return nil, nil
+}

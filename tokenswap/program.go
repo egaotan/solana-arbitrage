@@ -522,3 +522,7 @@ func (p *Program) InstructionSwap(market solana.PublicKey, tokenIn solana.Public
 func (p *Program) RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
 	return nil, nil
 }
+
+func (p *Program) MatchOrders(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	return nil, nil
+}
