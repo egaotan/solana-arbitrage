@@ -254,6 +254,62 @@ func (arb *Arbitrage) Arbitrage() error {
 		}
 		ins = append(ins, instruction)
 	}
+
+	{
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = program.SOL
+		parameter["tokenB"] = program.USDC
+		accs, err := p.ConsumeEvents(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 3)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
+	}
+
+	{
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = program.SOL
+		parameter["tokenB"] = program.USDT
+		accs, err := p.ConsumeEvents(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 3)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
+	}
 	//
 	{
 		accounts := make([]*solana.AccountMeta, 0)
@@ -305,18 +361,8 @@ func (arb *Arbitrage) Arbitrage() error {
 		arb.nonce = arb.nonce % 200
 		{
 			data := make([]byte, 2)
-			data[0] = 0
-			data[1] = arb.nonce
-			instruction := &program.Instruction{
-				IsAccounts:  accounts,
-				IsData:      data,
-				IsProgramID: program.Arbitrage,
-			}
-			ins = append(ins, instruction)
-		}
-		{
-			data := make([]byte, 1)
 			data[0] = 10
+			data[1] = arb.nonce
 			instruction := &program.Instruction{
 				IsAccounts:  accounts,
 				IsData:      data,

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"encoding/binary"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
 	"github.com/egaotan/solana-arbitrage/config"
@@ -189,12 +190,9 @@ func (arb *Arbitrage) randomArbitrage() {
 }
 
 func (arb *Arbitrage) ArbitrageClose() error {
-	//
-	accounts := make([]*solana.AccountMeta, 0)
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
-	// serum
+	ins := make([]solana.Instruction, 0)
 	{
+		accounts := make([]*solana.AccountMeta, 0)
 		p, ok := arb.programs[program.SerumV22]
 		if !ok {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
@@ -202,14 +200,27 @@ func (arb *Arbitrage) ArbitrageClose() error {
 		parameter := make(map[string]interface{})
 		parameter["tokenA"] = program.SOL
 		parameter["tokenB"] = program.USDC
-		accs, err := p.RandomAccounts(parameter)
+		accs, err := p.MatchOrders(parameter)
 		if err != nil {
 			return err
 		}
 		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 2)
+		binary.LittleEndian.PutUint16(data[5:], 3000)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
 	}
 
 	{
+		accounts := make([]*solana.AccountMeta, 0)
 		p, ok := arb.programs[program.SerumV22]
 		if !ok {
 			return fmt.Errorf("program %s is invalid", program.SerumV22)
@@ -217,66 +228,160 @@ func (arb *Arbitrage) ArbitrageClose() error {
 		parameter := make(map[string]interface{})
 		parameter["tokenA"] = program.SOL
 		parameter["tokenB"] = program.USDT
-		accs, err := p.RandomAccounts(parameter)
+		accs, err := p.MatchOrders(parameter)
 		if err != nil {
 			return err
 		}
 		accounts = append(accounts, accs...)
-	}
-	ins := make([]solana.Instruction, 0)
-	//
-	usdc_acc := arb.env.TokenUser(program.USDC)
-	usdt_acc := arb.env.TokenUser(program.USDT)
-	other_acc := arb.env.TokenUser(program.SOL)
 
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdt_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: other_acc, IsSigner: false, IsWritable: true})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
-	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
-
-	arb.nonce ++
-	arb.nonce = arb.nonce % 200
-	{
-		data := make([]byte, 2)
+		data := make([]byte, 7)
 		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 2)
+		binary.LittleEndian.PutUint16(data[5:], 3000)
+
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
-			IsProgramID: program.Arbitrage,
+			IsProgramID: program.SerumV22,
 		}
 		ins = append(ins, instruction)
 	}
+
 	{
-		data := make([]byte, 1)
-		data[0] = 10
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = program.SOL
+		parameter["tokenB"] = program.USDC
+		accs, err := p.ConsumeEvents(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 3)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
-			IsProgramID: program.Arbitrage,
+			IsProgramID: program.SerumV22,
 		}
 		ins = append(ins, instruction)
 	}
+
 	{
-		data := make([]byte, 1)
-		data[0] = 11
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = program.SOL
+		parameter["tokenB"] = program.USDT
+		accs, err := p.ConsumeEvents(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 3)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
 		instruction := &program.Instruction{
 			IsAccounts:  accounts,
 			IsData:      data,
-			IsProgramID: program.Arbitrage,
+			IsProgramID: program.SerumV22,
 		}
 		ins = append(ins, instruction)
 	}
+	//
 	{
-		data := make([]byte, 1)
-		data[0] = 60
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.Arbitrage,
+		accounts := make([]*solana.AccountMeta, 0)
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SerumV22, IsSigner: false, IsWritable: false})
+		// serum
+		{
+			p, ok := arb.programs[program.SerumV22]
+			if !ok {
+				return fmt.Errorf("program %s is invalid", program.SerumV22)
+			}
+			parameter := make(map[string]interface{})
+			parameter["tokenA"] = program.SOL
+			parameter["tokenB"] = program.USDC
+			accs, err := p.RandomAccounts(parameter)
+			if err != nil {
+				return err
+			}
+			accounts = append(accounts, accs...)
 		}
-		ins = append(ins, instruction)
+
+		{
+			p, ok := arb.programs[program.SerumV22]
+			if !ok {
+				return fmt.Errorf("program %s is invalid", program.SerumV22)
+			}
+			parameter := make(map[string]interface{})
+			parameter["tokenA"] = program.SOL
+			parameter["tokenB"] = program.USDT
+			accs, err := p.RandomAccounts(parameter)
+			if err != nil {
+				return err
+			}
+			accounts = append(accounts, accs...)
+		}
+		ins := make([]solana.Instruction, 0)
+		//
+		usdc_acc := arb.env.TokenUser(program.USDC)
+		usdt_acc := arb.env.TokenUser(program.USDT)
+		other_acc := arb.env.TokenUser(program.SOL)
+
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: usdt_acc, IsSigner: false, IsWritable: true})
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: other_acc, IsSigner: false, IsWritable: true})
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
+		accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
+
+		arb.nonce++
+		arb.nonce = arb.nonce % 200
+		{
+			data := make([]byte, 1)
+			data[0] = 10
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.Arbitrage,
+			}
+			ins = append(ins, instruction)
+		}
+		{
+			data := make([]byte, 1)
+			data[0] = 11
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.Arbitrage,
+			}
+			ins = append(ins, instruction)
+		}
+		{
+			data := make([]byte, 1)
+			data[0] = 60
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.Arbitrage,
+			}
+			ins = append(ins, instruction)
+		}
 	}
 	{
 		id := uint64(time.Now().UnixNano() / 1000)

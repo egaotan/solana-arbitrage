@@ -83,4 +83,5 @@ type Program interface {
 	ArbitrageStep(parameter map[string]interface{}) ([]solana.Instruction, error)
 	RandomAccounts(parameter map[string]interface{}) ([]*solana.AccountMeta, error)
 	MatchOrders(parameter map[string]interface{}) ([]*solana.AccountMeta, error)
+	ConsumeEvents(parameter map[string]interface{}) ([]*solana.AccountMeta, error)
 }

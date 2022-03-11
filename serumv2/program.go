@@ -1228,7 +1228,39 @@ func (p *Program) MatchOrders(parameter map[string]interface{}) ([]*solana.Accou
 		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
 		{PublicKey: market.Bids, IsSigner: false, IsWritable: true},
 		{PublicKey: market.Asks, IsSigner: false, IsWritable: true},
-		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
+		{PublicKey: market.BaseVault, IsSigner: false, IsWritable: true},
+		{PublicKey: market.QuoteVault, IsSigner: false, IsWritable: true},
+	}
+	return IsAccounts, nil
+}
+
+func (p *Program) ConsumeEvents(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	var tokenA solana.PublicKey
+	if item, ok := parameter["tokenA"]; !ok {
+		return nil, fmt.Errorf("no parameter token A - swap in instruct construction parameter")
+	} else {
+		tokenA = item.(solana.PublicKey)
+	}
+
+	var tokenB solana.PublicKey
+	if item, ok := parameter["tokenB"]; !ok {
+		return nil, fmt.Errorf("no parameter token B - swap in instruct construction parameter")
+	} else {
+		tokenB = item.(solana.PublicKey)
+	}
+
+	market := p.searchMarket(tokenA, tokenB)
+	if market == nil {
+		return nil, fmt.Errorf("no market for tokens")
+	}
+	openOrdersKey := p.env.MarketOpenOrder(market.Key)
+	if openOrdersKey.IsZero() {
+		return nil, fmt.Errorf("no parameter - swap in instruct construction parameter")
+	}
+	IsAccounts := []*solana.AccountMeta{
+		{PublicKey: openOrdersKey, IsSigner: false, IsWritable: true},
+		{PublicKey: market.Key, IsSigner: false, IsWritable: true},
+		{PublicKey: market.Key, IsSigner: false, IsWritable: true},
 		{PublicKey: market.EventQueue, IsSigner: false, IsWritable: true},
 	}
 	return IsAccounts, nil

@@ -601,3 +601,7 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn sola
 func (p *Program) MatchOrders(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
 	return nil, nil
 }
+
+func (p *Program) ConsumeEvents(parameter map[string]interface{}) ([]*solana.AccountMeta, error) {
+	return nil, nil
+}
