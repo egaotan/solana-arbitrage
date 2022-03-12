@@ -86,10 +86,10 @@ func (bl *BalanceListen) notify(balances []uint64) {
 		diff := decimal.NewFromInt(0)
 		if gBalance[i] != uint64(0) {
 			diff = newBalance.Sub(oldBalance)
-			context = context + fmt.Sprintf("%s -> %s (%s);\ntime: %s;",
-				oldBalance.StringFixed(2), newBalance.StringFixed(2),
-				diff.StringFixed(2), ttStr)
 		}
+		context = context + fmt.Sprintf("%s -> %s (%s);\ntime: %s;",
+			oldBalance.StringFixed(2), newBalance.StringFixed(2),
+			diff.StringFixed(2), ttStr)
 	}
 	dingNotify := &dingsdk.DingNotify{
 		MsgType: "text",

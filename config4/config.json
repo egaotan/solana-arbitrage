@@ -95,12 +95,12 @@
   "dump_state": false,
   "dump_log": false,
   "simulate": true,
-  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=405e839159e32d440e836d93c63b683a101391461d4639c42ec2dd440b7f0313",
+  "ding-url": "https://oapi.dingtalk.com/robot/send?access_token=4c2c6e4c25aecb46e57b294cfb017bb8e2aacd9a766be77b222c4489908a7308",
   "db_url": "127.0.0.1:3306",
   "db_scheme": "arbitrage",
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
   "listen": "0.0.0.0:8088",
-  "usdc_account": ["C5dr2fk9zLvjuSjxe3tdvFurcZHKbfU1mHbpdv9Bfr7T"],
+  "usdc_account": ["2JPoPKZFkQiCZWMFKgQsQqF2syc2sSssxbF6i3BQK154", "AYfbigAuJx5psSJ536E1udvP56SSDf1jZcWmPpkC8FQ6"],
   "usdc": 97100
 }
