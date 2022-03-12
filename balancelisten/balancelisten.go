@@ -82,15 +82,14 @@ func (bl *BalanceListen) notify(balances []uint64) {
 	for i := 0;i < size;i ++ {
 		oldBalance := decimal.NewFromInt(int64(gBalance[i])).Div(decimal.NewFromInt(1000000))
 		newBalance := decimal.NewFromInt(int64(balances[i])).Div(decimal.NewFromInt(1000000))
-		ttStr := time.Now().Format("2006-01-02 15:04:05")
 		diff := decimal.NewFromInt(0)
 		if gBalance[i] != uint64(0) {
 			diff = newBalance.Sub(oldBalance)
 		}
-		context = context + fmt.Sprintf("%s -> %s (%s);\ntime: %s;",
-			oldBalance.StringFixed(2), newBalance.StringFixed(2),
-			diff.StringFixed(2), ttStr)
+		context = context + fmt.Sprintf("%s -> %s (%s);\n",
+			oldBalance.StringFixed(2), newBalance.StringFixed(2), diff.StringFixed(2))
 	}
+	context = context + fmt.Sprintf("time: %s;", time.Now().Format("2006-01-02 15:04:05"))
 	dingNotify := &dingsdk.DingNotify{
 		MsgType: "text",
 		Text: dingsdk.DingContent{
