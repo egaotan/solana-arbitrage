@@ -78,7 +78,7 @@ type Config struct {
 	DBPasswd            string             `json:"db_passwd"`
 	Listen              string             `json:"listen"`
 	Usdc                uint64             `json:"usdc"`
-	UsdcAccount         string             `json:"usdc_account"`
+	UsdcAccount         []string             `json:"usdc_account"`
 	TokenA              solana.PublicKey   `json:"token_a"`
 	TokenB              solana.PublicKey   `json:"token_b"`
 	InstructionSize     int                `json:"instruction_size"`

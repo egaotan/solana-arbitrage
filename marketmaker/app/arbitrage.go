@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
+	"github.com/egaotan/solana-arbitrage/balancelisten"
 	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/dingsdk"
 	"github.com/egaotan/solana-arbitrage/env"
@@ -38,6 +39,7 @@ type Arbitrage struct {
 	balanceCounter int
 	latestNotify uint64
 	dsdk *dingsdk.DingSdk
+	balanceListen *balancelisten.BalanceListen
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -106,6 +108,8 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	dsdk := dingsdk.NewDingSdk(cfg.DingUrl)
 	arb.dsdk = dsdk
 	//
+	arb.balanceListen = balancelisten.NewBalanceListen(ctx, splToken, cfg.UsdcAccount, dsdk)
+	//
 	programs := make(map[solana.PublicKey]program.Program)
 	for _, program := range cfg.Programs {
 		programs[program] = NewProgram(program, ctx, cfg.Which, env, backend, splToken, system, arb)
@@ -136,6 +140,9 @@ func (arb *Arbitrage) Start() {
 	}
 	arb.wg.Add(1)
 	arb.backend.SubscribeSlot(arb)
+	//
+	arb.balanceListen.Start()
+	//
 	go arb.randomArbitrage()
 	//arb.Arbitrage()
 	arb.log.Printf("auto trader has started......")

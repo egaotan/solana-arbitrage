@@ -239,6 +239,19 @@ func (p *Program) GetBalance(key solana.PublicKey) (uint64, error) {
 	return user.Amount, nil
 }
 
+func (p *Program) GetBalances(keys []solana.PublicKey) ([]uint64, error) {
+	err := p.RetrieveUsers(keys)
+	if err != nil {
+		return nil, err
+	}
+	amounts := make([]uint64, 0)
+	for _, key := range keys {
+		user := p.GetUser(key)
+		amounts = append(amounts, user.Amount)
+	}
+	return amounts, nil
+}
+
 func (p *Program) InstructionInitUser(user solana.PublicKey, token solana.PublicKey, owner solana.PublicKey) (solana.Instruction, error) {
 	data := make([]byte, 1)
 	data[0] = 1

@@ -101,6 +101,6 @@
   "db_user": "root",
   "db_passwd": "Tgy_#0010",
   "listen": "0.0.0.0:8088",
-  "usdc_account": "C5dr2fk9zLvjuSjxe3tdvFurcZHKbfU1mHbpdv9Bfr7T",
+  "usdc_account": ["C5dr2fk9zLvjuSjxe3tdvFurcZHKbfU1mHbpdv9Bfr7T"],
   "usdc": 147100
 }
