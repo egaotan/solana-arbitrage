@@ -622,7 +622,9 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 		}
 		localArbitrage.LocalArbitrageSteps = append(localArbitrage.LocalArbitrageSteps, localStep)
 	}
-	arb.store.StoreLocalArbitrage(localArbitrage)
+	if arb.store != nil {
+		arb.store.StoreLocalArbitrage(localArbitrage)
+	}
 
 	// reorder, usdc must be first
 	i := 0
