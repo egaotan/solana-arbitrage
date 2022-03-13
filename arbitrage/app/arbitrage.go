@@ -27,7 +27,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -181,12 +180,12 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	//peer, ttl := networkdetect.DetectPeers(cfg.Nodes[0].Wss)
 	//logger.Printf("peer: %s, ttl: %d", peer, ttl/1000000)
 	//
-	store := store.NewStore(ctx, cfg.DBUrl, cfg.DBScheme, cfg.DBUser, cfg.DBPasswd)
-	arb.store = store
+	//store := store.NewStore(ctx, cfg.DBUrl, cfg.DBScheme, cfg.DBUser, cfg.DBPasswd)
+	//arb.store = store
 	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash, cfg.TpuClient, cfg.TransactionSend)
 	backend.ImportWallet(cfg.Key)
 	backend.SetPlayer(cfg.User)
-	backend.SetStore(store)
+	backend.SetStore(nil)
 	arb.backend = backend
 	splToken := spltoken.NewProgram(ctx, backend, arb)
 	arb.splToken = splToken
@@ -227,7 +226,9 @@ func (arb *Arbitrage) Start() {
 	if arb.config.NetStatus {
 		arb.nd.Start()
 	}
-	arb.store.Start()
+	if arb.store != nil {
+		arb.store.Start()
+	}
 	arb.backend.Start()
 	arb.env.Start()
 	if err := arb.splToken.Start(); err != nil {
@@ -285,7 +286,9 @@ func (arb *Arbitrage) Stop() {
 		}
 	}
 	arb.env.Stop()
-	arb.store.Stop()
+	if arb.store != nil {
+		arb.store.Stop()
+	}
 	arb.save2Cache()
 	arb.status = Stopped
 	arb.log.Printf("auto trader has stopped......")
@@ -595,7 +598,9 @@ func (arb *Arbitrage) Arbitrage(id uint64, token solana.PublicKey, amount uint64
 			}
 			committedArbitrage.CommittedArbitrageSteps = append(committedArbitrage.CommittedArbitrageSteps, committedArbitrageStep)
 		}
-		arb.store.StoreCommittedArbitrage(committedArbitrage)
+		if arb.store != nil {
+			arb.store.StoreCommittedArbitrage(committedArbitrage)
+		}
 		arb.notify.Commit(data)
 	}()
 
@@ -696,6 +701,7 @@ type ArbitrageInfo struct {
 }
 
 func (arb *Arbitrage) getArbitrage(c *gin.Context) {
+	/*
 	idStr, ok := c.GetQuery("id")
 	if !ok {
 		c.JSON(500, "parameter is invalid")
@@ -726,4 +732,5 @@ func (arb *Arbitrage) getArbitrage(c *gin.Context) {
 		CommittedArbitrages: buildCommittedArbitrages(committedArbitrages, arb.env),
 		ExecutedArbitrages:  buildExecutedArbitrages(executedArbitrages),
 	})
+	*/
 }
