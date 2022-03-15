@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"encoding/binary"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
 	"github.com/egaotan/solana-arbitrage/config"
@@ -193,6 +194,118 @@ func (arb *Arbitrage) randomArbitrage() {
 }
 
 func (arb *Arbitrage) Arbitrage() error {
+	ins := make([]solana.Instruction, 0)
+	{
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = arb.config.TokenA
+		parameter["tokenB"] = arb.config.TokenB
+		accs, err := p.MatchOrders(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 2)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
+	}
+
+	{
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = arb.config.TokenA
+		parameter["tokenB"] = arb.config.TokenB
+		accs, err := p.MatchOrders(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 2)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
+	}
+
+	{
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = arb.config.TokenA
+		parameter["tokenB"] = arb.config.TokenB
+		accs, err := p.ConsumeEvents(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 3)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
+	}
+
+	{
+		accounts := make([]*solana.AccountMeta, 0)
+		p, ok := arb.programs[program.SerumV22]
+		if !ok {
+			return fmt.Errorf("program %s is invalid", program.SerumV22)
+		}
+		parameter := make(map[string]interface{})
+		parameter["tokenA"] = arb.config.TokenA
+		parameter["tokenB"] = arb.config.TokenB
+		accs, err := p.ConsumeEvents(parameter)
+		if err != nil {
+			return err
+		}
+		accounts = append(accounts, accs...)
+
+		data := make([]byte, 7)
+		data[0] = 0
+		binary.LittleEndian.PutUint32(data[1:], 3)
+		binary.LittleEndian.PutUint16(data[5:], 65535)
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.SerumV22,
+		}
+		ins = append(ins, instruction)
+	}
 	//
 	accounts := make([]*solana.AccountMeta, 0)
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
@@ -228,7 +341,6 @@ func (arb *Arbitrage) Arbitrage() error {
 		}
 		accounts = append(accounts, accs...)
 	}
-	ins := make([]solana.Instruction, 0)
 	//
 	usdc_acc := arb.env.TokenUser(arb.config.TokenB)
 	other_acc := arb.env.TokenUser(arb.config.TokenA)
