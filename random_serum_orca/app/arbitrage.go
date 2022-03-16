@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"encoding/binary"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
 	"github.com/egaotan/solana-arbitrage/config"
@@ -195,6 +194,7 @@ func (arb *Arbitrage) randomArbitrage() {
 
 func (arb *Arbitrage) Arbitrage() error {
 	ins := make([]solana.Instruction, 0)
+	/*
 	{
 		accounts := make([]*solana.AccountMeta, 0)
 		p, ok := arb.programs[program.SerumV22]
@@ -306,6 +306,7 @@ func (arb *Arbitrage) Arbitrage() error {
 		}
 		ins = append(ins, instruction)
 	}
+	 */
 	//
 	accounts := make([]*solana.AccountMeta, 0)
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
