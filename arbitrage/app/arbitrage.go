@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend"
-	"github.com/egaotan/solana-arbitrage/balancelisten"
 	"github.com/egaotan/solana-arbitrage/calculator"
 	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/dingsdk"
@@ -101,7 +100,7 @@ type Arbitrage struct {
 	validYield    int64
 	nodeId        int
 	store         *store.Store
-	balanceListen *balancelisten.BalanceListen
+	//balanceListen *balancelisten.BalanceListen
 	notify        *Notify
 	stateListen   *statelisten.StateListen
 	httpServer    *http.Server
@@ -195,7 +194,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	arb.env = env
 	//
 	dsdk := dingsdk.NewDingSdk(cfg.DingUrl)
-	arb.balanceListen = balancelisten.NewBalanceListen(ctx, splToken, cfg.UsdcAccount, dsdk)
+	//arb.balanceListen = balancelisten.NewBalanceListen(ctx, splToken, cfg.UsdcAccount, dsdk)
 	arb.notify = NewNotify(ctx, env, dsdk)
 	arb.nd = networkdetect.NewNetworkDetector(cfg.Nodes[0].Ws, dsdk)
 	//
@@ -237,7 +236,7 @@ func (arb *Arbitrage) Start() {
 	if err := arb.system.Start(); err != nil {
 		arb.log.Printf("system program start err: %v", err)
 	}
-	arb.balanceListen.Start()
+	//arb.balanceListen.Start()
 	arb.notify.Start()
 	for _, program := range arb.programs {
 		if err := program.Start(); err != nil {
