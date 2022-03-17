@@ -16,6 +16,7 @@ import (
 	"github.com/egaotan/solana-arbitrage/system"
 	"github.com/egaotan/solana-arbitrage/tokenswap"
 	"github.com/gagliardetto/solana-go"
+	"github.com/shopspring/decimal"
 	"log"
 	"os"
 	"sync"
@@ -36,6 +37,10 @@ type Arbitrage struct {
 	nonce     byte
 	latestNotify uint64
 	dsdk *dingsdk.DingSdk
+	balances map[solana.PublicKey]uint64
+	frequency int64
+	counter int64
+	latestUpdate int64
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -109,6 +114,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 		programs[program] = NewProgram(program, ctx, cfg.Which, env, backend, splToken, system, arb)
 	}
 	arb.programs = programs
+	arb.frequency = 10
 	return arb
 }
 
@@ -132,6 +138,22 @@ func (arb *Arbitrage) Start() {
 			arb.log.Printf("program %s start err: %v", program.Name(), err)
 		}
 	}
+	/*
+	monitor usdc accounts
+	*/
+	usdcAccounts := make([]solana.PublicKey, 0)
+	arb.balances = make(map[solana.PublicKey]uint64, 0)
+	for _, acc := range arb.config.UsdcAccount {
+		item := solana.MustPublicKeyFromBase58(acc)
+		usdcAccounts = append(usdcAccounts, item)
+		arb.balances[item] = 0
+	}
+	err := arb.splToken.RetrieveUsers(usdcAccounts)
+	if err != nil {
+		arb.log.Printf("usdc account err!")
+	}
+	arb.splToken.SubscribeUsers(usdcAccounts)
+	//
 	arb.wg.Add(1)
 	arb.backend.SubscribeSlot(arb)
 	go arb.randomArbitrage()
@@ -175,6 +197,42 @@ func (arb *Arbitrage) OnSlotUpdate(slot *backend.Slot) error {
 }
 
 func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, newBalance uint64, oldBalance uint64, tokenKey solana.PublicKey, slot uint64) error {
+	initBalance, ok := arb.balances[userKey]
+	if !ok {
+		return fmt.Errorf("not monitor account")
+	}
+	if newBalance == initBalance {
+		if arb.counter - arb.latestUpdate > 10 * 60 {
+			arb.frequency = 10
+			arb.latestUpdate = arb.counter
+		}
+		return nil
+	}
+	arb.frequency = 5
+	arb.latestUpdate = arb.counter
+
+	context := "arbitrage account balance update: \n"
+	balance1 := decimal.NewFromInt(int64(initBalance)).Div(decimal.NewFromInt(1000000))
+	balance2 := decimal.NewFromInt(int64(newBalance)).Div(decimal.NewFromInt(1000000))
+	diff := decimal.NewFromInt(0)
+	if initBalance != uint64(0) {
+		diff = balance2.Sub(balance1)
+	}
+	context = context + fmt.Sprintf("%s -> %s (%s);\n",
+		balance1.StringFixed(2), balance2.StringFixed(2), diff.StringFixed(2))
+
+	context = context + fmt.Sprintf("time: %s;", time.Now().Format("2006-01-02 15:04:05"))
+	dingNotify := &dingsdk.DingNotify{
+		MsgType: "text",
+		Text: dingsdk.DingContent{
+			Content: context,
+		},
+		At: dingsdk.DingAt{
+			IsAtAll: false,
+		},
+	}
+	arb.dsdk.Notify(dingNotify)
+	arb.balances[userKey] = newBalance
 	return nil
 }
 
@@ -195,6 +253,10 @@ func (arb *Arbitrage) randomArbitrage() {
 }
 
 func (arb *Arbitrage) Arbitrage() error {
+	arb.counter ++
+	if arb.counter % arb.frequency != 0 {
+		return nil
+	}
 	ins := make([]solana.Instruction, 0)
 	/*
 	{
