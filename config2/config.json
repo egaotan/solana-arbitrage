@@ -53,18 +53,6 @@
     {
       "rpc": "https://solana-mainnet.phantom.tech",
       "usable": true
-    },
-    {
-      "rpc": "http://86.109.15.59:8899",
-      "usable": true
-    },
-    {
-      "rpc": "http://203.90.228.206:8899",
-      "usable": true
-    },
-    {
-      "rpc": "http://87.255.8.92:30333",
-      "usable": true
     }
   ],
   "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],

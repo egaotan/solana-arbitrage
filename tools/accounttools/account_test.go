@@ -21,12 +21,12 @@ import (
 
 var (
 	//Owner = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
-	Player = solana.MustPublicKeyFromBase58("3pfNpRNu31FBzx84TnefG6iBkSqQxGtuL5G5v9aaxyv8")
+	Player = solana.MustPublicKeyFromBase58("4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX")
 )
 
 var (
 	//OwnerKey = solana.MustPrivateKeyFromBase58("")
-	PlayerKey = "58WF8aF3FDDYLQoPjHiERk53gd2UgLtiJk1rr8saVsDHWz1ieJtEteNYhsDrYGPEYcbZ3SdqvG7TZbvwChaXMS5e"
+	PlayerKey = "3Yh1cksuufF6TWQPcaWMJqf9gsf7A72wNrnu76jWFrrmHzSQax3quY3QQN5HZBhfPwGYpHBtgY6do5hPBEjuX85P"
 )
 
 var (
@@ -35,8 +35,8 @@ var (
 
 func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
 	ctx := context.Background()
-	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
-		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
+	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
+		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
 		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2,
 	)
 	backend.ImportWallet(PlayerKey)
@@ -69,10 +69,10 @@ func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
 	if err != nil {
 		panic(err)
 	}
-	backend.Commit(0, uint64(time.Now().UnixNano()/1000), []solana.Instruction{in1, in2}, false, nil)
+	backend.Commit(0, uint64(time.Now().UnixNano()/1000), []solana.Instruction{in1, in2}, false, nil, nil)
 	time.Sleep(time.Second * 5)
 	//
-	backend.Stop()
+	//backend.Stop()
 	return newTokenAccount
 }
 
@@ -107,8 +107,8 @@ func Test_CreateSplTokenAccount(t *testing.T) {
 
 func CreateMarketOpenOrders(market solana.PublicKey) solana.PublicKey {
 	ctx := context.Background()
-	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
-		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, []string{}, true}},
+	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
+		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
 		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2)
 	backend.ImportWallet(PlayerKey)
 	backend.SetPlayer(Player)
@@ -142,8 +142,8 @@ func CreateMarketOpenOrders(market solana.PublicKey) solana.PublicKey {
 	if err != nil {
 		panic(err)
 	}
-	backend.Commit(0, uint64(time.Now().UnixNano()/1000), []solana.Instruction{in1, in2}, false, nil)
-	time.Sleep(time.Second * 120)
+	backend.Commit(0, uint64(time.Now().UnixNano()/1000), []solana.Instruction{in1, in2}, false, nil, nil)
+	time.Sleep(time.Second * 15)
 	return openorder
 }
 

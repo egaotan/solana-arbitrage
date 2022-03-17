@@ -24,11 +24,11 @@ func startProgram() *Program {
 	ctx := context.Background()
 	backend := backend.NewBackend(
 		ctx,
-		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
+		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, true}},
 		false,
-		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
-		rpc.MainNetBetaSerum_RPC,
-		rpc.MainNetBetaSerum_RPC,
+		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, true}},
+		[]string{rpc.MainNetBetaSerum_RPC},
+		[]string{rpc.MainNetBetaSerum_RPC},
 		1,
 		)
 	splTokenProgram := spltoken.NewProgram(ctx, backend, nil)
