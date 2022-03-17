@@ -16,7 +16,7 @@ func (backend *Backend) CacheRecentBlockHash() {
 	index := 0
 	for {
 		select {
-		case <-backend.updateBlockHash:
+		case slot := <-backend.updateBlockHash:
 			/*
 				getRecentBlockHashResult, err := rpcClient.GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 				if err != nil {
@@ -42,6 +42,10 @@ func (backend *Backend) CacheRecentBlockHash() {
 				getRecentBlockHashResult, err = rpcClients[index].GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 				if err != nil {
 					backend.logger.Printf("GetRecentBlockhash, %d err: %s", index, err.Error())
+					index++
+					index = index % len(rpcClients)
+				} else if slot - getRecentBlockHashResult.Context.Slot > 90 {
+					backend.logger.Printf("GetRecentBlockhash, %d err: %s", index, "this block hash is too old")
 					index++
 					index = index % len(rpcClients)
 				} else {
