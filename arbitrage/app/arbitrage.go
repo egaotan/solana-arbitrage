@@ -376,7 +376,7 @@ func (arb *Arbitrage) OnSlotUpdate(slot *backend.Slot) error {
 	return nil
 }
 
-func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, newBalance uint64, oldBalance uint64, tokenKey solana.PublicKey, slot uint64) error {
+func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, oldBalance uint64, newBalance uint64, tokenKey solana.PublicKey, slot uint64) error {
 	for !atomic.CompareAndSwapInt32(&arb.status, Started, Pause) {
 		continue
 	}

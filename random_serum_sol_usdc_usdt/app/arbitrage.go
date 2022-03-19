@@ -196,11 +196,12 @@ func (arb *Arbitrage) OnSlotUpdate(slot *backend.Slot) error {
 	return nil
 }
 
-func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, newBalance uint64, oldBalance uint64, tokenKey solana.PublicKey, slot uint64) error {
+func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, oldBalance uint64, newBalance uint64, tokenKey solana.PublicKey, slot uint64) error {
 	initBalance, ok := arb.balances[userKey]
 	if !ok {
 		return fmt.Errorf("not monitor account")
 	}
+	arb.log.Printf("new balanece: %d, init balance: %d", newBalance, initBalance)
 	if newBalance == initBalance {
 		if arb.counter - arb.latestUpdate > 10 * 60 {
 			arb.frequency = 10
