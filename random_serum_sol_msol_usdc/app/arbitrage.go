@@ -202,10 +202,6 @@ func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, oldBalance uint6
 	}
 	arb.log.Printf("new balanece: %d, init balance: %d", newBalance, initBalance)
 	if newBalance == initBalance {
-		if arb.counter - arb.latestUpdate > 10 * 60 {
-			arb.frequency = 10
-			arb.latestUpdate = arb.counter
-		}
 		return nil
 	}
 	arb.frequency = 5
@@ -254,6 +250,9 @@ func (arb *Arbitrage) randomArbitrage() {
 
 func (arb *Arbitrage) Arbitrage() error {
 	arb.counter ++
+	if arb.counter - arb.latestUpdate > 10 * 60 {
+		arb.frequency = 10
+	}
 	if arb.counter % arb.frequency != 0 {
 		return nil
 	}
