@@ -39,6 +39,11 @@
       "rpc": "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
       "ws": "wss://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
       "usable": false
+    },
+    {
+      "rpc": "https://mercurial.rpcpool.com",
+      "ws": "wss://mercurial.rpcpool.com",
+      "usable": false
     }
   ],
   "transaction_nodes": [
