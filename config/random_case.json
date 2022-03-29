@@ -1,0 +1,24 @@
+{
+  "case": [
+    {
+      "amount": 10000000000,
+      "path": [
+        {
+          "program": "",
+          "market": "",
+          "in": ""
+        },
+        {
+          "program": "",
+          "market": "",
+          "in": ""
+        },
+        {
+          "program": "",
+          "market": "",
+          "in": ""
+        }
+      ]
+    }
+  ]
+}

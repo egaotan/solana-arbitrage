@@ -1,6 +1,8 @@
 package config
 
-import "github.com/gagliardetto/solana-go"
+import (
+	"github.com/gagliardetto/solana-go"
+)
 
 var (
 //validYield = int64(-50)
@@ -34,6 +36,7 @@ var (
 	MarketsFile                  = ConfigPath + "markets.json"
 	ConfigFile                   = ConfigPath + "config.json"
 	ValidatorFile                = ConfigPath + "validator.json"
+	RandomCaseFile = ConfigFile + "random_case.json"
 	LogPath                      = "./logs/"
 	BackendLog                   = "backend"
 	ExecutorLog                  = "executor"
@@ -83,4 +86,17 @@ type Config struct {
 	TokenB              solana.PublicKey   `json:"token_b"`
 	InstructionSize     int                `json:"instruction_size"`
 	RandomTicker        uint64             `json:"random_ticker"`
+}
+
+type Path struct {
+	Program solana.PublicKey `json:"program"`
+	Market solana.PublicKey `json:"market"`
+	In solana.PublicKey `json:"in"`
+}
+type Case struct {
+	Amount uint64 `json:"amount"`
+	Paths []*Path `json:"path"`
+}
+type RandomCase struct {
+	Cases []*Case `json:"case"`
 }

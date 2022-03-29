@@ -261,6 +261,9 @@ func (arb *Arbitrage) Start() {
 	arb.backend.SubscribeSlot(arb)
 	arb.status = Started
 	arb.startTime = time.Now().Unix()
+	//
+	//go arb.randomArbitrage()
+
 	arb.log.Printf("auto trader has started......")
 }
 
@@ -734,4 +737,58 @@ func (arb *Arbitrage) getArbitrage(c *gin.Context) {
 		ExecutedArbitrages:  buildExecutedArbitrages(executedArbitrages),
 	})
 	*/
+}
+
+
+func (arb *Arbitrage) randomArbitrage() {
+	ticker := time.NewTicker(time.Millisecond * time.Duration(arb.config.RandomTicker))
+	for {
+		select {
+		case <-ticker.C:
+			arb.RArbitrage()
+		case <-arb.ctx.Done():
+			return
+		}
+	}
+}
+
+func (arb *Arbitrage) RArbitrage() error {
+	//
+	infoJson, err := os.ReadFile(config.RandomCaseFile)
+	if err != nil {
+		return err
+	}
+	var allCase config.RandomCase
+	err = json.Unmarshal(infoJson, &allCase)
+	if err != nil {
+		return err
+	}
+	for _, oneCase := range allCase.Cases {
+		ins := make([]solana.Instruction, 0)
+		amountIn := oneCase.Amount
+		for j, step := range oneCase.Paths {
+			p := arb.GetProgram(step.Program)
+			market := p.GetMarket(step.Market)
+			tokenIn := step.In
+			parameter := make(map[string]interface{})
+			parameter["market"] = market
+			parameter["token"] = tokenIn
+			parameter["amount"] = amountIn
+			if j == 0 {
+				parameter["flag"] = uint8(0)
+			} else if j == len(oneCase.Paths)-1 {
+				parameter["flag"] = uint8(2)
+			} else {
+				parameter["flag"] = uint8(1)
+			}
+			result, err := p.ArbitrageStep(parameter)
+			if err != nil {
+				return err
+			}
+			ins = append(ins, result...)
+		}
+		id := uint64(time.Now().UnixNano() / 1000)
+		arb.backend.Commit(0, id, ins, false, nil, nil)
+	}
+	return nil
 }
