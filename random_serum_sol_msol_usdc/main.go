@@ -36,6 +36,7 @@ func main() {
 
 	//
 	config.USDC_AMOUNT = cfg.Usdc * 1000000
+	config.Bomb = cfg.Bomb
 
 	cfg.WorkSpace = workSpace
 	workspace, _ := os.Getwd()

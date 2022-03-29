@@ -35,6 +35,7 @@ func main() {
 	}
 
 	//
+	config.Bomb = cfg.Bomb
 	config.USDC_AMOUNT = cfg.Usdc * 1000000
 
 	cfg.WorkSpace = workSpace
