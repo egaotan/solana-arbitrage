@@ -192,9 +192,10 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 			if err != nil {
 				proxy.logger.Printf("send tx (%d) err: %s", tx.Id, err.Error())
 			} else {
-				proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+				//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 			}
 		}
+		proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 		if i%10 == 9 {
 			time.Sleep(time.Millisecond * 50)
 		}
