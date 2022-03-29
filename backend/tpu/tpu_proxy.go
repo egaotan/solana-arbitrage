@@ -195,7 +195,7 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 				//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 			}
 		}
-		proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, len(tx.Tx))
+		//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, len(tx.Tx))
 		if i%10 == 9 {
 			time.Sleep(time.Millisecond * 50)
 		}

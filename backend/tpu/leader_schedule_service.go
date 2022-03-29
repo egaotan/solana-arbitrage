@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	UPCOMING_SLOT_SEARCH = uint64(100)
-	PAST_SLOT_SEARCH     = uint64(5)
+	UPCOMING_SLOT_SEARCH = uint64(120)
+	PAST_SLOT_SEARCH     = uint64(0)
 )
 
 type LeaderScheduleService struct {
