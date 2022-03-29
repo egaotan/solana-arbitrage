@@ -170,29 +170,29 @@ func (proxy *Proxy) SendTransaction(tx *Command) {
 	tpuConnections := proxy.tpuConns
 	atomic.StoreInt32(&proxy.lock, 0)
 
-	proxy.logger.Printf("begin send tx: %d, time: %s", tx.Id,
+	proxy.logger.Printf("begin send tx (%d) time: %s", tx.Id,
 		time.Unix(int64(tx.Id)/1000000, int64(tx.Id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
 	defer func() {
 		proxy.logger.Printf("end send tx (%d)", tx.Id)
 	}()
 
 	for addr, conn := range tpuConnections {
-		proxy.logger.Printf("send tx to %s", addr)
+		proxy.logger.Printf("send tx (%d) to %s", tx.Id, addr)
 		n, err := conn.Write(tx.Tx)
 		if err != nil {
-			proxy.logger.Printf("send err: %s", err.Error())
+			proxy.logger.Printf("send tx (%d) err: %s, %d", tx.Id, err.Error())
 		} else {
-			proxy.logger.Printf("send (%d, %d)", n, len(tx.Tx))
+			proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 		}
 	}
 	for i := 0; i < config.Bomb; i++ {
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx to %s", addr)
-			_, err := conn.Write(tx.Tx)
+			n, err := conn.Write(tx.Tx)
 			if err != nil {
-				proxy.logger.Printf("send err: %s", err.Error())
+				proxy.logger.Printf("send tx (%d) err: %s", tx.Id, err.Error())
 			} else {
-				//proxy.logger.Printf("send (%d, %d)", n, len(tx))
+				proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 			}
 		}
 		if i%10 == 9 {
