@@ -61,7 +61,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		transaction:     transaction,
 		blockHash:       blockHash,
 		transactionSend: transactionSend,
-		senderNodes: sender,
+		senderNodes:     sender,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))

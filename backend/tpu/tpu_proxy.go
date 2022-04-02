@@ -29,8 +29,8 @@ type Proxy struct {
 }
 
 type Command struct {
-	Id uint64
-	Tx []byte
+	Id   uint64
+	Tx   []byte
 	Hash string
 }
 
