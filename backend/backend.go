@@ -35,10 +35,11 @@ type Backend struct {
 	blockHashTime   uint64
 	tpu             *tpu.Proxy
 	senderNodes     []*config.Node
+	commandData     []chan []byte
 	transactionSend int
 }
 
-func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash []string, tpuclient []string, sender []*config.Node, transactionSend int) *Backend {
+func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash []string, tpuclient []string, senderNodes []*config.Node, transactionSend int) *Backend {
 	rpcClient := rpc.New(nodes[0].Rpc)
 	wsClients := make([]*ws.Client, 0, len(nodes))
 	for _, node := range nodes {
@@ -61,7 +62,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		transaction:     transaction,
 		blockHash:       blockHash,
 		transactionSend: transactionSend,
-		senderNodes:     sender,
+		senderNodes:     senderNodes,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))
@@ -99,6 +100,12 @@ func (backend *Backend) Start() {
 	//backend.updateBlockHash <- true
 	backend.cachedBlockHash = append(backend.cachedBlockHash, []solana.Hash{{}, {}, {}}...)
 	backend.tpu.Start()
+	//
+	backend.commandData = make([]chan []byte, 0)
+	for i, senderNode := range backend.senderNodes {
+		backend.commandData = append(backend.commandData, make(chan []byte, 64))
+		go backend.sender(i, senderNode.Rpc)
+	}
 }
 
 func (backend *Backend) Stop() {

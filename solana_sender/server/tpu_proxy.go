@@ -31,12 +31,6 @@ type Proxy struct {
 	lock         int32
 }
 
-type Command struct {
-	Hash string
-	Id   uint64
-	Tx   []byte
-}
-
 func NewProxy(ctx context.Context, slotClientUrl string, lssClientUrls []string, bomb int) (*Proxy, error) {
 	logger := utils.NewLog("./log/", "tpu_executor")
 	// client

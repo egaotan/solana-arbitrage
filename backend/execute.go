@@ -1,17 +1,17 @@
 package backend
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend/tpu"
 	"github.com/egaotan/solana-arbitrage/config"
+	"github.com/egaotan/solana-arbitrage/solana_sender/server"
 	"github.com/egaotan/solana-arbitrage/store"
 	"github.com/egaotan/solana-arbitrage/utils"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"log"
-	"net/http"
+	"net"
 	"time"
 )
 
@@ -213,7 +213,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		time.Unix(int64(id)/1000000, int64(id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
 
 	//
-	if (backend.transactionSend == 2 || backend.transactionSend == 3) && !Test {
+	if (backend.transactionSend == 2 || backend.transactionSend == 3 || backend.transactionSend == 4) && !Test {
 		backend.logger.Printf("send transaction to tpu")
 		command := &tpu.Command{
 			Id:   id,
@@ -225,7 +225,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		}
 		backend.tpu.CommitTransaction(command)
 	}
-	if backend.transactionSend == 1 || backend.transactionSend == 3 {
+	if backend.transactionSend == 1 || backend.transactionSend == 3 || backend.transactionSend == 4 {
 		backend.logger.Printf("sent transaction to rpc")
 		command := &Command{
 			Id:       id,
@@ -238,10 +238,10 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 			backend.commandChans[i] <- command
 		}
 	}
-	if (backend.transactionSend == 4 || backend.transactionSend == 3) && false {
+	if backend.transactionSend == 5 || backend.transactionSend == 4 {
 		backend.logger.Printf("send transaction to sender")
 		//
-		command := &tpu.Command{
+		command := &server.Command{
 			Id:   id,
 			Hash: trx.Signatures[0].String(),
 		}
@@ -251,12 +251,12 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 			return
 		}
 		//
-		commandJson, err := json.Marshal(command)
-		if err != nil {
-			backend.logger.Printf("mashal command err: %s", err.Error())
-			return
+		commandData := command.Encode()
+		for _, commandDataChan := range backend.commandData {
+			commandDataChan <- commandData
 		}
 		//
+		/*
 		client := &http.Client{}
 		for _, node := range backend.senderNodes {
 			backend.logger.Printf("to sender: %s", node.Rpc)
@@ -278,6 +278,38 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 			}
 			resp.Body.Close()
 		}
+		 */
 		backend.logger.Printf("sender successful!")
+	}
+}
+
+func (backend *Backend) sender(id int, url string) {
+	var senderConn net.Conn
+	senderConn = nil
+	for {
+		select {
+			case commandData := <-backend.commandData[id]: {
+				if senderConn == nil {
+					conn, err := net.Dial("tcp", url)
+					if err != nil {
+						continue
+					}
+					senderConn = conn
+				}
+				n, err := senderConn.Write(commandData)
+				if err != nil {
+					backend.logger.Printf("tpc write err: %s", err.Error())
+					senderConn.Close()
+					senderConn = nil
+					continue
+				}
+				if n != server.CommandLen {
+					backend.logger.Printf("tpc write size not right: %d", n)
+					senderConn.Close()
+					senderConn = nil
+					continue
+				}
+			}
+		}
 	}
 }
