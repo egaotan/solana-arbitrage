@@ -58,6 +58,12 @@
     },
     {
       "rpc": "https://solend.genesysgo.net"
+    },
+    {
+      "rpc": "https://solendf-solendf-67c7.rpcpool.com"
+    },
+    {
+      "rpc": "https://api.mainnet-beta.solana.com"
     }
   ],
   "bomb": 199
