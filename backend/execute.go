@@ -259,6 +259,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		//
 		client := &http.Client{}
 		for _, node := range backend.senderNodes {
+			backend.logger.Printf("to sender: %s", node.Rpc)
 			req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/sendtransaction", node.Rpc), bytes.NewBuffer(commandJson))
 			if err != nil {
 				backend.logger.Printf("sender err, NewRequest: %s", err.Error())
