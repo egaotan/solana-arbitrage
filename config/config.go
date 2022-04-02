@@ -56,6 +56,7 @@ type Config struct {
 	TransactionNodes    []*Node            `json:"transaction_nodes"`
 	BlochHash           []string           `json:"block_hash"`
 	TpuClient           []string           `json:"tpu_client"`
+	Senders             []*Node            `json:"senders"`
 	TransactionNodeSize int                `json:"transaction_node_size"`
 	TransactionSend     int                `json:"transaction_send"`
 	NodeId              int                `json:"node_id"`

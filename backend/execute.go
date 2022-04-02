@@ -257,22 +257,25 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 			return
 		}
 		//
-		req, err := http.NewRequest("POST", "http://127.0.0.1:8088/api/sendtransaction", bytes.NewBuffer(commandJson))
-		if err != nil {
-			backend.logger.Printf("sender err, NewRequest: %s", err.Error())
-			return
-		}
-		req.Header.Set("Accepts", "application/json")
 		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			backend.logger.Printf("sender err, Do: %s", err.Error())
-			return
-		}
-		defer resp.Body.Close()
-		if resp.StatusCode != 200 {
-			backend.logger.Printf("sender err, status code: %d, %s", resp.StatusCode, resp.Status)
-			return
+		for _, node := range backend.senderNodes {
+			req, err := http.NewRequest("POST", fmt.Sprintf("%s/api/sendtransaction", node.Rpc), bytes.NewBuffer(commandJson))
+			if err != nil {
+				backend.logger.Printf("sender err, NewRequest: %s", err.Error())
+				continue
+			}
+			req.Header.Set("Accepts", "application/json")
+			resp, err := client.Do(req)
+			if err != nil {
+				backend.logger.Printf("sender err, Do: %s", err.Error())
+				continue
+			}
+			resp.Body.Close()
+			if resp.StatusCode != 200 {
+				backend.logger.Printf("sender err, status code: %d, %s", resp.StatusCode, resp.Status)
+				continue
+			}
+			resp.Body.Close()
 		}
 		backend.logger.Printf("sender successful!")
 	}

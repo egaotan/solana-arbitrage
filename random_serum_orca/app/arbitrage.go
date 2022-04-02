@@ -93,7 +93,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	//peer, ttl := networkdetect.DetectPeers(cfg.Nodes[0].Wss)
 	//logger.Printf("peer: %s, ttl: %d", peer, ttl/1000000)
 	//
-	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash, cfg.TpuClient, cfg.TransactionSend)
+	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash, cfg.TpuClient, cfg.Nodes, cfg.TransactionSend)
 	backend.ImportWallet(cfg.Key)
 	backend.SetPlayer(cfg.User)
 	backend.SetStore(nil)

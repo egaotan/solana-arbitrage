@@ -72,7 +72,7 @@ func (sender *Sender) StartRPC() {
 	g := router.Group("/api")
 	g.POST("/sendtransaction", sender.sendTransaction)
 	sender.httpServer = &http.Server{
-		Addr:    "0.0.0.0:8088",
+		Addr:    "0.0.0.0:8089",
 		Handler: router,
 	}
 	sender.logger.Printf("start rpc server......")
