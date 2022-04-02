@@ -69,7 +69,7 @@ func (bl *BalanceListen) notify(balances []uint64) {
 		gBalance = append(gBalance, 0)
 	}
 	update := false
-	for i := 0;i < size;i ++ {
+	for i := 0; i < size; i++ {
 		if balances[i] != gBalance[i] {
 			update = true
 			break
@@ -79,7 +79,7 @@ func (bl *BalanceListen) notify(balances []uint64) {
 		return
 	}
 	context := "arbitrage account balance update: \n"
-	for i := 0;i < size;i ++ {
+	for i := 0; i < size; i++ {
 		oldBalance := decimal.NewFromInt(int64(gBalance[i])).Div(decimal.NewFromInt(1000000))
 		newBalance := decimal.NewFromInt(int64(balances[i])).Div(decimal.NewFromInt(1000000))
 		diff := decimal.NewFromInt(0)
@@ -100,7 +100,7 @@ func (bl *BalanceListen) notify(balances []uint64) {
 		},
 	}
 	bl.dsdk.Notify(dingNotify)
-	for i := 0;i < size;i ++ {
+	for i := 0; i < size; i++ {
 		gBalance[i] = balances[i]
 	}
 }

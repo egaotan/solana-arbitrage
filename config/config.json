@@ -60,11 +60,11 @@
       "usable": true
     }
   ],
-  "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
-  "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com"],
+  "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com", "https://solend.genesysgo.net", "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913", "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189", "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q"],
+  "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com", "https://solend.genesysgo.net", "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913", "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189", "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q"],
   "transaction_node_size": 10,
   "transaction_send": 3,
-  "bomb": 99,
+  "bomb": 199,
   "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
@@ -74,7 +74,7 @@
   "token_a": "So11111111111111111111111111111111111111112",
   "token_b": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   "instruction_size": 1,
-  "random_ticker": 500,
+  "random_ticker": 100,
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
   "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",

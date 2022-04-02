@@ -24,22 +24,22 @@ import (
 )
 
 type Arbitrage struct {
-	ctx       context.Context
-	log       *log.Logger
-	config    *config.Config
-	wg        sync.WaitGroup
-	backend   *backend.Backend
-	env       *env.Env
-	splToken  *spltoken.Program
-	system    *system.Program
-	programs  map[solana.PublicKey]program.Program
-	blockHash int
-	nonce     byte
+	ctx          context.Context
+	log          *log.Logger
+	config       *config.Config
+	wg           sync.WaitGroup
+	backend      *backend.Backend
+	env          *env.Env
+	splToken     *spltoken.Program
+	system       *system.Program
+	programs     map[solana.PublicKey]program.Program
+	blockHash    int
+	nonce        byte
 	latestNotify uint64
-	dsdk *dingsdk.DingSdk
-	balances map[solana.PublicKey]uint64
-	frequency int64
-	counter int64
+	dsdk         *dingsdk.DingSdk
+	balances     map[solana.PublicKey]uint64
+	frequency    int64
+	counter      int64
 	latestUpdate int64
 }
 
@@ -73,8 +73,8 @@ func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env 
 
 func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	arb := &Arbitrage{
-		ctx:    ctx,
-		config: cfg,
+		ctx:       ctx,
+		config:    cfg,
 		blockHash: 2,
 	}
 	//
@@ -139,7 +139,7 @@ func (arb *Arbitrage) Start() {
 		}
 	}
 	/*
-	monitor usdc accounts
+		monitor usdc accounts
 	*/
 	usdcAccounts := make([]solana.PublicKey, 0)
 	arb.balances = make(map[solana.PublicKey]uint64, 0)
@@ -250,127 +250,127 @@ func (arb *Arbitrage) randomArbitrage() {
 }
 
 func (arb *Arbitrage) Arbitrage() error {
-	arb.counter ++
-	if arb.counter - arb.latestUpdate > 10 * 60 {
+	arb.counter++
+	if arb.counter-arb.latestUpdate > 10*60 {
 		arb.frequency = 10
 	}
-	if arb.counter % arb.frequency != 0 {
+	if arb.counter%arb.frequency != 0 {
 		return nil
 	}
 	ins := make([]solana.Instruction, 0)
 	/*
-	{
-		accounts := make([]*solana.AccountMeta, 0)
-		p, ok := arb.programs[program.SerumV22]
-		if !ok {
-			return fmt.Errorf("program %s is invalid", program.SerumV22)
-		}
-		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
-		parameter["tokenB"] = program.USDC
-		accs, err := p.MatchOrders(parameter)
-		if err != nil {
-			return err
-		}
-		accounts = append(accounts, accs...)
+		{
+			accounts := make([]*solana.AccountMeta, 0)
+			p, ok := arb.programs[program.SerumV22]
+			if !ok {
+				return fmt.Errorf("program %s is invalid", program.SerumV22)
+			}
+			parameter := make(map[string]interface{})
+			parameter["tokenA"] = program.SOL
+			parameter["tokenB"] = program.USDC
+			accs, err := p.MatchOrders(parameter)
+			if err != nil {
+				return err
+			}
+			accounts = append(accounts, accs...)
 
-		data := make([]byte, 7)
-		data[0] = 0
-		binary.LittleEndian.PutUint32(data[1:], 2)
-		binary.LittleEndian.PutUint16(data[5:], 65535)
+			data := make([]byte, 7)
+			data[0] = 0
+			binary.LittleEndian.PutUint32(data[1:], 2)
+			binary.LittleEndian.PutUint16(data[5:], 65535)
 
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.SerumV22,
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.SerumV22,
+			}
+			ins = append(ins, instruction)
 		}
-		ins = append(ins, instruction)
-	}
 
-	{
-		accounts := make([]*solana.AccountMeta, 0)
-		p, ok := arb.programs[program.SerumV22]
-		if !ok {
-			return fmt.Errorf("program %s is invalid", program.SerumV22)
-		}
-		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
-		parameter["tokenB"] = program.USDT
-		accs, err := p.MatchOrders(parameter)
-		if err != nil {
-			return err
-		}
-		accounts = append(accounts, accs...)
+		{
+			accounts := make([]*solana.AccountMeta, 0)
+			p, ok := arb.programs[program.SerumV22]
+			if !ok {
+				return fmt.Errorf("program %s is invalid", program.SerumV22)
+			}
+			parameter := make(map[string]interface{})
+			parameter["tokenA"] = program.SOL
+			parameter["tokenB"] = program.USDT
+			accs, err := p.MatchOrders(parameter)
+			if err != nil {
+				return err
+			}
+			accounts = append(accounts, accs...)
 
-		data := make([]byte, 7)
-		data[0] = 0
-		binary.LittleEndian.PutUint32(data[1:], 2)
-		binary.LittleEndian.PutUint16(data[5:], 65535)
+			data := make([]byte, 7)
+			data[0] = 0
+			binary.LittleEndian.PutUint32(data[1:], 2)
+			binary.LittleEndian.PutUint16(data[5:], 65535)
 
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.SerumV22,
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.SerumV22,
+			}
+			ins = append(ins, instruction)
 		}
-		ins = append(ins, instruction)
-	}
 
-	{
-		accounts := make([]*solana.AccountMeta, 0)
-		p, ok := arb.programs[program.SerumV22]
-		if !ok {
-			return fmt.Errorf("program %s is invalid", program.SerumV22)
-		}
-		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
-		parameter["tokenB"] = program.USDC
-		accs, err := p.ConsumeEvents(parameter)
-		if err != nil {
-			return err
-		}
-		accounts = append(accounts, accs...)
+		{
+			accounts := make([]*solana.AccountMeta, 0)
+			p, ok := arb.programs[program.SerumV22]
+			if !ok {
+				return fmt.Errorf("program %s is invalid", program.SerumV22)
+			}
+			parameter := make(map[string]interface{})
+			parameter["tokenA"] = program.SOL
+			parameter["tokenB"] = program.USDC
+			accs, err := p.ConsumeEvents(parameter)
+			if err != nil {
+				return err
+			}
+			accounts = append(accounts, accs...)
 
-		data := make([]byte, 7)
-		data[0] = 0
-		binary.LittleEndian.PutUint32(data[1:], 3)
-		binary.LittleEndian.PutUint16(data[5:], 65535)
+			data := make([]byte, 7)
+			data[0] = 0
+			binary.LittleEndian.PutUint32(data[1:], 3)
+			binary.LittleEndian.PutUint16(data[5:], 65535)
 
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.SerumV22,
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.SerumV22,
+			}
+			ins = append(ins, instruction)
 		}
-		ins = append(ins, instruction)
-	}
 
-	{
-		accounts := make([]*solana.AccountMeta, 0)
-		p, ok := arb.programs[program.SerumV22]
-		if !ok {
-			return fmt.Errorf("program %s is invalid", program.SerumV22)
-		}
-		parameter := make(map[string]interface{})
-		parameter["tokenA"] = program.SOL
-		parameter["tokenB"] = program.USDT
-		accs, err := p.ConsumeEvents(parameter)
-		if err != nil {
-			return err
-		}
-		accounts = append(accounts, accs...)
+		{
+			accounts := make([]*solana.AccountMeta, 0)
+			p, ok := arb.programs[program.SerumV22]
+			if !ok {
+				return fmt.Errorf("program %s is invalid", program.SerumV22)
+			}
+			parameter := make(map[string]interface{})
+			parameter["tokenA"] = program.SOL
+			parameter["tokenB"] = program.USDT
+			accs, err := p.ConsumeEvents(parameter)
+			if err != nil {
+				return err
+			}
+			accounts = append(accounts, accs...)
 
-		data := make([]byte, 7)
-		data[0] = 0
-		binary.LittleEndian.PutUint32(data[1:], 3)
-		binary.LittleEndian.PutUint16(data[5:], 65535)
+			data := make([]byte, 7)
+			data[0] = 0
+			binary.LittleEndian.PutUint32(data[1:], 3)
+			binary.LittleEndian.PutUint16(data[5:], 65535)
 
-		instruction := &program.Instruction{
-			IsAccounts:  accounts,
-			IsData:      data,
-			IsProgramID: program.SerumV22,
+			instruction := &program.Instruction{
+				IsAccounts:  accounts,
+				IsData:      data,
+				IsProgramID: program.SerumV22,
+			}
+			ins = append(ins, instruction)
 		}
-		ins = append(ins, instruction)
-	}
-	 */
+	*/
 	//
 	accounts := make([]*solana.AccountMeta, 0)
 	//accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.ExchangeContract, IsSigner: false, IsWritable: true})
@@ -435,7 +435,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysClock, IsSigner: false, IsWritable: false})
 
-	arb.nonce ++
+	arb.nonce++
 	arb.nonce = arb.nonce % 90
 	for i := 0; i < arb.config.InstructionSize; i++ {
 		// very dangerous

@@ -96,16 +96,16 @@ type Arbitrage struct {
 	tokens       map[solana.PublicKey]bool
 	swapAccounts map[solana.PublicKey]bool
 	//calculators   map[string]calculator.Calculator
-	calculators   []calculator.Calculator
-	validYield    int64
-	nodeId        int
-	store         *store.Store
+	calculators []calculator.Calculator
+	validYield  int64
+	nodeId      int
+	store       *store.Store
 	//balanceListen *balancelisten.BalanceListen
-	notify        *Notify
-	stateListen   *statelisten.StateListen
-	httpServer    *http.Server
-	rpcPort       string
-	cache         map[string][]*ArbitrageData
+	notify      *Notify
+	stateListen *statelisten.StateListen
+	httpServer  *http.Server
+	rpcPort     string
+	cache       map[string][]*ArbitrageData
 	//selector         int64
 	startTime        int64
 	latestCommitTime int64
@@ -706,39 +706,38 @@ type ArbitrageInfo struct {
 
 func (arb *Arbitrage) getArbitrage(c *gin.Context) {
 	/*
-	idStr, ok := c.GetQuery("id")
-	if !ok {
-		c.JSON(500, "parameter is invalid")
-		return
-	}
-	id, err := strconv.ParseUint(idStr, 10, 64)
-	if err != nil {
-		c.JSON(500, err)
-		return
-	}
-	localArbitrages, err := arb.store.GetLocalArbitrage(id)
-	if err != nil {
-		c.JSON(500, err)
-		return
-	}
-	committedArbitrages, err := arb.store.GetCommittedArbitrage(id)
-	if err != nil {
-		c.JSON(500, err)
-		return
-	}
-	executedArbitrages, err := arb.store.GetExecutedArbitrage(id)
-	if err != nil {
-		c.JSON(500, err)
-		return
-	}
-	c.JSON(200, &ArbitrageInfo{
-		LocalArbitrages:     buildLocalArbitrages(localArbitrages, arb.env),
-		CommittedArbitrages: buildCommittedArbitrages(committedArbitrages, arb.env),
-		ExecutedArbitrages:  buildExecutedArbitrages(executedArbitrages),
-	})
+		idStr, ok := c.GetQuery("id")
+		if !ok {
+			c.JSON(500, "parameter is invalid")
+			return
+		}
+		id, err := strconv.ParseUint(idStr, 10, 64)
+		if err != nil {
+			c.JSON(500, err)
+			return
+		}
+		localArbitrages, err := arb.store.GetLocalArbitrage(id)
+		if err != nil {
+			c.JSON(500, err)
+			return
+		}
+		committedArbitrages, err := arb.store.GetCommittedArbitrage(id)
+		if err != nil {
+			c.JSON(500, err)
+			return
+		}
+		executedArbitrages, err := arb.store.GetExecutedArbitrage(id)
+		if err != nil {
+			c.JSON(500, err)
+			return
+		}
+		c.JSON(200, &ArbitrageInfo{
+			LocalArbitrages:     buildLocalArbitrages(localArbitrages, arb.env),
+			CommittedArbitrages: buildCommittedArbitrages(committedArbitrages, arb.env),
+			ExecutedArbitrages:  buildExecutedArbitrages(executedArbitrages),
+		})
 	*/
 }
-
 
 func (arb *Arbitrage) randomArbitrage() {
 	ticker := time.NewTicker(time.Millisecond * time.Duration(arb.config.RandomTicker))

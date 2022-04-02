@@ -31,6 +31,7 @@ type Proxy struct {
 type Command struct {
 	Id uint64
 	Tx []byte
+	Hash string
 }
 
 func NewProxy(ctx context.Context, tpuclient []string) *Proxy {
@@ -141,7 +142,7 @@ func (proxy *Proxy) newSlot() {
 					}
 				}
 			}
-			if slot - proxy.curSlot < 5 {
+			if slot-proxy.curSlot < 5 {
 				continue
 			}
 			proxy.curSlot = slot

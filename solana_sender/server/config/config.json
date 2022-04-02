@@ -1,0 +1,64 @@
+{
+  "slot_nodes": [
+    {
+      "rpc": "https://api.mainnet-beta.solana.com",
+      "ws": "wss://api.mainnet-beta.solana.com",
+      "usable": true
+    },
+    {
+      "rpc": "https://solana-api.projectserum.com",
+      "ws": "wss://solana-api.projectserum.com",
+      "usable": false
+    },
+    {
+      "rpc": "https://solend.genesysgo.net",
+      "ws": "wss://solend.genesysgo.net",
+      "usable": false
+    },
+    {
+      "rpc": "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913",
+      "ws": "wss://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913",
+      "usable": false
+    },
+    {
+      "rpc": "https://ssc-dao.genesysgo.net",
+      "ws": "wss://ssc-dao.genesysgo.net",
+      "usable": false
+    },
+    {
+      "rpc": "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189",
+      "ws": "wss://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189",
+      "usable": false
+    },
+    {
+      "rpc": "https://free.rpcpool.com",
+      "ws": "wss://free.rpcpool.com",
+      "usable": false
+    },
+    {
+      "rpc": "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
+      "ws": "wss://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q",
+      "usable": false
+    },
+    {
+      "rpc": "https://mercurial.rpcpool.com",
+      "ws": "wss://mercurial.rpcpool.com",
+      "usable": false
+    }
+  ],
+  "lss_nodes": [
+    {
+      "rpc": "https://ssc-dao.genesysgo.net"
+    },
+    {
+      "rpc": "https://free.rpcpool.com"
+    },
+    {
+      "rpc": "https://solana-api.projectserum.com"
+    },
+    {
+      "rpc": "https://solend.genesysgo.net"
+    }
+  ],
+  "bomb": 199
+}

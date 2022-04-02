@@ -35,11 +35,11 @@ func (ans *AvailableNodesService) Start() {
 func (ans *AvailableNodesService) fetchAvailableNodes() {
 	var clusterNodes []*rpc.GetClusterNodesResult
 	var err error
-	for i := 0; i < len(ans.client);i ++ {
+	for i := 0; i < len(ans.client); i++ {
 		clusterNodes, err = ans.client[ans.index].GetClusterNodes(ans.ctx)
 		if err != nil {
 			ans.logger.Printf("GetClusterNodes err: %s", err.Error())
-			ans.index ++
+			ans.index++
 			ans.index = ans.index % len(ans.client)
 		} else {
 			break

@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/egaotan/solana-arbitrage/backend/tpu"
@@ -10,6 +11,7 @@ import (
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 	"log"
+	"net/http"
 	"time"
 )
 
@@ -82,10 +84,10 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 		}
 		if Test {
 			response, err := backend.rpcClient.SimulateTransactionWithOpts(backend.ctx, trx, &rpc.SimulateTransactionOpts{
-				SigVerify:  false,
-				Commitment: rpc.CommitmentFinalized,
+				SigVerify:              false,
+				Commitment:             rpc.CommitmentFinalized,
 				ReplaceRecentBlockhash: true,
-				Accounts: &rpc.SimulateTransactionAccountsOpts{solana.EncodingBase64,command.Accounts},
+				Accounts:               &rpc.SimulateTransactionAccountsOpts{solana.EncodingBase64, command.Accounts},
 			})
 			if err != nil {
 				logger.Printf("SimulateTransactionWithOpts err: %s", err.Error())
@@ -215,6 +217,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		backend.logger.Printf("send transaction to tpu")
 		command := &tpu.Command{
 			Id: id,
+			Hash: trx.Signatures[0].String(),
 		}
 		command.Tx, err = trx.MarshalBinary()
 		if err != nil {
@@ -234,5 +237,43 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 		for i := 0; i < len(backend.commandChans); i++ {
 			backend.commandChans[i] <- command
 		}
+	}
+	if backend.transactionSend == 4 || backend.transactionSend == 3 {
+		backend.logger.Printf("send transaction to sender")
+		//
+		command := &tpu.Command{
+			Id: id,
+			Hash: trx.Signatures[0].String(),
+		}
+		command.Tx, err = trx.MarshalBinary()
+		if err != nil {
+			backend.logger.Printf("trx.MarshalBinary err: %s", err.Error())
+			return
+		}
+		//
+		commandJson, err := json.Marshal(command)
+		if err != nil {
+			backend.logger.Printf("mashal command err: %s", err.Error())
+			return
+		}
+		//
+		req, err := http.NewRequest("POST", "http://127.0.0.1:8088/api/sendtransaction", bytes.NewBuffer(commandJson))
+		if err != nil {
+			backend.logger.Printf("sender err, NewRequest: %s", err.Error())
+			return
+		}
+		req.Header.Set("Accepts", "application/json")
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			backend.logger.Printf("sender err, Do: %s", err.Error())
+			return
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			backend.logger.Printf("sender err, status code: %d, %s", resp.StatusCode, resp.Status)
+			return
+		}
+		backend.logger.Printf("sender successful!")
 	}
 }

@@ -30,7 +30,7 @@ func startProgram() *Program {
 		[]string{rpc.MainNetBetaSerum_RPC},
 		[]string{rpc.MainNetBetaSerum_RPC},
 		1,
-		)
+	)
 	splTokenProgram := spltoken.NewProgram(ctx, backend, nil)
 	systemProgram := system.NewProgram(ctx, backend)
 	env := env.NewEnv(ctx)

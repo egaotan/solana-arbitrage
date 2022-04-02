@@ -24,19 +24,19 @@ import (
 )
 
 type Arbitrage struct {
-	ctx       context.Context
-	log       *log.Logger
-	config    *config.Config
-	wg        sync.WaitGroup
-	backend   *backend.Backend
-	env       *env.Env
-	splToken  *spltoken.Program
-	system    *system.Program
-	programs  map[solana.PublicKey]program.Program
-	blockHash int
-	nonce     byte
+	ctx          context.Context
+	log          *log.Logger
+	config       *config.Config
+	wg           sync.WaitGroup
+	backend      *backend.Backend
+	env          *env.Env
+	splToken     *spltoken.Program
+	system       *system.Program
+	programs     map[solana.PublicKey]program.Program
+	blockHash    int
+	nonce        byte
 	latestNotify uint64
-	dsdk *dingsdk.DingSdk
+	dsdk         *dingsdk.DingSdk
 }
 
 func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env *env.Env, b *backend.Backend, splToken *spltoken.Program, system *system.Program, cb program.Callback) program.Program {
@@ -69,8 +69,8 @@ func NewProgram(programId solana.PublicKey, ctx context.Context, which int, env 
 
 func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	arb := &Arbitrage{
-		ctx:    ctx,
-		config: cfg,
+		ctx:       ctx,
+		config:    cfg,
 		blockHash: 2,
 	}
 	//
@@ -440,7 +440,7 @@ func (arb *Arbitrage) ArbitrageStart() error {
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
 	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysRent, IsSigner: false, IsWritable: false})
 
-	arb.nonce ++
+	arb.nonce++
 	arb.nonce = arb.nonce % 200
 	{
 		data := make([]byte, 2)

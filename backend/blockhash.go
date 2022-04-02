@@ -38,13 +38,13 @@ func (backend *Backend) CacheRecentBlockHash() {
 			backend.logger.Printf("begin update block hash")
 			var getRecentBlockHashResult *rpc.GetRecentBlockhashResult
 			var err error
-			for i := 0;i < len(rpcClients);i ++ {
+			for i := 0; i < len(rpcClients); i++ {
 				getRecentBlockHashResult, err = rpcClients[index].GetRecentBlockhash(backend.ctx, rpc.CommitmentFinalized)
 				if err != nil {
 					backend.logger.Printf("GetRecentBlockhash, %d err: %s", index, err.Error())
 					index++
 					index = index % len(rpcClients)
-				} else if slot - getRecentBlockHashResult.Context.Slot > 90 {
+				} else if slot-getRecentBlockHashResult.Context.Slot > 90 {
 					backend.logger.Printf("GetRecentBlockhash, %d err: %s", index, "this block hash is too old")
 					index++
 					index = index % len(rpcClients)

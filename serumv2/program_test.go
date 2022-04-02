@@ -34,7 +34,7 @@ func startProgram() *Program {
 		true,
 		[]*config.Node{{rpc.MainNetBetaSerum_RPC, rpc.MainNetBetaSerum_WS, nil, true}},
 		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2,
-		)
+	)
 	splTokenProgram := spltoken.NewProgram(ctx, backend, nil)
 	systemProgram := system.NewProgram(ctx, backend)
 	env := env.NewEnv(ctx)

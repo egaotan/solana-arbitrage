@@ -36,7 +36,7 @@ var (
 	MarketsFile                  = ConfigPath + "markets.json"
 	ConfigFile                   = ConfigPath + "config.json"
 	ValidatorFile                = ConfigPath + "validator.json"
-	RandomCaseFile = ConfigFile + "random_case.json"
+	RandomCaseFile               = ConfigFile + "random_case.json"
 	LogPath                      = "./logs/"
 	BackendLog                   = "backend"
 	ExecutorLog                  = "executor"
@@ -46,16 +46,16 @@ var (
 )
 
 type Node struct {
-	Rpc    string   `json:"rpc"`
-	Ws     string   `json:"ws"`
-	Usable bool     `json:"usable"`
+	Rpc    string `json:"rpc"`
+	Ws     string `json:"ws"`
+	Usable bool   `json:"usable"`
 }
 
 type Config struct {
 	Nodes               []*Node            `json:"nodes"`
 	TransactionNodes    []*Node            `json:"transaction_nodes"`
-	BlochHash           []string             `json:"block_hash"`
-	TpuClient           []string             `json:"tpu_client"`
+	BlochHash           []string           `json:"block_hash"`
+	TpuClient           []string           `json:"tpu_client"`
 	TransactionNodeSize int                `json:"transaction_node_size"`
 	TransactionSend     int                `json:"transaction_send"`
 	NodeId              int                `json:"node_id"`
@@ -81,7 +81,7 @@ type Config struct {
 	DBPasswd            string             `json:"db_passwd"`
 	Listen              string             `json:"listen"`
 	Usdc                uint64             `json:"usdc"`
-	UsdcAccount         []string             `json:"usdc_account"`
+	UsdcAccount         []string           `json:"usdc_account"`
 	TokenA              solana.PublicKey   `json:"token_a"`
 	TokenB              solana.PublicKey   `json:"token_b"`
 	InstructionSize     int                `json:"instruction_size"`
@@ -90,12 +90,12 @@ type Config struct {
 
 type Path struct {
 	Program solana.PublicKey `json:"program"`
-	Market solana.PublicKey `json:"market"`
-	In solana.PublicKey `json:"in"`
+	Market  solana.PublicKey `json:"market"`
+	In      solana.PublicKey `json:"in"`
 }
 type Case struct {
-	Amount uint64 `json:"amount"`
-	Paths []*Path `json:"path"`
+	Amount uint64  `json:"amount"`
+	Paths  []*Path `json:"path"`
 }
 type RandomCase struct {
 	Cases []*Case `json:"case"`

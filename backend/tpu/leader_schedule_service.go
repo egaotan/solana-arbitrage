@@ -42,11 +42,11 @@ func (ans *LeaderScheduleService) Start() {
 func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
 	var leaders []solana.PublicKey
 	var err error
-	for i := 0;i < len(ans.client);i ++ {
+	for i := 0; i < len(ans.client); i++ {
 		leaders, err = ans.client[ans.index].GetSlotLeaders(ans.ctx, slot, counter)
 		if err != nil {
 			ans.logger.Printf("GetSlotLeaders err: %s", err.Error())
-			ans.index ++
+			ans.index++
 			ans.index = ans.index % len(ans.client)
 		} else {
 			break
