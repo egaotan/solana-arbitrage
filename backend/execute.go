@@ -238,7 +238,7 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 			backend.commandChans[i] <- command
 		}
 	}
-	if backend.transactionSend == 4 || backend.transactionSend == 3 {
+	if backend.transactionSend == 4 || backend.transactionSend == 3 || true {
 		backend.logger.Printf("send transaction to sender")
 		//
 		command := &tpu.Command{
