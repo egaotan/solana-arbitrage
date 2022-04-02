@@ -55,7 +55,7 @@ func NewSender(ctx context.Context, cfg *config.Config) *Sender {
 
 func (sender *Sender) Service() {
 	sender.Start()
-	sender.StartTCP()
+	go sender.StartTCP()
 	<-sender.ctx.Done()
 	sender.StopTCP()
 	sender.Stop()
@@ -82,6 +82,7 @@ func (sender *Sender) StartTCP() {
 			sender.logger.Printf("accept connection err: %s", err.Error())
 			continue
 		}
+		sender.logger.Printf("accept connection")
 		go sender.doProcess(conn)
 	}
 }

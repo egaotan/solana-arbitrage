@@ -292,6 +292,7 @@ func (backend *Backend) sender(id int, url string) {
 				if senderConn == nil {
 					conn, err := net.Dial("tcp", url)
 					if err != nil {
+						backend.logger.Printf("dial err: %s", err.Error())
 						continue
 					}
 					senderConn = conn

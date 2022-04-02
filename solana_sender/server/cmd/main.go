@@ -38,6 +38,6 @@ func main() {
 
 func shutdown(cancel context.CancelFunc, quit <-chan os.Signal) {
 	osCall := <-quit
-	fmt.Printf("System call: %v, auto trader is shutting down......\n", osCall)
+	fmt.Printf("System call: %v, solana sender is shutting down......\n", osCall)
 	cancel()
 }
