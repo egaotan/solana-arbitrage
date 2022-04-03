@@ -205,8 +205,10 @@ func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, oldBalance uint6
 	if newBalance == initBalance {
 		return nil
 	}
-	arb.frequency = 5
-	arb.latestUpdate = arb.counter
+	if initBalance != 0 {
+		arb.frequency = 5
+		arb.latestUpdate = arb.counter
+	}
 
 	context := "arbitrage account balance update: \n"
 	balance1 := decimal.NewFromInt(int64(initBalance)).Div(decimal.NewFromInt(1000000))

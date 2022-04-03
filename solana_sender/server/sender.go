@@ -91,6 +91,7 @@ func (sender *Sender) doProcess(conn net.Conn) {
 	defer conn.Close()
 	buf := make([]byte, 0, 1024 * 1024)
 	for {
+		sender.logger.Printf("try to read......")
 		temp := make([]byte, CommandLen)
 		n, err := conn.Read(temp)
 		if err != nil {

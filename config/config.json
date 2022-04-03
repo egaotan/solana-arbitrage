@@ -64,21 +64,21 @@
   "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com", "https://solend.genesysgo.net", "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913", "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189", "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q"],
   "senders": [
     {
-      "rpc": "http://8.216.6.126:8089",
+      "rpc": "8.216.6.126:8089",
       "name": "tokyo"
     },
     {
-      "rpc": "http://8.211.15.125:8089",
+      "rpc": "8.211.15.125:8089",
       "name": "frankfurt"
     },
     {
-      "rpc": "http://47.253.206.55:8089",
+      "rpc": "47.253.206.55:8089",
       "name": "virginia"
     }
   ],
   "transaction_node_size": 10,
   "transaction_send": 3,
-  "bomb": 199,
+  "bomb": 100,
   "node_id": 0,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",

@@ -299,7 +299,9 @@ func (backend *Backend) sender(id int, url string) {
 						backend.logger.Printf("dial err: %s", err.Error())
 						continue
 					}
+					backend.logger.Printf("connected")
 					senderConn = conn
+					senderConn.SetWriteDeadline(time.Now().Add(time.Second))
 				}
 				n, err := senderConn.Write(commandData)
 				if err != nil {
