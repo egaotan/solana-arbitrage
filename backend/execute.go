@@ -284,6 +284,9 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 }
 
 func (backend *Backend) sender(id int, url string) {
+	defer func() {
+		backend.logger.Printf("sender exit, (%d)", id)
+	}()
 	var senderConn net.Conn
 	senderConn = nil
 	for {

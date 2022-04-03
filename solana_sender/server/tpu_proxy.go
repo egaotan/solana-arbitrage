@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/utils"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
@@ -233,8 +232,8 @@ func (proxy *Proxy) send(tx *Command) {
 			proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 		}
 	}
-	timeRate := 500 / config.Bomb
-	for i := 0;i < config.Bomb;i ++ {
+	timeRate := 500 / proxy.bomb
+	for i := 0;i < proxy.bomb;i ++ {
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx to %s", addr)
 			_, err := conn.Write(tx.Tx)

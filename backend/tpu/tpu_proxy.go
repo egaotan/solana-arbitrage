@@ -56,7 +56,7 @@ func (proxy *Proxy) Start() {
 	proxy.ans.Start()
 	proxy.lss.Start()
 	go proxy.newSlot()
-	for i := 0; i < 64; i++ {
+	for i := 0; i < 32; i++ {
 		go proxy.SendTransactions()
 	}
 }
@@ -156,6 +156,9 @@ func (proxy *Proxy) CommitTransaction(command *Command) {
 }
 
 func (proxy *Proxy) SendTransactions() {
+	defer func() {
+		proxy.logger.Printf("tpu exit")
+	}()
 	for {
 		select {
 		case tx := <-proxy.transactions:
