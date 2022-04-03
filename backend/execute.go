@@ -76,7 +76,7 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 	trx := command.Trx
 	send := func() solana.Signature {
 		if !Test {
-			signature, err := client.SendTransactionWithOpts(backend.ctx, trx, true, rpc.CommitmentFinalized)
+			signature, err := client.SendTransactionWithOpts(backend.ctx, trx, true, rpc.CommitmentProcessed)
 			if err != nil {
 				logger.Printf("SendTransactionWithOpts err: %s", err.Error())
 			}
