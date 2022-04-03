@@ -301,8 +301,8 @@ func (backend *Backend) sender(id int, url string) {
 					}
 					backend.logger.Printf("connected")
 					senderConn = conn
-					senderConn.SetWriteDeadline(time.Now().Add(time.Second))
 				}
+				senderConn.SetWriteDeadline(time.Now().Add(time.Second))
 				n, err := senderConn.Write(commandData)
 				if err != nil {
 					backend.logger.Printf("tpc write err: %s", err.Error())
