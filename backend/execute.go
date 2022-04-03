@@ -292,8 +292,9 @@ func (backend *Backend) sender(id int, url string) {
 	for {
 		select {
 			case commandData := <-backend.commandData[id]: {
+				backend.logger.Printf("try to send: (%d)", id)
 				if senderConn == nil {
-					conn, err := net.Dial("tcp", url)
+					conn, err := net.DialTimeout("tcp", url, time.Second)
 					if err != nil {
 						backend.logger.Printf("dial err: %s", err.Error())
 						continue

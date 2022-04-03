@@ -89,7 +89,7 @@ func (sender *Sender) StartTCP() {
 
 func (sender *Sender) doProcess(conn net.Conn) {
 	defer conn.Close()
-	buf := make([]byte, 0)
+	buf := make([]byte, 0, 1024 * 1024)
 	for {
 		temp := make([]byte, CommandLen)
 		n, err := conn.Read(temp)
