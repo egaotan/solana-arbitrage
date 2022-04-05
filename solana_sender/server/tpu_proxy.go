@@ -63,7 +63,7 @@ func (proxy *Proxy) Start() {
 	proxy.lss.Start()
 	go proxy.refreshConnection()
 	proxy.slotSubscribe()
-	for i := 0; i < 32; i++ {
+	for i := 0; i < 8; i++ {
 		go proxy.sendTransaction()
 	}
 }

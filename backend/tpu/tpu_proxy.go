@@ -56,7 +56,7 @@ func (proxy *Proxy) Start() {
 	proxy.ans.Start()
 	proxy.lss.Start()
 	go proxy.newSlot()
-	for i := 0; i < 32; i++ {
+	for i := 0; i < 8; i++ {
 		go proxy.SendTransactions()
 	}
 }
