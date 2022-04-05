@@ -212,6 +212,9 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	backend.txLogger.Printf("(%s) (%d) (%s)", trx.Signatures[0].String(), id,
 		time.Unix(int64(id)/1000000, int64(id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
 
+	backend.logger.Printf("(%s) (%d) (%s)", trx.Signatures[0].String(), id,
+		time.Unix(int64(id)/1000000, int64(id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
+	
 	//
 	if (backend.transactionSend == 2 || backend.transactionSend == 3 || backend.transactionSend == 4) && !Test {
 		backend.logger.Printf("send transaction to tpu")
