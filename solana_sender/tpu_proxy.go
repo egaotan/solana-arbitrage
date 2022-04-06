@@ -34,8 +34,8 @@ type Proxy struct {
 	txSub        map[solana.Signature]*ws.SignatureSubscription
 }
 
-func NewProxy(ctx context.Context, slotClientUrl string, lssClientUrls []string, bomb int) (*Proxy, error) {
-	logger := utils.NewLog("./log/", "tpu_executor")
+func NewProxy(ctx context.Context, slotClientUrl string, lssClientUrls []string, bomb int, logPath string) (*Proxy, error) {
+	logger := utils.NewLog(logPath, "tpu_executor")
 	// client
 	slotClient, err := ws.Connect(ctx, slotClientUrl)
 	if err != nil {

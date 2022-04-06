@@ -74,7 +74,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 	backend.commandChans = commandChans
 	backend.clients = clients
 
-	tpu, err := sender.NewProxy(ctx, nodes[0].Rpc, tpuclient, config.Bomb)
+	tpu, err := sender.NewProxy(ctx, nodes[0].Rpc, tpuclient, config.Bomb, config.LogPath)
 	if err != nil {
 		panic(err)
 	}
