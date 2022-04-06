@@ -40,7 +40,7 @@ func NewSender(ctx context.Context, cfg *config.Config) *Sender {
 		clients = append(clients, senderClient.Rpc)
 	}
 	//
-	tpu, err := NewProxy(ctx, usedClient.Ws, clients, cfg.Bomb)
+	tpu, err := NewProxy(ctx, usedClient.Ws, clients, cfg.Bomb, "./log/")
 	if err != nil {
 		logger.Printf("new proxy err: %s", err.Error())
 		return nil
