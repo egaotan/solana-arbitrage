@@ -43,6 +43,17 @@ func main() {
 	fmt.Printf("work space: %s\n", workspace)
 
 	//
+	infoJson, err = os.ReadFile(config.ValidatorFile)
+	if err != nil {
+		panic(err)
+	}
+	validatorNodes := make([]*config.Node, 0)
+	err = json.Unmarshal(infoJson, &validatorNodes)
+	if err != nil {
+		panic(err)
+	}
+
+	//
 	oldNodes := cfg.Nodes
 	usableNodes := make([]*config.Node, 0)
 	for _, node := range oldNodes {
@@ -51,7 +62,6 @@ func main() {
 		}
 	}
 	cfg.Nodes = usableNodes
-
 	oldValidators := cfg.TransactionNodes
 	usableValidators := make([]*config.Node, 0)
 	for _, oldValidator := range oldValidators {
@@ -60,6 +70,24 @@ func main() {
 		}
 	}
 	cfg.TransactionNodes = usableValidators
+	//
+	usableValidators1 := make([]*config.Node, 0)
+	for _, validator := range validatorNodes {
+		if validator.Usable {
+			usableValidators1 = append(usableValidators1, validator)
+		}
+	}
+	//
+	selectedValidators := make([]*config.Node, 0)
+	for i := 0; i < len(usableValidators1); i++ {
+		if i%3 == cfg.NodeId {
+			selectedValidators = append(selectedValidators, usableValidators1[i])
+		}
+		if len(selectedValidators) > cfg.TransactionNodeSize {
+			break
+		}
+	}
+	cfg.TransactionNodes = append(cfg.TransactionNodes, selectedValidators...)
 
 	//
 	t := time.Now()
