@@ -316,11 +316,11 @@ func (proxy *Proxy) send() {
 		}
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx (%d) to %s", tx.Id, addr)
-			n, err := conn.Write(tx.Tx)
+			_, err := conn.Write(tx.Tx)
 			if err != nil {
 				proxy.logger.Printf("send tx (%d) err: %s, %d", tx.Id, err.Error())
 			} else {
-				proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+				//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 			}
 		}
 	}
