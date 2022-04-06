@@ -174,8 +174,10 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 		logger.Printf("check err: %s", err.Error())
 		time.Sleep(time.Millisecond * 500)
 	}
+	/*
 	trxJson, _ := json.MarshalIndent(trx, "", "    ")
 	logger.Printf("transaction: %s", trxJson)
+	 */
 }
 
 func (backend *Backend) startExecutor() {
