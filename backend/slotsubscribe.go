@@ -50,7 +50,6 @@ func (backend *Backend) RecvSlot(cb SlotCallback, sub *ws.SlotSubscription, tt *
 		if got.Slot%10 == 0 {
 			backend.updateBlockHash <- got.Slot
 		}
-		backend.tpu.CommitSlot(got.Slot)
 		data := got
 		slot := &Slot{
 			Number: data.Slot,

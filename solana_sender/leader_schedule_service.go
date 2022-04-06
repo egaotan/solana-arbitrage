@@ -1,4 +1,4 @@
-package tpu
+package sender
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 
 var (
 	UPCOMING_SLOT_SEARCH = uint64(60)
-	PAST_SLOT_SEARCH     = uint64(0)
+	PAST_SLOT_SEARCH     = uint64(5)
 )
 
 type LeaderScheduleService struct {
@@ -36,7 +36,7 @@ func NewLeaderScheduleService(ctx context.Context, client []*rpc.Client, logger 
 }
 
 func (ans *LeaderScheduleService) Start() {
-	go ans.Refresh()
+	go ans.refreshSlotLeaders()
 }
 
 func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
@@ -56,8 +56,7 @@ func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
 		ans.logger.Printf("GetSlotLeaders all err: %s", err.Error())
 		return
 	}
-
-	ans.logger.Printf("GetSlotLeaders, slot: %d, count: %d", slot, counter)
+	ans.logger.Printf("GetSlotLeaders, slot: %d, count: %d, size: %d, index: %d", slot, counter, len(leaders), ans.index)
 	for !atomic.CompareAndSwapInt32(&ans.lock, 0, 1) {
 		continue
 	}
@@ -70,16 +69,8 @@ func (ans *LeaderScheduleService) fetchLeaders(slot uint64, counter uint64) {
 	ans.firstSlot = slot
 }
 
-func (ans *LeaderScheduleService) GetFirstSlot() uint64 {
-	return ans.firstSlot
-}
-
-func (ans *LeaderScheduleService) GetLastSlot() uint64 {
-	return ans.firstSlot + uint64(len(ans.leaders))
-}
-
 func (ans *LeaderScheduleService) GetCheckPoint() uint64 {
-	return ans.firstSlot + UPCOMING_SLOT_SEARCH
+	return ans.firstSlot + UPCOMING_SLOT_SEARCH*2
 }
 
 func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
@@ -91,9 +82,6 @@ func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
 	}
 	//ans.logger.Printf("slots (%d, %d), slot: %d", ans.firstSlot, ans.GetLastSlot(), slot)
 	defer atomic.StoreInt32(&ans.lock, 0)
-	if slot >= ans.firstSlot && slot <= ans.GetLastSlot() {
-		return ans.leaders[slot]
-	}
 	item, ok := ans.leaders[slot]
 	if ok {
 		return item
@@ -102,7 +90,7 @@ func (ans *LeaderScheduleService) GetSlotLeader(slot uint64) solana.PublicKey {
 	return solana.PublicKey{}
 }
 
-func (ans *LeaderScheduleService) Refresh() {
+func (ans *LeaderScheduleService) refreshSlotLeaders() {
 	for {
 		select {
 		case slot := <-ans.newFresh:
@@ -120,6 +108,9 @@ func (ans *LeaderScheduleService) Refresh() {
 				}
 			}
 			ans.refresh(slot)
+		case <-ans.ctx.Done():
+			ans.logger.Printf("LeaderScheduleService::refreshSlotLeaders exit")
+			return
 		}
 	}
 }

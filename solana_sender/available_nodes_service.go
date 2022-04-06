@@ -1,4 +1,4 @@
-package tpu
+package sender
 
 import (
 	"context"
@@ -12,7 +12,6 @@ import (
 type AvailableNodesService struct {
 	ctx            context.Context
 	client         []*rpc.Client
-	index          int
 	availableNodes map[solana.PublicKey]string
 	lock           int32
 	logger         *log.Logger
@@ -35,31 +34,30 @@ func (ans *AvailableNodesService) Start() {
 func (ans *AvailableNodesService) fetchAvailableNodes() {
 	var clusterNodes []*rpc.GetClusterNodesResult
 	var err error
+	availableNodes := make(map[solana.PublicKey]string)
 	for i := 0; i < len(ans.client); i++ {
-		clusterNodes, err = ans.client[ans.index].GetClusterNodes(ans.ctx)
+		clusterNodes, err = ans.client[i].GetClusterNodes(ans.ctx)
 		if err != nil {
-			ans.logger.Printf("GetClusterNodes err: %s", err.Error())
-			ans.index++
-			ans.index = ans.index % len(ans.client)
+			ans.logger.Printf("GetClusterNodes err (%d): %s", i, err.Error())
 		} else {
-			break
-		}
-	}
-	if err != nil {
-		ans.logger.Printf("GetClusterNodes all err: %s", err.Error())
-		return
-	}
-
-	ans.logger.Printf("get GetClusterNodes......")
-	for _, node := range clusterNodes {
-		if node.TPU != nil {
-			for !atomic.CompareAndSwapInt32(&ans.lock, 0, 1) {
-				continue
+			ans.logger.Printf("GetClusterNodes (%d)......", i)
+			for _, node := range clusterNodes {
+				if node.TPU != nil {
+					availableNodes[node.Pubkey] = *node.TPU
+				} else {
+					ans.logger.Printf("tpu is unavailable, (%s)", node.Pubkey.String())
+				}
 			}
-			ans.availableNodes[node.Pubkey] = *node.TPU
-			atomic.StoreInt32(&ans.lock, 0)
 		}
 	}
+	ans.logger.Printf("update cluster nodes......")
+	for !atomic.CompareAndSwapInt32(&ans.lock, 0, 1) {
+		continue
+	}
+	for k, v := range availableNodes {
+		ans.availableNodes[k] = v
+	}
+	atomic.StoreInt32(&ans.lock, 0)
 }
 
 func (ans *AvailableNodesService) GetNode(key solana.PublicKey) string {
@@ -77,6 +75,9 @@ func (ans *AvailableNodesService) refresh() {
 		select {
 		case <-ticker.C:
 			ans.fetchAvailableNodes()
+		case <-ans.ctx.Done():
+			ans.logger.Printf("AvailableNodesService::refresh exit!")
+			return
 		}
 	}
 }

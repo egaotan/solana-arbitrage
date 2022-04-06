@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/egaotan/solana-arbitrage/solana_sender/server"
-	"github.com/egaotan/solana-arbitrage/solana_sender/server/config"
+	sender "github.com/egaotan/solana-arbitrage/solana_sender"
+	"github.com/egaotan/solana-arbitrage/solana_sender/config"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	at := server.NewSender(ctx, &cfg)
+	at := sender.NewSender(ctx, &cfg)
 	at.Service()
 }
 

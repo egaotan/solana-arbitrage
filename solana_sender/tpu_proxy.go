@@ -1,8 +1,9 @@
-package server
+package sender
 
 import (
 	"context"
 	"fmt"
+	"github.com/egaotan/solana-arbitrage/config"
 	"github.com/egaotan/solana-arbitrage/utils"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
@@ -29,6 +30,8 @@ type Proxy struct {
 	curSlot      uint64
 	bomb         int
 	lock         int32
+	cache        []*Command
+	txSub        map[solana.Signature]*ws.SignatureSubscription
 }
 
 func NewProxy(ctx context.Context, slotClientUrl string, lssClientUrls []string, bomb int) (*Proxy, error) {
@@ -54,6 +57,8 @@ func NewProxy(ctx context.Context, slotClientUrl string, lssClientUrls []string,
 		transactions: make(chan *Command, 1024),
 		tpuConns:     make(map[string]net.Conn),
 		bomb:         bomb,
+		cache:        make([]*Command, 0),
+		txSub:        make(map[solana.Signature]*ws.SignatureSubscription),
 	}
 	return proxy, nil
 }
@@ -63,9 +68,9 @@ func (proxy *Proxy) Start() {
 	proxy.lss.Start()
 	go proxy.refreshConnection()
 	proxy.slotSubscribe()
-	for i := 0; i < 8; i++ {
-		go proxy.sendTransaction()
-	}
+	//for i := 0; i < 8; i++ {
+	go proxy.sendTransaction()
+	//}
 }
 
 func (proxy *Proxy) Stop() {
@@ -166,7 +171,7 @@ func (proxy *Proxy) refreshConnection() {
 func (proxy *Proxy) slotSubscribe() {
 	sub, err := proxy.slotClient.SlotSubscribe()
 	if err != nil {
-		proxy.logger.Printf("solo subscribe error: %s", err.Error())
+		proxy.logger.Printf("slot subscribe error: %s", err.Error())
 		return
 	}
 	go proxy.recvSlot(sub)
@@ -191,75 +196,184 @@ func (proxy *Proxy) recvSlot(sub *ws.SlotSubscription) {
 	}
 }
 
+func (proxy *Proxy) txSubscribe(tx *Command) {
+	proxy.logger.Printf("begin subscribe tx (%s) (%d) (%s)", tx.Hash.String(), tx.Id,
+		time.Unix(int64(tx.Id)/1000000, int64(tx.Id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
+
+	sub, err := proxy.slotClient.SignatureSubscribe(tx.Hash, rpc.CommitmentProcessed)
+	if err != nil {
+		proxy.logger.Printf("tx subscribe error: %s", err.Error())
+		return
+	}
+	proxy.txSub[tx.Hash] = sub
+	go proxy.recvTx(tx, sub)
+}
+
+func (proxy *Proxy) recvTx(tx *Command, sub *ws.SignatureSubscription) {
+	for {
+		got, err := sub.Recv()
+		if err != nil {
+			proxy.logger.Printf("recvTx error: %s", err.Error())
+			//syscall.Kill(syscall.Getpid(), syscall.SIGABRT)
+			return
+		}
+		if got == nil {
+			proxy.logger.Printf("recvTx exit")
+			return
+		}
+		proxy.logger.Printf("receive tx (%s) (%d)", tx.Hash.String(), got.Context.Slot)
+		tx.Status = 1
+	}
+}
+
 func (proxy *Proxy) CommitTransaction(command *Command) {
 	proxy.transactions <- command
 }
 
 func (proxy *Proxy) sendTransaction() {
+	defer func() {
+		proxy.logger.Printf("tpu exit")
+	}()
+	ticker := time.NewTicker(time.Millisecond * time.Duration(config.Bomb))
+	var tx *Command
 	for {
 		select {
-		case tx := <-proxy.transactions:
-			proxy.send(tx)
-		case <-proxy.ctx.Done():
-			proxy.logger.Printf("sendTransactions exit!")
-			return
+		case tx = <-proxy.transactions:
+			proxy.cache = append(proxy.cache, tx)
+			{
+			L:
+				for {
+					select {
+					case tx = <-proxy.transactions:
+						proxy.cache = append(proxy.cache, tx)
+					default:
+						break L
+					}
+				}
+			}
+			proxy.send()
+		case <-ticker.C:
+			proxy.send()
 		}
 	}
 }
 
-func (proxy *Proxy) send(tx *Command) {
+func (proxy *Proxy) send() {
 	for !atomic.CompareAndSwapInt32(&proxy.lock, 0, 1) {
 		continue
 	}
 	tpuConnections := proxy.tpuConns
 	atomic.StoreInt32(&proxy.lock, 0)
 
-	proxy.logger.Printf("begin send tx (%s)(%d)", tx.Hash, tx.Id)
-	proxy.logger.Printf("tx time: %s, send time: %s",
-		time.Unix(int64(tx.Id)/1000000, int64(tx.Id)%1000000*1000).Format("2006-01-02 15:04:05.000000"),
-		time.Now().Format("2006-01-02 15:04:05.000000"),
-	)
-	defer func() {
-		proxy.logger.Printf("end send tx (%d)", tx.Id)
-	}()
-
-	for addr, conn := range tpuConnections {
-		proxy.logger.Printf("send tx (%d) to %s", tx.Id, addr)
-		n, err := conn.Write(tx.Tx)
-		if err != nil {
-			proxy.logger.Printf("send tx (%d) err: %s, %d", tx.Id, err.Error())
+	// remove old tx
+	t := uint64(time.Now().UnixNano() / 1000)
+	startIndex := -1
+	endIndex := 0
+	txCounter := 0
+	for i, tx := range proxy.cache {
+		if t-tx.Id <= 2*1000000 {
+			if startIndex == -1 {
+				startIndex = i
+			}
+			if tx.Status == 0 {
+				txCounter++
+			}
+			endIndex = i
+			if txCounter >= 8 {
+				break
+			}
 		} else {
-			proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
-		}
-	}
-	timeRate := 500 / proxy.bomb
-	for i := 0;i < proxy.bomb;i ++ {
-		for _, conn := range tpuConnections {
-			//proxy.logger.Printf("send tx to %s", addr)
-			_, err := conn.Write(tx.Tx)
-			if err != nil {
-				proxy.logger.Printf("send tx (%d) err: %s", tx.Id, err.Error())
+			sub, ok := proxy.txSub[tx.Hash]
+			if ok {
+				sub.Unsubscribe()
+				delete(proxy.txSub, tx.Hash)
+			}
+			if tx.Status == 1 {
+				continue
 			} else {
-				//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+				proxy.logger.Printf("send tx failed. (%s)", tx.Hash.String())
 			}
 		}
-		time.Sleep(time.Millisecond * time.Duration(timeRate))
 	}
+	if startIndex != -1 {
+		proxy.cache = proxy.cache[startIndex : endIndex+1]
+	}
+
+	for _, tx := range proxy.cache {
+		/*
+			proxy.logger.Printf("begin send tx (%d) time: %s", tx.Id,
+				time.Unix(int64(tx.Id)/1000000, int64(tx.Id)%1000000*1000).Format("2006-01-02 15:04:05.000000"))
+			defer func() {
+				proxy.logger.Printf("end send tx (%d)", tx.Id)
+			}()
+		*/
+		if tx.Status == 1 {
+			continue
+		}
+		_, ok := proxy.txSub[tx.Hash]
+		if !ok {
+			proxy.txSubscribe(tx)
+		}
+		for _, conn := range tpuConnections {
+			//proxy.logger.Printf("send tx (%d) to %s", tx.Id, addr)
+			n, err := conn.Write(tx.Tx)
+			if err != nil {
+				proxy.logger.Printf("send tx (%d) err: %s, %d", tx.Id, err.Error())
+			} else {
+				proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+			}
+		}
+	}
+
 	/*
-	for i := 0; i < proxy.bomb; i++ {
-		for _, conn := range tpuConnections {
-			//proxy.logger.Printf("send tx to %s", addr)
-			_, err := conn.Write(tx.Tx)
+		proxy.logger.Printf("begin send tx (%s)(%d)", tx.Hash, tx.Id)
+		proxy.logger.Printf("tx time: %s, send time: %s",
+			time.Unix(int64(tx.Id)/1000000, int64(tx.Id)%1000000*1000).Format("2006-01-02 15:04:05.000000"),
+			time.Now().Format("2006-01-02 15:04:05.000000"),
+		)
+		defer func() {
+			proxy.logger.Printf("end send tx (%d)", tx.Id)
+		}()
+
+		for addr, conn := range tpuConnections {
+			proxy.logger.Printf("send tx (%d) to %s", tx.Id, addr)
+			n, err := conn.Write(tx.Tx)
 			if err != nil {
-				proxy.logger.Printf("send tx (%d) err: %s", tx.Id, err.Error())
+				proxy.logger.Printf("send tx (%d) err: %s, %d", tx.Id, err.Error())
 			} else {
-				//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+				proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
 			}
 		}
-		//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, len(tx.Tx))
-		if i%50 == 49 {
-			time.Sleep(time.Millisecond * 50)
+		timeRate := 500 / proxy.bomb
+		for i := 0;i < proxy.bomb;i ++ {
+			for _, conn := range tpuConnections {
+				//proxy.logger.Printf("send tx to %s", addr)
+				_, err := conn.Write(tx.Tx)
+				if err != nil {
+					proxy.logger.Printf("send tx (%d) err: %s", tx.Id, err.Error())
+				} else {
+					//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+				}
+			}
+			time.Sleep(time.Millisecond * time.Duration(timeRate))
 		}
-	}
+	*/
+
+	/*
+		for i := 0; i < proxy.bomb; i++ {
+			for _, conn := range tpuConnections {
+				//proxy.logger.Printf("send tx to %s", addr)
+				_, err := conn.Write(tx.Tx)
+				if err != nil {
+					proxy.logger.Printf("send tx (%d) err: %s", tx.Id, err.Error())
+				} else {
+					//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, n, len(tx.Tx))
+				}
+			}
+			//proxy.logger.Printf("send tx (%d) (%d, %d)", tx.Id, len(tx.Tx))
+			if i%50 == 49 {
+				time.Sleep(time.Millisecond * 50)
+			}
+		}
 	*/
 }

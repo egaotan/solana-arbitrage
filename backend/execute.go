@@ -3,9 +3,8 @@ package backend
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/egaotan/solana-arbitrage/backend/tpu"
 	"github.com/egaotan/solana-arbitrage/config"
-	"github.com/egaotan/solana-arbitrage/solana_sender/server"
+	sender "github.com/egaotan/solana-arbitrage/solana_sender"
 	"github.com/egaotan/solana-arbitrage/store"
 	"github.com/egaotan/solana-arbitrage/utils"
 	"github.com/gagliardetto/solana-go"
@@ -218,9 +217,9 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	//
 	if (backend.transactionSend == 2 || backend.transactionSend == 3 || backend.transactionSend == 4) && !Test {
 		backend.logger.Printf("send transaction to tpu")
-		command := &tpu.Command{
+		command := &sender.Command{
 			Id:   id,
-			Hash: trx.Signatures[0].String(),
+			Hash: trx.Signatures[0],
 		}
 		command.Tx, err = trx.MarshalBinary()
 		if err != nil {
@@ -244,9 +243,9 @@ func (backend *Backend) Commit(level int, id uint64, ins []solana.Instruction, s
 	if backend.transactionSend == 5 || backend.transactionSend == 4 {
 		backend.logger.Printf("send transaction to sender")
 		//
-		command := &server.Command{
+		command := &sender.Command{
 			Id:   id,
-			Hash: trx.Signatures[0].String(),
+			Hash: trx.Signatures[0],
 		}
 		command.Tx, err = trx.MarshalBinary()
 		if err != nil {
@@ -313,7 +312,7 @@ func (backend *Backend) sender(id int, url string) {
 					senderConn = nil
 					continue
 				}
-				if n != server.CommandLen {
+				if n != sender.CommandLen {
 					backend.logger.Printf("tpc write size not right: %d", n)
 					senderConn.Close()
 					senderConn = nil

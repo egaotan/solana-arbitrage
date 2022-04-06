@@ -2,8 +2,8 @@ package backend
 
 import (
 	"context"
-	"github.com/egaotan/solana-arbitrage/backend/tpu"
 	"github.com/egaotan/solana-arbitrage/config"
+	sender "github.com/egaotan/solana-arbitrage/solana_sender"
 	"github.com/egaotan/solana-arbitrage/store"
 	"github.com/egaotan/solana-arbitrage/utils"
 	"github.com/gagliardetto/solana-go"
@@ -33,7 +33,7 @@ type Backend struct {
 	clients         []*rpc.Client
 	blockHash       []string
 	blockHashTime   uint64
-	tpu             *tpu.Proxy
+	tpu             *sender.Proxy
 	senderNodes     []*config.Node
 	commandData     []chan []byte
 	transactionSend int
@@ -74,7 +74,11 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 	backend.commandChans = commandChans
 	backend.clients = clients
 
-	backend.tpu = tpu.NewProxy(ctx, tpuclient)
+	tpu, err := sender.NewProxy(ctx, nodes[0].Rpc, tpuclient, config.Bomb)
+	if err != nil {
+		panic(err)
+	}
+	backend.tpu = tpu
 	return backend
 }
 

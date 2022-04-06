@@ -1,9 +1,9 @@
-package server
+package sender
 
 import (
 	"context"
 	"fmt"
-	"github.com/egaotan/solana-arbitrage/solana_sender/server/config"
+	"github.com/egaotan/solana-arbitrage/solana_sender/config"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net"
