@@ -297,6 +297,10 @@ func (proxy *Proxy) send() {
 	}
 	if startIndex != -1 {
 		proxy.cache = proxy.cache[startIndex : endIndex+1]
+	} else {
+		if len(proxy.cache) > 0 {
+			proxy.cache = proxy.cache[:0]
+		}
 	}
 
 	for _, tx := range proxy.cache {
