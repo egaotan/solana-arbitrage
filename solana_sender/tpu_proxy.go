@@ -234,7 +234,7 @@ func (proxy *Proxy) sendTransaction() {
 	defer func() {
 		proxy.logger.Printf("tpu exit")
 	}()
-	ticker := time.NewTicker(time.Millisecond * time.Duration(config.Bomb))
+	ticker := time.NewTicker(time.Microsecond * time.Duration(config.Bomb))
 	var tx *Command
 	for {
 		select {
@@ -308,6 +308,9 @@ func (proxy *Proxy) send() {
 			}()
 		*/
 		if tx.Status == 1 {
+			continue
+		}
+		if t - tx.Id > 2*1000000 {
 			continue
 		}
 		_, ok := proxy.txSub[tx.Hash]
