@@ -221,7 +221,7 @@ func (proxy *Proxy) recvTx(tx *Command, sub *ws.SignatureSubscription) {
 			proxy.logger.Printf("recvTx exit")
 			return
 		}
-		proxy.logger.Printf("receive tx (%s) (%d)", tx.Hash.String(), got.Context.Slot)
+		proxy.logger.Printf("receive tx (%s) (%d) (%d)", tx.Hash.String(), got.Context.Slot, tx.Counter)
 		tx.Status = 1
 	}
 }
@@ -291,7 +291,7 @@ func (proxy *Proxy) send() {
 			if tx.Status == 1 {
 				continue
 			} else {
-				proxy.logger.Printf("send tx failed. (%s)", tx.Hash.String())
+				proxy.logger.Printf("send tx failed. (%s) (%d)", tx.Hash.String(), tx.Counter)
 			}
 		}
 	}
@@ -321,6 +321,7 @@ func (proxy *Proxy) send() {
 		if !ok {
 			proxy.txSubscribe(tx)
 		}
+		tx.Counter ++
 		for _, conn := range tpuConnections {
 			//proxy.logger.Printf("send tx (%d) to %s", tx.Id, addr)
 			_, err := conn.Write(tx.Tx)

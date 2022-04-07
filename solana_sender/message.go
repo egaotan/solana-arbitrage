@@ -14,6 +14,7 @@ type Command struct {
 	Id     uint64
 	Tx     []byte
 	Status int
+	Counter int
 }
 
 func (cmd *Command) Encode() []byte {
