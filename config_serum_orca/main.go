@@ -81,7 +81,7 @@ func main() {
 			usableValidators1 = append(usableValidators1, validator)
 		}
 	}
-	fmt.Printf("there are %s validator rpcs", len(usableValidators1))
+	fmt.Printf("there are %d validator rpcs", len(usableValidators1))
 	//
 	selectedValidators := make([]*config.Node, 0)
 	for i := 0; i < len(usableValidators1); i++ {
