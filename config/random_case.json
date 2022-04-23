@@ -1,22 +1,17 @@
 {
-  "case": [
+  "cases": [
     {
-      "amount": 10000000000,
-      "path": [
+      "amount": 1000000000,
+      "paths": [
         {
-          "program": "",
-          "market": "",
-          "in": ""
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "25bQ6UzZpgFgnU7MqZdqM9Axi6oJunytRL2LgXruDWZB",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
         },
         {
-          "program": "",
-          "market": "",
-          "in": ""
-        },
-        {
-          "program": "",
-          "market": "",
-          "in": ""
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "CVJVpXU9xksCt2uSduVDrrqVw6fLZCAtNusuqLKc5DhW",
+          "token_in": "SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y"
         }
       ]
     }

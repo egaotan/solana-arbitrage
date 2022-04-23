@@ -181,7 +181,7 @@ func NewArbitrage(ctx context.Context, cfg *config.Config) *Arbitrage {
 	//
 	//store := store.NewStore(ctx, cfg.DBUrl, cfg.DBScheme, cfg.DBUser, cfg.DBPasswd)
 	//arb.store = store
-	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash, cfg.TpuClient, cfg.Senders, cfg.TransactionSend)
+	backend := backend.NewBackend(ctx, cfg.Nodes, true, cfg.TransactionNodes, cfg.BlochHash, cfg.TpuClient, cfg.Senders, cfg.TransactionSend, cfg.PreExecute)
 	backend.ImportWallet(cfg.Key)
 	backend.SetPlayer(cfg.User)
 	backend.SetStore(nil)
@@ -770,7 +770,7 @@ func (arb *Arbitrage) RArbitrage() error {
 			market := p.GetMarket(step.Market)
 			tokenIn := step.In
 			parameter := make(map[string]interface{})
-			parameter["market"] = market
+			parameter["market"] = market.Id()
 			parameter["token"] = tokenIn
 			parameter["amount"] = amountIn
 			if j == 0 {

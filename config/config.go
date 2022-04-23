@@ -36,7 +36,7 @@ var (
 	MarketsFile                  = ConfigPath + "markets.json"
 	ConfigFile                   = ConfigPath + "config.json"
 	ValidatorFile                = ConfigPath + "validator.json"
-	RandomCaseFile               = ConfigFile + "random_case.json"
+	RandomCaseFile               = ConfigPath + "random_case.json"
 	LogPath                      = "./logs/"
 	BackendLog                   = "backend"
 	ExecutorLog                  = "executor"
@@ -59,6 +59,7 @@ type Config struct {
 	Senders             []*Node            `json:"senders"`
 	TransactionNodeSize int                `json:"transaction_node_size"`
 	TransactionSend     int                `json:"transaction_send"`
+	PreExecute          bool               `json:"pre_execute"`
 	NodeId              int                `json:"node_id"`
 	Programs            []solana.PublicKey `json:"programs"`
 	User                solana.PublicKey   `json:"user"`

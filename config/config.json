@@ -78,6 +78,7 @@
   ],
   "transaction_node_size": 10,
   "transaction_send": 3,
+  "pre_execute": false,
   "bomb": 100,
   "node_id": 0,
   "programs": [

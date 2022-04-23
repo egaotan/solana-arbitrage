@@ -37,9 +37,10 @@ type Backend struct {
 	senderNodes     []*config.Node
 	commandData     []chan []byte
 	transactionSend int
+	preExecute      bool
 }
 
-func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash []string, tpuclient []string, senderNodes []*config.Node, transactionSend int) *Backend {
+func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, transactionNodes []*config.Node, blockHash []string, tpuclient []string, senderNodes []*config.Node, transactionSend int, preExecute bool) *Backend {
 	rpcClient := rpc.New(nodes[0].Rpc)
 	wsClients := make([]*ws.Client, 0, len(nodes))
 	for _, node := range nodes {
@@ -63,6 +64,7 @@ func NewBackend(ctx context.Context, nodes []*config.Node, transaction bool, tra
 		blockHash:       blockHash,
 		transactionSend: transactionSend,
 		senderNodes:     senderNodes,
+		preExecute:      preExecute,
 	}
 	commandChans := make([]chan *Command, 0, len(transactionNodes))
 	clients := make([]*rpc.Client, 0, len(transactionNodes))

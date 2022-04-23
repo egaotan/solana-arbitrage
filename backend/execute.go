@@ -11,6 +11,7 @@ import (
 	"github.com/gagliardetto/solana-go/rpc"
 	"log"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -75,9 +76,12 @@ func (backend *Backend) Execute(command *Command, client *rpc.Client, id int, lo
 	trx := command.Trx
 	send := func() solana.Signature {
 		if !Test {
-			signature, err := client.SendTransactionWithOpts(backend.ctx, trx, true, rpc.CommitmentProcessed)
+			signature, err := client.SendTransactionWithOpts(backend.ctx, trx, !backend.preExecute, rpc.CommitmentProcessed)
 			if err != nil {
-				logger.Printf("SendTransactionWithOpts err: %s", err.Error())
+				ss := err.Error()
+				if !strings.Contains(ss, "Transaction simulation failed") {
+					logger.Printf("SendTransactionWithOpts err: %s", err.Error())
+				}
 			}
 			return signature
 		}
