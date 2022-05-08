@@ -23,6 +23,7 @@ var (
 	SOL       = solana.MustPublicKeyFromBase58("So11111111111111111111111111111111111111112")
 	MSOL      = solana.MustPublicKeyFromBase58("mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So")
 	RAY       = solana.MustPublicKeyFromBase58("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R")
+	UST       = solana.MustPublicKeyFromBase58("9vMJfxuKxXBoEa7rM12mYLMwTacLMLDJqHozw96WQL8i")
 	Exchange  = solana.MustPublicKeyFromBase58("HhUVfHYvGby6k7zHrAcmA52YQLB7sWD41wkcb1WyUw8Z")
 	Arbitrage = solana.MustPublicKeyFromBase58("7H4ShpibmzrKS8yPJX9wi1ZyrRYzw5tLym7RjWvAxcHA")
 )
