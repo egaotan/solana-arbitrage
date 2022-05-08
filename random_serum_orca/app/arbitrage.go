@@ -203,7 +203,7 @@ func (arb *Arbitrage) OnBalanceUpdate(userKey solana.PublicKey, oldBalance uint6
 		return nil
 	}
 	if initBalance != 0 {
-		arb.frequency = 5
+		//arb.frequency = 5
 		arb.latestUpdate = arb.counter
 	}
 
