@@ -37,7 +37,7 @@ func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {
 	ctx := context.Background()
 	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
 		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
-		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2,
+		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, nil, 3, false,
 	)
 	backend.ImportWallet(PlayerKey)
 	backend.SetPlayer(Player)
@@ -109,7 +109,7 @@ func CreateMarketOpenOrders(market solana.PublicKey) solana.PublicKey {
 	ctx := context.Background()
 	backend := backend.NewBackend(ctx, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
 		true, []*config.Node{{rpc.MainNetBeta_RPC, rpc.MainNetBeta_WS, true}},
-		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, 2)
+		[]string{"https://free.rpcpool.com"}, []string{"https://free.rpcpool.com"}, nil, 3, false)
 	backend.ImportWallet(PlayerKey)
 	backend.SetPlayer(Player)
 	env := env.NewEnv(ctx)

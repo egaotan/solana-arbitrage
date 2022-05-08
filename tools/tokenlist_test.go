@@ -89,6 +89,29 @@ func TestInitToken(t *testing.T) {
 	}
 }
 
+func TestInitAllToken(t *testing.T) {
+	FilePath = "./tools/solana.tokenlist.json"
+	tokenList, err := InitTokenList()
+	if err != nil {
+		panic(err)
+	}
+	tokens := make(map[string]*TokenInfo)
+	for _, item := range tokenList.Tokens {
+		tokens[item.Address] = &TokenInfo{
+			Symbol:  item.Symbol,
+			Name:    item.Name,
+			Decimal: xxx(item.Decimals),
+		}
+	}
+	{
+		infoData, _ := json.MarshalIndent(tokens, "", "    ")
+		err = os.WriteFile(config.TokensFile, infoData, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
 type Holder struct {
 	Address  string `json:"address"`
 	Amount   uint64 `json:"amount"`

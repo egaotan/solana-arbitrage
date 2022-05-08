@@ -3,12 +3,12 @@
     {
       "rpc": "https://api.mainnet-beta.solana.com",
       "ws": "wss://api.mainnet-beta.solana.com",
-      "usable": true
+      "usable": false
     },
     {
       "rpc": "https://solana-api.projectserum.com",
       "ws": "wss://solana-api.projectserum.com",
-      "usable": false
+      "usable": true
     },
     {
       "rpc": "https://solend.genesysgo.net",
@@ -79,7 +79,7 @@
   "transaction_node_size": 10,
   "transaction_send": 3,
   "bomb": 100,
-  "instruction_size": 1,
+  "instruction_size": 15,
   "random_ticker": 1000,
   "node_id": 0,
   "programs": [
@@ -91,8 +91,8 @@
   "token_b": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   "user": "4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX",
   "key":"",
-  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
-  "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
+  "arbitrage_contract": "9aKPKtXAgFv2Sg9zNDaZrNLRwqJcASbBwn3yj3L2RrdK",
+  "exchange_contract": "7GoPPLwrbj2GbhL7AJZF9ZZhbRjMqtUw1ji7vkkYpQcH",
   "calculators": [
     "cyclic","serum"
   ],

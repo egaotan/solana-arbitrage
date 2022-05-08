@@ -287,7 +287,7 @@ func (arb *Arbitrage) Arbitrage() error {
 	arb.nonce = arb.nonce % 90
 	for i := 0; i < arb.config.InstructionSize; i++ {
 		// very dangerous
-		data := make([]byte, 12)
+		data := make([]byte, 3)
 		data[0] = 31
 		data[1] = byte(i)
 		data[2] = arb.nonce
@@ -346,7 +346,7 @@ func (arb *Arbitrage) Arbitrage1() error {
 	arb.nonce = arb.nonce % 90
 	for i := 0; i < arb.config.InstructionSize; i++ {
 		// very dangerous
-		data := make([]byte, 12)
+		data := make([]byte, 3)
 		data[0] = 41
 		data[1] = byte(i)
 		data[2] = arb.nonce
