@@ -88,6 +88,10 @@ type Config struct {
 	TokenB              solana.PublicKey   `json:"token_b"`
 	InstructionSize     int                `json:"instruction_size"`
 	RandomTicker        uint64             `json:"random_ticker"`
+	USTUSDC             bool               `json:"ust_usdc"`
+	SOLUSDC             bool               `json:"sol_usdc"`
+	GSTUSDC             bool               `json:"gst_usdc"`
+	GMTUSDC             bool               `json:"gmt_usdc"`
 }
 
 type Path struct {
