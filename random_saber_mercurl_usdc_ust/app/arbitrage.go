@@ -423,13 +423,13 @@ func (arb *Arbitrage) Arbitrage_orca_raydium_sol_usdc() error {
 
 	arb.nonce++
 	arb.nonce = arb.nonce % 90
-	for i := 0; i < arb.config.InstructionSize; i++ {
+	for i := 0; i < arb.config.InstructionSize2; i++ {
 		// very dangerous
 		data := make([]byte, 3)
 		data[0] = 1
 		data[1] = byte(i)
 		data[2] = arb.nonce
-		if i == arb.config.InstructionSize-1 {
+		if i == arb.config.InstructionSize2-1 {
 			data[1] = byte(100)
 		}
 
