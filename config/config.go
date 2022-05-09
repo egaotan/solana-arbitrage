@@ -25,7 +25,7 @@ var (
 	CachePath                    = "./cache/"
 	MarketUsableTokensFile       = CachePath + "market_usable_tokens.json"
 	MarketUsablePoolAccounts     = CachePath + "market_usable_pool_accounts.json"
-	ConfigPath                   = "./config/"
+	ConfigPath                   = "./config3/"
 	TokensFile                   = ConfigPath + "tokens.json"
 	UsersFile                    = ConfigPath + "tokens_user.json"
 	UsersSimulateFile            = ConfigPath + "tokens_user_simulate.json"
@@ -87,6 +87,7 @@ type Config struct {
 	TokenA              solana.PublicKey   `json:"token_a"`
 	TokenB              solana.PublicKey   `json:"token_b"`
 	InstructionSize     int                `json:"instruction_size"`
+	InstructionSize2    int                `json:"instruction_size2"`
 	RandomTicker        uint64             `json:"random_ticker"`
 	USTUSDC             bool               `json:"ust_usdc"`
 	SOLUSDC             bool               `json:"sol_usdc"`
