@@ -80,8 +80,12 @@
   "transaction_send": 3,
   "bomb": 100,
   "instruction_size": 15,
-  "random_ticker": 1000,
+  "random_ticker": 2000,
   "node_id": 0,
+  "ust_usdc": true,
+  "sol_usdc": true,
+  "gst_usdc": true,
+  "gmt_usdc": true,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
     "SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ",
