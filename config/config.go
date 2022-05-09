@@ -25,7 +25,7 @@ var (
 	CachePath                    = "./cache/"
 	MarketUsableTokensFile       = CachePath + "market_usable_tokens.json"
 	MarketUsablePoolAccounts     = CachePath + "market_usable_pool_accounts.json"
-	ConfigPath                   = "./config3/"
+	ConfigPath                   = "./config/"
 	TokensFile                   = ConfigPath + "tokens.json"
 	UsersFile                    = ConfigPath + "tokens_user.json"
 	UsersSimulateFile            = ConfigPath + "tokens_user_simulate.json"
