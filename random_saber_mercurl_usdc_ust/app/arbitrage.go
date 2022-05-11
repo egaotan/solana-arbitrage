@@ -242,14 +242,9 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 
 func (arb *Arbitrage) randomArbitrage() {
 	ticker := time.NewTicker(time.Millisecond * time.Duration(arb.config.RandomTicker))
-	counter := 0
 	for {
 		select {
 		case <-ticker.C:
-			counter ++
-			if counter >= 5 {
-				continue
-			}
 			if arb.config.USTUSDC {
 				arb.Arbitrage_saber_mercurl_usdc_ust()
 				arb.Arbitrage_mercurl_saber_usdc_ust()
