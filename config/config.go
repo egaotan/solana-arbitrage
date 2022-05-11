@@ -93,6 +93,7 @@ type Config struct {
 	SOLUSDC             bool               `json:"sol_usdc"`
 	GSTUSDC             bool               `json:"gst_usdc"`
 	GMTUSDC             bool               `json:"gmt_usdc"`
+	WhirlUSTUSDC        bool               `json:"whirl_ust_usdc"`
 }
 
 type Path struct {

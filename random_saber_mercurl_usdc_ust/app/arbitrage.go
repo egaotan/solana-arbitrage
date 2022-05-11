@@ -242,9 +242,16 @@ func (arb *Arbitrage) OnStateUpdate(slot uint64) error {
 
 func (arb *Arbitrage) randomArbitrage() {
 	ticker := time.NewTicker(time.Millisecond * time.Duration(arb.config.RandomTicker))
+	//counter := 0
 	for {
 		select {
 		case <-ticker.C:
+			/*
+			counter ++
+			if counter >= 10 {
+				continue
+			}
+			 */
 			if arb.config.USTUSDC {
 				arb.Arbitrage_saber_mercurl_usdc_ust()
 				arb.Arbitrage_mercurl_saber_usdc_ust()
@@ -257,6 +264,10 @@ func (arb *Arbitrage) randomArbitrage() {
 			}
 			if arb.config.GMTUSDC {
 				arb.Arbitrage_orca_raydium_gmt_usdc()
+			}
+			if arb.config.WhirlUSTUSDC {
+				arb.Arbitrage_saber_whirl_usdc_ust()
+				arb.Arbitrage_whirl_saber_usdc_ust()
 			}
 		case <-arb.ctx.Done():
 			return
@@ -359,6 +370,122 @@ func (arb *Arbitrage) Arbitrage_mercurl_saber_usdc_ust() error {
 		// very dangerous
 		data := make([]byte, 3)
 		data[0] = 41
+		data[1] = byte(i)
+		data[2] = arb.nonce
+		if i == arb.config.InstructionSize-1 {
+			data[1] = byte(100)
+		}
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.Arbitrage,
+		}
+		ins = append(ins, instruction)
+	}
+	{
+		id := uint64(time.Now().UnixNano() / 1000)
+		arb.backend.Commit(arb.blockHash, id, ins, false, nil, nil)
+		arb.blockHash++
+		arb.blockHash = arb.blockHash % 3
+	}
+	return nil
+}
+
+func (arb *Arbitrage) Arbitrage_saber_whirl_usdc_ust() error {
+	ins := make([]solana.Instruction, 0)
+	//
+	accounts := make([]*solana.AccountMeta, 0)
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Exchange, IsSigner: false, IsWritable: false})
+	//
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Saber, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("KwnjUuZhTMTSGAaavkLEmSyfobY16JNH4poL9oeeEvE"), IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("9osV5a7FXEjuMujxZJGBRXVAyQ5fJfBFNkyAf6fSz9kw"), IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("BnKQtTdLw9qPCDgZkWX3sURkBAoKCUYL1yahh6Mw7mRK"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("J63v6qEZmQpDqCD8bd4PXu2Pq5ZbyXrFcSa3Xt1HdAPQ"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("BYgyVxdrGa3XNj1cx1XHAVyRG8qYhBnv1DS59Bsvmg5h"), IsSigner: false, IsWritable: true})
+	//
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"), IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("HyBtxWGiYKzHG5WERyA6Ks9tq6k33UyXrU9Aj1BUFK2J"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("CWArXimAPJrsmDXHA93aYn9ezcXoPfj6zdVZMJddiH1f"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("8ahvzqK1Ljtopm3fR3AHRAypYFbdXTXn7FLYuXUfeH4o"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("jPBxUQHcj3TRHcufH9CEQd5fMCFUMNHUWSxEuJ546Qu"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("3Jb2dZhYzB3rXgD4zxpkVvWtt1WFXaPk7WvYGVaGMHwn"), IsSigner: false, IsWritable: false})
+	//
+	usdc_acc := arb.env.TokenUser(program.USDC)
+	ust_acc := arb.env.TokenUser(program.UST)
+
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: ust_acc, IsSigner: false, IsWritable: true})
+	//
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysClock, IsSigner: false, IsWritable: false})
+
+	arb.nonce++
+	arb.nonce = arb.nonce % 90
+	for i := 0; i < arb.config.InstructionSize; i++ {
+		// very dangerous
+		data := make([]byte, 3)
+		data[0] = 51
+		data[1] = byte(i)
+		data[2] = arb.nonce
+		if i == arb.config.InstructionSize-1 {
+			data[1] = byte(100)
+		}
+
+		instruction := &program.Instruction{
+			IsAccounts:  accounts,
+			IsData:      data,
+			IsProgramID: program.Arbitrage,
+		}
+		ins = append(ins, instruction)
+	}
+	{
+		id := uint64(time.Now().UnixNano() / 1000)
+		arb.backend.Commit(arb.blockHash, id, ins, false, nil, nil)
+		arb.blockHash++
+		arb.blockHash = arb.blockHash % 3
+	}
+	return nil
+}
+
+func (arb *Arbitrage) Arbitrage_whirl_saber_usdc_ust() error {
+	ins := make([]solana.Instruction, 0)
+	//
+	accounts := make([]*solana.AccountMeta, 0)
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Exchange, IsSigner: false, IsWritable: false})
+	//
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Saber, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("KwnjUuZhTMTSGAaavkLEmSyfobY16JNH4poL9oeeEvE"), IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("9osV5a7FXEjuMujxZJGBRXVAyQ5fJfBFNkyAf6fSz9kw"), IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("J63v6qEZmQpDqCD8bd4PXu2Pq5ZbyXrFcSa3Xt1HdAPQ"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("BnKQtTdLw9qPCDgZkWX3sURkBAoKCUYL1yahh6Mw7mRK"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("G9nt2GazsDj3Ey3KdA49Sfaq9K95Dc72Ejps4NKTP2SR"), IsSigner: false, IsWritable: true})
+	//
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"), IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("HyBtxWGiYKzHG5WERyA6Ks9tq6k33UyXrU9Aj1BUFK2J"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("CWArXimAPJrsmDXHA93aYn9ezcXoPfj6zdVZMJddiH1f"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("8ahvzqK1Ljtopm3fR3AHRAypYFbdXTXn7FLYuXUfeH4o"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("jPBxUQHcj3TRHcufH9CEQd5fMCFUMNHUWSxEuJ546Qu"), IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: solana.MustPublicKeyFromBase58("3Jb2dZhYzB3rXgD4zxpkVvWtt1WFXaPk7WvYGVaGMHwn"), IsSigner: false, IsWritable: false})
+	//
+	usdc_acc := arb.env.TokenUser(program.USDC)
+	ust_acc := arb.env.TokenUser(program.UST)
+
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: arb.config.User, IsSigner: true, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: usdc_acc, IsSigner: false, IsWritable: true})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: ust_acc, IsSigner: false, IsWritable: true})
+	//
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.Token, IsSigner: false, IsWritable: false})
+	accounts = append(accounts, &solana.AccountMeta{PublicKey: program.SysClock, IsSigner: false, IsWritable: false})
+
+	arb.nonce++
+	arb.nonce = arb.nonce % 90
+	for i := 0; i < arb.config.InstructionSize; i++ {
+		// very dangerous
+		data := make([]byte, 3)
+		data[0] = 61
 		data[1] = byte(i)
 		data[2] = arb.nonce
 		if i == arb.config.InstructionSize-1 {
