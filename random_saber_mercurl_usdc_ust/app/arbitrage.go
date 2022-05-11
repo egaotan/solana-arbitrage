@@ -258,6 +258,10 @@ func (arb *Arbitrage) randomArbitrage() {
 				arb.Arbitrage_saber_mercurl_usdc_usdt()
 				arb.Arbitrage_mercurl_saber_usdc_usdt()
 			}
+			if arb.config.SOLMSOL {
+				arb.Arbitrage_mercurl_saber_sol_msol()
+				arb.Arbitrage_saber_mercurl_sol_msol()
+			}
 			if arb.config.SOLUSDC {
 				arb.Arbitrage_orca_raydium_sol_usdc()
 			}
