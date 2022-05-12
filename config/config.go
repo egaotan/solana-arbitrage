@@ -91,12 +91,13 @@ type Config struct {
 	RandomTicker        uint64             `json:"random_ticker"`
 	USTUSDC             bool               `json:"ust_usdc"`
 	UXDUSDC             bool               `json:"uxd_usdc"`
-	USDTUSDC             bool               `json:"usdt_usdc"`
+	USDTUSDC            bool               `json:"usdt_usdc"`
 	SOLUSDC             bool               `json:"sol_usdc"`
 	GSTUSDC             bool               `json:"gst_usdc"`
 	GMTUSDC             bool               `json:"gmt_usdc"`
 	WhirlUSTUSDC        bool               `json:"whirl_ust_usdc"`
-	SOLMSOL bool `json:"sol_msol"`
+	SOLMSOL             bool               `json:"sol_msol"`
+	SOLSTSOL            bool               `json:"sol_stsol"`
 }
 
 type Path struct {
