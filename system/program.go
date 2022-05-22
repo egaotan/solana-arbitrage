@@ -65,3 +65,17 @@ func (p *Program) InstructionCreateAccount(fromKey solana.PublicKey, newKey sola
 	}
 	return instruction, nil
 }
+
+func (p *Program) InstructionAssign(key solana.PublicKey, ownerId solana.PublicKey) (solana.Instruction, error) {
+	data := make([]byte, 36)
+	binary.LittleEndian.PutUint32(data[0:], 1)
+	copy(data[4:], ownerId.Bytes())
+	instruction := &program.Instruction{
+		IsAccounts: []*solana.AccountMeta{
+			{PublicKey: key, IsSigner: true, IsWritable: true},
+		},
+		IsData:      data,
+		IsProgramID: p.id,
+	}
+	return instruction, nil
+}

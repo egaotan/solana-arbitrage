@@ -99,6 +99,8 @@ type Config struct {
 	SOLMSOL             bool               `json:"sol_msol"`
 	SOLSTSOL            bool               `json:"sol_stsol"`
 	USDTUSDC3POOL       bool               `json:"usdt_usdc_3pool"`
+	WhirlSOLUSDC bool `json:"whirl_sol_usdc"`
+	SerumWhirl bool `json:"serum_whirl"`
 }
 
 type Path struct {
