@@ -371,9 +371,16 @@ func (p *Program) ArbitrageStep(parameter map[string]interface{}) ([]solana.Inst
 	} else {
 		flag = item.(uint8)
 	}
+	var nonce uint8
+	if item, ok := parameter["nonce"]; !ok {
+		nonce = 0
+		//return nil, fmt.Errorf("no parameter - amount in instruct construction parameter")
+	} else {
+		nonce = item.(uint8)
+	}
 	//
 	instructions := make([]solana.Instruction, 0)
-	instruction, err := p.InstructionArbitrageStep(market, token, amount, flag)
+	instruction, err := p.InstructionArbitrageStep(market, token, amount, flag, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -563,7 +570,7 @@ func (p *Program) InstructionSwap(market solana.PublicKey, tokenIn solana.Public
 	return instruction, nil
 }
 
-func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn solana.PublicKey, amountIn uint64, flag uint8) (solana.Instruction, error) {
+func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn solana.PublicKey, amountIn uint64, flag uint8, nonce uint8) (solana.Instruction, error) {
 	var model *Model
 	if item, ok := p.models[market]; !ok {
 		return nil, fmt.Errorf("no model of this market - %s", market)
@@ -593,12 +600,13 @@ func (p *Program) InstructionArbitrageStep(market solana.PublicKey, tokenIn sola
 		return nil, fmt.Errorf("no user account for minter - %s", tokenDst)
 	}
 	// build instruction
-	data := make([]byte, 12)
+	data := make([]byte, 13)
 	data[0] = 0
 	binary.LittleEndian.PutUint64(data[1:], amountIn)
 	data[9] = 1
 	data[10] = 0
 	data[11] = flag
+	data[12] = nonce
 	instruction := &program.Instruction{
 		IsAccounts: []*solana.AccountMeta{
 			{PublicKey: program.Exchange, IsSigner: false, IsWritable: true},

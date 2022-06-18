@@ -21,16 +21,16 @@ import (
 
 var (
 	//Owner = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
-	Player = solana.MustPublicKeyFromBase58("4qfMyvVxAUMWLceyaiWrXxD9mXhZCZ32d16cArQ5MmfX")
+	Player = solana.MustPublicKeyFromBase58("FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS")
 )
 
 var (
 	//OwnerKey = solana.MustPrivateKeyFromBase58("")
-	PlayerKey = "3Yh1cksuufF6TWQPcaWMJqf9gsf7A72wNrnu76jWFrrmHzSQax3quY3QQN5HZBhfPwGYpHBtgY6do5hPBEjuX85P"
+	PlayerKey = ""
 )
 
 var (
-	ArbitrageContract = solana.MustPublicKeyFromBase58("9aKPKtXAgFv2Sg9zNDaZrNLRwqJcASbBwn3yj3L2RrdK")
+	ArbitrageContract = solana.MustPublicKeyFromBase58("Atv4JkoVwY2hVEpH1wHhpZx4Q534ZLNm64VxVRPRJQzq")
 )
 
 func CreateSplTokenAccount(mint solana.PublicKey) solana.PublicKey {

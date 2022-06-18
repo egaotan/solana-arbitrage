@@ -60,7 +60,7 @@
       "usable": true
     }
   ],
-  "block_hash": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com", "https://solend.genesysgo.net", "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913", "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189", "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q"],
+  "block_hash": ["https://mercuria-fronten-1cd8.mainnet.rpcpool.com/","https://solendf-solendf-67c7.rpcpool.com/","https://api.mainnet-beta.solana.com","https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com", "https://solend.genesysgo.net", "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913", "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189", "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q"],
   "tpu_client": ["https://ssc-dao.genesysgo.net", "https://free.rpcpool.com", "https://solana-api.projectserum.com", "https://solend.genesysgo.net", "https://solana--mainnet.datahub.figment.io/apikey/0e1a11d5b5daf922a4016206301cd913", "https://autumn-empty-dawn.solana-mainnet.quiknode.pro/924b1527134b73309d1fd8b934a2f078ce31b189", "https://connect.runnode.com/?apikey=suthSNHk0SiKJyBlDR0q"],
   "senders": [
     {
@@ -78,9 +78,23 @@
   ],
   "transaction_node_size": 10,
   "transaction_send": 3,
+  "instruction_size": 29,
+  "random_ticker": 2000,
   "pre_execute": false,
   "bomb": 100,
   "node_id": 0,
+  "ust_usdc": false,
+  "uxd_usdc": false,
+  "usdt_usdc": false,
+  "whirl_ust_usdc": false,
+  "sol_usdc": false,
+  "gst_usdc": false,
+  "gmt_usdc": false,
+  "sol_msol": false,
+  "sol_stsol": false,
+  "usdt_usdc_3pool": false,
+  "whirl_sol_usdc": false,
+  "serum_whirl": true,
   "programs": [
     "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
     "SSwpkEEcbUqx4vtoEByFjSkhKdCT862DNVb52nZg1UZ",
@@ -88,12 +102,10 @@
   ],
   "token_a": "So11111111111111111111111111111111111111112",
   "token_b": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "instruction_size": 1,
-  "random_ticker": 100,
   "user": "FrJZ4DP12Tg7r8rpjMqknkpCbJihqbEhfEBBQkpFimaS",
   "key":"",
-  "arbitrage_contract": "GCQ2KPaxKeweMdHcJtfdFd88o1mQvntA1oPSBkSfJwQp",
-  "exchange_contract": "9YYpVyE4x5PRF1FyjXJtfjo1z7cyH2vfEoX6d7weQZo",
+  "arbitrage_contract": "Atv4JkoVwY2hVEpH1wHhpZx4Q534ZLNm64VxVRPRJQzq",
+  "exchange_contract": "CLtQpFKn6Dia3ryS6cRVsJBEuVV3h4PdYqAWW5qicUVB",
   "calculators": [
     "cyclic","serum"
   ],

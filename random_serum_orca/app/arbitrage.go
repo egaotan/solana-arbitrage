@@ -249,13 +249,6 @@ func (arb *Arbitrage) randomArbitrage() {
 }
 
 func (arb *Arbitrage) Arbitrage() error {
-	arb.counter++
-	if arb.counter-arb.latestUpdate > 10*60 {
-		arb.frequency = 10
-	}
-	if arb.counter%arb.frequency != 0 {
-		return nil
-	}
 	ins := make([]solana.Instruction, 0)
 	/*
 		{

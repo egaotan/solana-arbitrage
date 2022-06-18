@@ -1,0 +1,104 @@
+{
+  "cases": [
+    {
+      "amount": 5200000000,
+      "paths": [
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "25bQ6UzZpgFgnU7MqZdqM9Axi6oJunytRL2LgXruDWZB",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "CVJVpXU9xksCt2uSduVDrrqVw6fLZCAtNusuqLKc5DhW",
+          "token_in": "SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y"
+        }
+      ]
+    },
+    {
+      "amount": 5200000000,
+      "paths": [
+        {
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "CVJVpXU9xksCt2uSduVDrrqVw6fLZCAtNusuqLKc5DhW",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "25bQ6UzZpgFgnU7MqZdqM9Axi6oJunytRL2LgXruDWZB",
+          "token_in": "SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y"
+        }
+      ]
+    },
+    {
+      "amount": 5200000000,
+      "paths": [
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "9wb29L97MmPp7Nw8oaqiAGkXceETGNQurhySiUNLv5wh",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "HCWgghHfDefcGZsPsLAdMP3NigJwBrptZnXemeQchZ69",
+          "token_in": "Basis9oJw9j8cw53oMV7iqsgo6ihi9ALw4QR31rcjUJa"
+        }
+      ]
+    },
+    {
+      "amount": 5200000000,
+      "paths": [
+        {
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "HCWgghHfDefcGZsPsLAdMP3NigJwBrptZnXemeQchZ69",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "9wb29L97MmPp7Nw8oaqiAGkXceETGNQurhySiUNLv5wh",
+          "token_in": "Basis9oJw9j8cw53oMV7iqsgo6ihi9ALw4QR31rcjUJa"
+        }
+      ]
+    },
+    {
+      "amount": 5200000000,
+      "paths": [
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "2p7nYbtPBgtmY69NsE8DAW6szpRJn7tQvDnqvoEWQvjY",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "2ZnVuidTHpi5WWKUwFXauYGhvdT9jRKYv5MDahtbwtYr",
+          "token_in": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE"
+        },
+        {
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+          "token_in": "So11111111111111111111111111111111111111112"
+        }
+      ]
+    },
+    {
+      "amount": 5200000000,
+      "paths": [
+        {
+          "program": "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin",
+          "market": "9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT",
+          "token_in": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        },
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "2ZnVuidTHpi5WWKUwFXauYGhvdT9jRKYv5MDahtbwtYr",
+          "token_in": "So11111111111111111111111111111111111111112"
+        },
+        {
+          "program": "9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP",
+          "market": "2p7nYbtPBgtmY69NsE8DAW6szpRJn7tQvDnqvoEWQvjY",
+          "token_in": "orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE"
+        }
+      ]
+    }
+  ]
+}

@@ -74,7 +74,7 @@ func TestProgram_Start(t *testing.T) {
 }
 
 func TestProgram_ErrorCode(t *testing.T) {
-	code := 0x1000879
+	code := 0x10005fb
 	data := make([]byte, 4)
 	binary.LittleEndian.PutUint32(data, uint32(code))
 	file := data[3]
